@@ -29,7 +29,7 @@ import static org.dizitart.no2.common.Constants.*;
  * A representation of a nitrite document.
  *
  * @since 1.0
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public interface Document extends Iterable<Pair<String, Object>>, Cloneable, Serializable {
 

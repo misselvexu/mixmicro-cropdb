@@ -30,7 +30,7 @@ import java.util.Iterator;
 /**
  * Represents a projected nitrite document stream.
  *
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 1.0
  */
 public class ProjectedDocumentStream implements RecordStream<Document> {

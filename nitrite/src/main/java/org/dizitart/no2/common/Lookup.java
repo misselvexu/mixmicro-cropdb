@@ -25,7 +25,7 @@ import org.dizitart.no2.repository.Cursor;
 /**
  * Represents lookup parameters in join operation of two collections.
  *
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @see DocumentCursor#join(DocumentCursor, Lookup)
  * @see Cursor#join(Cursor, Lookup, Class)
  * @since 2.1.0

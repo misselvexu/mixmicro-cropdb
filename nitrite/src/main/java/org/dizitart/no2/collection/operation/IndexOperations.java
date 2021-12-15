@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static org.dizitart.no2.common.concurrent.ThreadPoolManager.runAsync;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 class IndexOperations implements AutoCloseable {
     private final String collectionName;

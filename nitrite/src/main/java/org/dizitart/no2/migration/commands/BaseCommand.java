@@ -11,7 +11,7 @@ import org.dizitart.no2.store.NitriteStore;
  * Represents a base command for database migration. It initializes
  * different components necessary to execute the migration steps
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 abstract class BaseCommand implements Command {

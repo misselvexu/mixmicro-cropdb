@@ -27,7 +27,7 @@ import java.util.*;
 /**
  * Represents a document stream of distinct elements
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public class DistinctStream implements RecordStream<Pair<NitriteId, Document>> {

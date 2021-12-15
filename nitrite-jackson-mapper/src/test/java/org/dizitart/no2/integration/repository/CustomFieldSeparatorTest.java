@@ -47,7 +47,7 @@ import static org.dizitart.no2.integration.repository.BaseObjectRepositoryTest.g
 import static org.junit.Assert.assertEquals;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class CustomFieldSeparatorTest {
     private Nitrite db;

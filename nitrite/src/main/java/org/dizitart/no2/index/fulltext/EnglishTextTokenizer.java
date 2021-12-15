@@ -23,7 +23,7 @@ import java.util.Set;
 /**
  * A {@link TextTokenizer} implementation for the English languages.
  *
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 1.0
  */
 public class EnglishTextTokenizer extends BaseTextTokenizer {

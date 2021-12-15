@@ -23,7 +23,7 @@ import org.dizitart.no2.common.mapper.Mappable;
 import org.dizitart.no2.common.mapper.NitriteMapper;
 
 /**
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  */
 @EqualsAndHashCode
 public class WithOutGetterSetter implements Mappable {

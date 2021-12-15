@@ -9,7 +9,7 @@ import org.dizitart.no2.index.IndexType;
  * A command to change the id fields of an entity in
  * an {@link org.dizitart.no2.repository.ObjectRepository}.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 @AllArgsConstructor

@@ -45,7 +45,7 @@ import org.dizitart.no2.common.RecordStream;
  * }*
  * </pre>
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public interface DocumentCursor extends RecordStream<Document> {

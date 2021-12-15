@@ -29,7 +29,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  */
 public class ReplicaBuilder {
     private NitriteCollection collection;

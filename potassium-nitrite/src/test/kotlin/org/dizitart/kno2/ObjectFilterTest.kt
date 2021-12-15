@@ -35,7 +35,7 @@ import java.util.concurrent.Executors
 
 /**
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 class ObjectFilterTest : BaseTest() {
 

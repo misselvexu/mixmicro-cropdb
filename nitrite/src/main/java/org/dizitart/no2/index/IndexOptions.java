@@ -23,7 +23,7 @@ import lombok.Setter;
 /**
  * Represents options to apply while creating an index.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 1.0
  */
 @EqualsAndHashCode

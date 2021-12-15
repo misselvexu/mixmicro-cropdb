@@ -28,7 +28,7 @@ import static org.dizitart.no2.collection.Document.createDocument;
 import static org.junit.Assert.assertEquals;
 
 /**
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  */
 public class NitriteSecurityTest {
     private Nitrite db;

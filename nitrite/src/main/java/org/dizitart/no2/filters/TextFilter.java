@@ -33,7 +33,7 @@ import static org.dizitart.no2.common.util.ValidationUtils.notNull;
 /**
  * Represents a nitrite full-text search filter.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 1.0
  */
 public class TextFilter extends StringFilter {

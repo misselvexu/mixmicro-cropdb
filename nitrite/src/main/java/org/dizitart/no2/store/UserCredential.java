@@ -26,7 +26,7 @@ import java.io.Serializable;
 /**
  * The user credential data for database authentication.
  *
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 1.0
  */
 @Data

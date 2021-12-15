@@ -26,7 +26,7 @@ import java.util.NavigableMap;
 /**
  * Represents a filter based on document field holding {@link Comparable} values.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public abstract class ComparableFilter extends FieldBasedFilter {

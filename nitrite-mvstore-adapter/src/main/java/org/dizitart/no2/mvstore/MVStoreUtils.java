@@ -32,7 +32,7 @@ import static org.dizitart.no2.common.util.StringUtils.isNullOrEmpty;
 
 /**
  * @since 4.0.0
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  */
 @Slf4j
 class MVStoreUtils {

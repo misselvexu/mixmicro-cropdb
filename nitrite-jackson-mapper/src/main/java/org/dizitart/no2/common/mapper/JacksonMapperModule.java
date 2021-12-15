@@ -24,7 +24,7 @@ import java.util.Set;
 import static org.dizitart.no2.common.util.Iterables.setOf;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class JacksonMapperModule implements NitriteModule {
     private final JacksonMapper jacksonMapper;

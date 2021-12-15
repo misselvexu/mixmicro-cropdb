@@ -29,7 +29,7 @@ import java.text.Collator;
 /**
  * The options for find operation.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 1.0
  */
 @Data

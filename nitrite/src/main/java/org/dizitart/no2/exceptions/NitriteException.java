@@ -21,7 +21,7 @@ import lombok.Getter;
 /**
  * Represents a generic nitrite database runtime error.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 1.0
  */
 @Getter

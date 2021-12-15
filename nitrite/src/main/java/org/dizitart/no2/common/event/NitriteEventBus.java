@@ -27,7 +27,7 @@ import java.util.concurrent.ExecutorService;
  *
  * @param <EventInfo>     the event information type parameter
  * @param <EventListener> the event listener type parameter
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 1.0
  */
 public abstract class NitriteEventBus<EventInfo, EventListener>

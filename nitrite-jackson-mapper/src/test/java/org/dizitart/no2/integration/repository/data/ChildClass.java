@@ -22,7 +22,7 @@ import lombok.Setter;
 import org.dizitart.no2.repository.annotations.InheritIndices;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 @Getter
 @Setter

@@ -20,7 +20,7 @@ import okhttp3.Response;
 import okio.ByteString;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public interface DataGateSocketListener {
     default void onOpen(Response response) {

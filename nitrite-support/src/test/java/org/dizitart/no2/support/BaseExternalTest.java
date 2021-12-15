@@ -36,7 +36,7 @@ import static org.dizitart.no2.common.Constants.*;
 import static org.junit.Assert.assertTrue;
 
 /**
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  */
 public abstract class BaseExternalTest {
     protected ObjectRepository<Employee> sourceEmpRepo;

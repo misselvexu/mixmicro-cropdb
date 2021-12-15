@@ -24,7 +24,7 @@ import java.util.*;
 /**
  * A utility class for {@link Iterable}.
  *
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 1.0
  */
 public class Iterables {

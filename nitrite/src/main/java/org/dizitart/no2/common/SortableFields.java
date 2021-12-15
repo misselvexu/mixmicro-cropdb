@@ -32,7 +32,7 @@ import static org.dizitart.no2.common.util.ValidationUtils.notNull;
  * Represents a list of document field with
  * sorting direction for find query.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public class SortableFields extends Fields {

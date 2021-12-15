@@ -29,7 +29,7 @@ import java.util.Set;
 /**
  * Represents a nitrite nitrite stream backed by an index.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public class IndexedStream implements RecordStream<Pair<NitriteId, Document>> {

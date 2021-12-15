@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 /**
  * Represents a transaction journal entry.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 @Data

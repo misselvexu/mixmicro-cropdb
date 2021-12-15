@@ -25,7 +25,7 @@ import java.util.List;
  * Represents a filter which does a logical operation (AND, OR)
  * between a set of filters.
  *
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 1.0
  */
 @Getter

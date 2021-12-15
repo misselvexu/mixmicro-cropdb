@@ -20,7 +20,7 @@ package org.dizitart.no2.collection.events;
  * Interface to be implemented by collections that wish to be aware
  * of any event.
  *
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @see EventType
  * @since 4.0
  */

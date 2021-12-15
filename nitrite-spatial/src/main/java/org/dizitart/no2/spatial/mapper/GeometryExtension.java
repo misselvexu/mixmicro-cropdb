@@ -28,7 +28,7 @@ import static org.dizitart.no2.common.util.Iterables.listOf;
 /**
  * Class that registers capability of serializing {@code Geometry} objects with the Jackson core.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0.0
  */
 public class GeometryExtension implements JacksonExtension {

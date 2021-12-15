@@ -21,7 +21,7 @@ import org.dizitart.no2.sync.message.DataGateMessage;
 import org.dizitart.no2.sync.net.DataGateSocket;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 @Slf4j
 public class MessageTemplate implements AutoCloseable {

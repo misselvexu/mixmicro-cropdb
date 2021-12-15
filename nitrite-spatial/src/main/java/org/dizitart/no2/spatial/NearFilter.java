@@ -23,7 +23,7 @@ import org.locationtech.jts.util.GeometricShapeFactory;
 
 /**
  * @since 4.0
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 class NearFilter extends WithinFilter {
     NearFilter(String field, Coordinate point, Double distance) {

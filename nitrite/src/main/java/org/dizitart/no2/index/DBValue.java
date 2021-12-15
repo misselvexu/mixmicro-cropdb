@@ -28,7 +28,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 @Data
 public class DBValue implements Comparable<DBValue>, Serializable {

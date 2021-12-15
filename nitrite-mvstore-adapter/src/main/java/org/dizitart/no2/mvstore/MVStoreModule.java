@@ -31,7 +31,7 @@ import static org.dizitart.no2.common.util.Iterables.setOf;
  * A {@link NitriteModule} which provides h2's mvstore as a storage engine.
  *
  * @since 4.0.0
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class MVStoreModule implements StoreModule {
     @Setter(AccessLevel.PACKAGE)

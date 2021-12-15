@@ -37,7 +37,7 @@ import java.nio.file.Paths;
 import static org.junit.Assert.*;
 
 /**
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  */
 public class ObjectRepositoryNegativeTest {
     private final String dbPath = BaseObjectRepositoryTest.getRandomTempDbFile();

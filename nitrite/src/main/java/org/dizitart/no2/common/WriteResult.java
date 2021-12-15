@@ -25,7 +25,7 @@ import org.dizitart.no2.common.util.Iterables;
  * on {@link NitriteCollection}. It provides a means to iterate over
  * all affected ids in the collection.
  *
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 1.0
  */
 public interface WriteResult extends Iterable<NitriteId> {

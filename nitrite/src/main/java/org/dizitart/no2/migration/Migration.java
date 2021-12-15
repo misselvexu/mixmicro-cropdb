@@ -8,7 +8,7 @@ import java.util.Queue;
 /**
  * Represents the database migration operation.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public abstract class Migration {

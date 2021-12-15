@@ -22,7 +22,7 @@ import org.dizitart.no2.sync.message.BatchAck;
 import org.dizitart.no2.sync.message.Receipt;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class BatchAckHandler implements MessageHandler<BatchAck> {
     private final ReplicationTemplate replicationTemplate;

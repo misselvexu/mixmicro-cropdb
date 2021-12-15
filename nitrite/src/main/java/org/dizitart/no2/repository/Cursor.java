@@ -25,7 +25,7 @@ import org.dizitart.no2.common.RecordStream;
  * A collection of {@link NitriteId}s of the database records,
  * as a result of a find operation.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 1.0
  */
 public interface Cursor<T> extends RecordStream<T> {

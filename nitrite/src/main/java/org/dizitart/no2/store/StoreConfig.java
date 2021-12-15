@@ -22,7 +22,7 @@ import org.dizitart.no2.store.events.StoreEventListener;
 /**
  * Represents a {@link NitriteStore} configuration.
  *
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 4.0
  */
 public interface StoreConfig {

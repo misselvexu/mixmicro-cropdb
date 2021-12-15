@@ -24,7 +24,7 @@ import java.util.*;
  * Represents a record stream which can be iterated in a for loop.
  *
  * @param <T> the type parameter
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 1.0
  */
 public interface RecordStream<T> extends Iterable<T> {

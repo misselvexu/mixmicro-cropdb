@@ -36,7 +36,7 @@ import java.nio.charset.StandardCharsets;
  * NOTE: This is a derivative work of https://mkyong.com/java/java-symmetric-key-cryptography-example/
  * </p>
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public class AESEncryptor implements Encryptor {

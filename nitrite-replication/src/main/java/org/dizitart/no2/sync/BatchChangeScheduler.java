@@ -25,7 +25,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 class BatchChangeScheduler {
     private Timer timer;

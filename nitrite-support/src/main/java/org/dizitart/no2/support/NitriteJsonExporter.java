@@ -37,7 +37,7 @@ import static org.dizitart.no2.common.util.ObjectUtils.getKeyName;
 import static org.dizitart.no2.common.util.ObjectUtils.getKeyedRepositoryType;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 class NitriteJsonExporter {
     private final Nitrite db;

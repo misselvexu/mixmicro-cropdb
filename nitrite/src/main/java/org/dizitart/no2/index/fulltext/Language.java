@@ -21,7 +21,7 @@ import java.util.Set;
 /**
  * Represents a set of stop words for a specific language.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 2.1.0
  */
 public interface Language {

@@ -27,7 +27,7 @@ import org.dizitart.no2.common.mapper.NitriteMapper;
 import java.util.Date;
 
 /**
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  */
 @EqualsAndHashCode
 public class SubEmployee implements Mappable {

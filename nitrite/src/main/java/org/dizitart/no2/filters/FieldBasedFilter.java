@@ -29,7 +29,7 @@ import static org.dizitart.no2.common.util.ValidationUtils.notNull;
 /**
  * Represents a filter based on value of a nitrite document field.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 @Data

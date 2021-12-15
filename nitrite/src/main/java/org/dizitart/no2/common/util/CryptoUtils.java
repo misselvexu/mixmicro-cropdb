@@ -30,7 +30,7 @@ import java.security.spec.KeySpec;
  * A utility class for cryptographic operations
  *
  * @since 4.0
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class CryptoUtils {
 

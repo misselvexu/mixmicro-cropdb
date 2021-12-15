@@ -26,7 +26,7 @@ import static org.dizitart.no2.common.util.ObjectUtils.findRepositoryName;
 /**
  * The database migration manager.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public class MigrationManager {

@@ -41,7 +41,7 @@ import static org.dizitart.no2.common.util.ValidationUtils.notNull;
  * A default implementation of nitrite document.
  *
  * @since 4.0
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 class NitriteDocument extends LinkedHashMap<String, Object> implements Document {
     private static final long serialVersionUID = 1477462374L;

@@ -3,7 +3,7 @@ package org.dizitart.no2.migration;
 /**
  * Represents a collection of database migration steps.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 interface Instruction {

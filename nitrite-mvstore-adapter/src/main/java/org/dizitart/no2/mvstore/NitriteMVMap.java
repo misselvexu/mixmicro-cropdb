@@ -31,7 +31,7 @@ import static org.dizitart.no2.common.util.ValidationUtils.notNull;
 
 /**
  * @since 1.0
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 class NitriteMVMap<Key, Value> implements NitriteMap<Key, Value> {
     private final MVMap<Key, Value> mvMap;

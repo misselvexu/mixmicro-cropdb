@@ -20,7 +20,7 @@ package org.dizitart.no2.integration.server;
 import org.glassfish.tyrus.server.Server;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class SimpleDataGateServer {
     private final int port;

@@ -23,7 +23,7 @@ import org.dizitart.no2.sync.message.BatchChangeEnd;
 import org.dizitart.no2.sync.message.BatchEndAck;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class BatchChangeEndHandler implements MessageHandler<BatchChangeEnd> {
     private final ReplicationTemplate replicationTemplate;

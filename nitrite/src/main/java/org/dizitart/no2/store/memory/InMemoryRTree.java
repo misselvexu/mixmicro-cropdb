@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @param <Key>   the type parameter
  * @param <Value> the type parameter
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public class InMemoryRTree<Key extends BoundingBox, Value> implements NitriteRTree<Key, Value> {

@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static org.dizitart.no2.integration.TestUtils.createDb;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 @Data
 public class Repository {

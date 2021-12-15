@@ -24,7 +24,7 @@ import org.dizitart.no2.repository.ObjectRepository
 
 /**
  * @since 2.1.0
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 
 /**

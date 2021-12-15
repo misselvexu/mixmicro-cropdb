@@ -31,7 +31,7 @@ import java.util.Collections;
 import static org.dizitart.no2.common.Constants.REPLICATOR;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 @Slf4j
 class ReplicaChangeListener implements CollectionEventListener {

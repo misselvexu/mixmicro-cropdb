@@ -24,7 +24,7 @@ import org.locationtech.jts.geom.Geometry;
 import static org.dizitart.no2.spatial.SpatialIndexer.SPATIAL_INDEX;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 @Data
 @Index(value = "geometry", type = SPATIAL_INDEX)

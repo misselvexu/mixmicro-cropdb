@@ -24,7 +24,7 @@ import static org.dizitart.no2.common.util.ValidationUtils.containsNull;
 import static org.dizitart.no2.common.util.ValidationUtils.notNull;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 class DefaultTransactionalRepository<T> implements ObjectRepository<T> {

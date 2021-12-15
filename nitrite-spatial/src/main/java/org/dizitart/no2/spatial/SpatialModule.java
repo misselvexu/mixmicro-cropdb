@@ -27,7 +27,7 @@ import static org.dizitart.no2.common.util.Iterables.setOf;
  * A nitrite module to enable spatial data indexing.
  *
  * @since 4.0.0
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class SpatialModule implements NitriteModule {
     private SpatialIndexer spatialIndexer;

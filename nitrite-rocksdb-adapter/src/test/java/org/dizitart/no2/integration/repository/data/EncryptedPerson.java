@@ -26,7 +26,7 @@ import org.dizitart.no2.repository.annotations.Entity;
 import java.util.Date;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 @Data
 @Entity

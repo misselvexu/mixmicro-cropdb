@@ -26,7 +26,7 @@ import org.dizitart.no2.common.module.NitriteModule;
 /**
  * A builder utility to create a {@link Nitrite} database instance.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @see Nitrite
  * @since 1.0
  */

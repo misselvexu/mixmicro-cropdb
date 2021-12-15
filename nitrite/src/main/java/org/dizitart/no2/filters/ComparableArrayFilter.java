@@ -22,7 +22,7 @@ import org.dizitart.no2.common.mapper.NitriteMapper;
 import static org.dizitart.no2.common.util.ValidationUtils.*;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 abstract class ComparableArrayFilter extends ComparableFilter {
     /**

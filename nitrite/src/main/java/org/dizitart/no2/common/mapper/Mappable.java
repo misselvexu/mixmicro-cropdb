@@ -22,7 +22,7 @@ import org.dizitart.no2.collection.Document;
  * An object that serializes itself to a {@link Document}
  * and vice versa.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 2.0
  */
 public interface Mappable {

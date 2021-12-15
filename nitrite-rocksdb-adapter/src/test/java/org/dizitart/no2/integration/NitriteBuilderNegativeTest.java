@@ -27,7 +27,7 @@ import static org.dizitart.no2.integration.TestUtil.*;
 
 
 /**
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  */
 public class NitriteBuilderNegativeTest {
     private final String filePath = getRandomTempDbFile();

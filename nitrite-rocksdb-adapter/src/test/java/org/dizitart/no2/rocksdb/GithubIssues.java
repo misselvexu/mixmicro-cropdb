@@ -26,7 +26,7 @@ import org.dizitart.no2.repository.ObjectRepository;
 import org.junit.Test;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class GithubIssues {
     @Test

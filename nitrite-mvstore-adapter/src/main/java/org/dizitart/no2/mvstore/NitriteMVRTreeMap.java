@@ -29,7 +29,7 @@ import java.util.Iterator;
 
 /**
  * @since 1.0
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 class NitriteMVRTreeMap<Key extends BoundingBox, Value> implements NitriteRTree<Key, Value> {
     private final MVRTreeMap<Key> mvMap;

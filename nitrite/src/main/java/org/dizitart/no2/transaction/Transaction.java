@@ -6,7 +6,7 @@ import org.dizitart.no2.repository.ObjectRepository;
 /**
  * Represents an ACID transaction on nitrite database.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public interface Transaction extends AutoCloseable {

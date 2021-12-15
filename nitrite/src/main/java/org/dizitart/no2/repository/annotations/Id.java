@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 /**
  * Indicates that an annotated field is the id field.
  *
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 1.0
  */
 @Retention(RetentionPolicy.RUNTIME)

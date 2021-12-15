@@ -45,7 +45,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class UniversalTextTokenizerTest extends BaseObjectRepositoryTest {
     private final String fileName = getRandomTempDbFile();

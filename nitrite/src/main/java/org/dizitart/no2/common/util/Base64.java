@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
  * </p>
  *
  * @author The Android Open Source Project
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public class Base64 {

@@ -38,7 +38,7 @@ import static org.dizitart.no2.common.util.ObjectUtils.convertToObjectArray;
 /**
  * Represents a nitrite index on a single field.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public class SingleFieldIndex implements NitriteIndex {

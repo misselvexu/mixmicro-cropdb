@@ -6,7 +6,7 @@ import com.esotericsoftware.kryo.kryo5.io.Input;
 import com.esotericsoftware.kryo.kryo5.io.Output;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public abstract class ComparableKeySerializer<T extends Comparable<?>> extends KryoKeySerializer<T> {
     private static final String NULL = "null";

@@ -17,7 +17,7 @@
 package org.dizitart.no2.rocksdb.formatter;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public interface ObjectFormatter {
     <T> byte[] encode(T object);

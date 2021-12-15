@@ -26,7 +26,7 @@ import java.util.Iterator;
 import static org.dizitart.no2.common.Constants.DOC_ID;
 
 /**
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  */
 class MutatedObjectStream<T> implements RecordStream<T> {
     private final RecordStream<Document> recordIterable;

@@ -34,7 +34,7 @@ import static org.dizitart.no2.common.util.StringUtils.isNullOrEmpty;
 /**
  * User authentication service for nitrite.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 @Slf4j

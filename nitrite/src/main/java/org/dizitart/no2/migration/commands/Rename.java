@@ -16,7 +16,7 @@ import java.util.Collection;
 /**
  * A command to rename a {@link org.dizitart.no2.collection.NitriteCollection}.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 @AllArgsConstructor

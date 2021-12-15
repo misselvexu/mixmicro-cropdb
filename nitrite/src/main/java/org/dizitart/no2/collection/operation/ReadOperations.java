@@ -38,7 +38,7 @@ import java.util.List;
 import static org.dizitart.no2.common.tuples.Pair.pair;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 class ReadOperations {
     private final String collectionName;

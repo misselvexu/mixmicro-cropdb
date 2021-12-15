@@ -19,7 +19,7 @@ package org.dizitart.no2.index.fulltext;
 /**
  * All supported languages for full-text search.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 2.1.0
  */
 public enum Languages {

@@ -24,7 +24,7 @@ import org.dizitart.no2.collection.NitriteId;
 import java.io.IOException;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 class NitriteIdDeserializer extends StdScalarDeserializer<NitriteId> {
 

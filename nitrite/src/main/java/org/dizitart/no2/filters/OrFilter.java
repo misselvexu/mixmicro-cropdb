@@ -24,7 +24,7 @@ import org.dizitart.no2.common.tuples.Pair;
 /**
  * Represents an OR filter.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 1.0
  */
 @Getter

@@ -19,7 +19,7 @@ package org.dizitart.no2.sync.message;
 import lombok.Data;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 @Data
 public class BatchChangeEnd implements DataGateMessage {

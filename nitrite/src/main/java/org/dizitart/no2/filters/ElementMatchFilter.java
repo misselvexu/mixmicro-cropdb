@@ -32,7 +32,7 @@ import static org.dizitart.no2.common.util.Numbers.compare;
 import static org.dizitart.no2.common.util.ObjectUtils.deepEquals;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 class ElementMatchFilter extends NitriteFilter {
     private final String field;

@@ -24,7 +24,7 @@ import org.dizitart.no2.collection.NitriteId;
  * does not have any {@link NitriteId} associated
  * with it or it has invalid/incompatible {@link NitriteId}.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 1.0
  */
 public class InvalidIdException extends NitriteException {

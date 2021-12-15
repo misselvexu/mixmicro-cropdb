@@ -8,7 +8,7 @@ import org.dizitart.no2.rocksdb.formatter.ComparableKeySerializer;
 import org.joda.time.DateTime;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class JodaTimeKryoKeySerializer extends ComparableKeySerializer<DateTime> {
 

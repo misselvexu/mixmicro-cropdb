@@ -53,7 +53,7 @@ import static org.dizitart.no2.common.util.ValidationUtils.notNull;
  * }
  *</pre>
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @see EventAware
  * @see Document
  * @see NitriteId

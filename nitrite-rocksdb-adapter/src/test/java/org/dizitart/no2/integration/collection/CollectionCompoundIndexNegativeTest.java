@@ -30,7 +30,7 @@ import static org.dizitart.no2.index.IndexOptions.indexOptions;
 import static org.junit.Assert.assertTrue;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class CollectionCompoundIndexNegativeTest extends BaseCollectionTest {
 

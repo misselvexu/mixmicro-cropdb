@@ -42,7 +42,7 @@ import static org.dizitart.no2.sync.event.ReplicationEventType.Started;
 import static org.dizitart.no2.sync.event.ReplicationEventType.Stopped;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 @Slf4j
 @Getter

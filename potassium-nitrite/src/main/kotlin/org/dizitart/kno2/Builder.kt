@@ -27,7 +27,7 @@ import org.dizitart.no2.spatial.SpatialIndexer
  * A builder to create a nitrite database.
  *
  * @since 2.1.0
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 class Builder internal constructor() {
     private val modules = mutableSetOf<NitriteModule>()

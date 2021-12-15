@@ -44,7 +44,7 @@ import static org.dizitart.no2.common.util.IndexUtils.deriveIndexMapName;
  * Represents a spatial index in nitrite.
  *
  * @since 4.0.0
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class SpatialIndex implements NitriteIndex {
     @Getter

@@ -30,7 +30,7 @@ import java.util.*;
 import static org.dizitart.no2.index.IndexOptions.indexOptions;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 class AnnotationScanner {
     private final Set<Index> indices;

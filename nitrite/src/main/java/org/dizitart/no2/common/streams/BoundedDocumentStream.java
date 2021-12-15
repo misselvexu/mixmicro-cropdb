@@ -31,7 +31,7 @@ import java.util.NoSuchElementException;
  * Represents a bounded document stream.
  *
  * @since 1.0
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  */
 public class BoundedDocumentStream implements RecordStream<Pair<NitriteId, Document>> {
     private final RecordStream<Pair<NitriteId, Document>> recordStream;

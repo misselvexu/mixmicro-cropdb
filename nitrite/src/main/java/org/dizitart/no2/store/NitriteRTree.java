@@ -24,7 +24,7 @@ import org.dizitart.no2.common.RecordStream;
  *
  * @param <Key>   the type parameter
  * @param <Value> the type parameter
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 4.0
  */
 public interface NitriteRTree<Key, Value> extends AutoCloseable {

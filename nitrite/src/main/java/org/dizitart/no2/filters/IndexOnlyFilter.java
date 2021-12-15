@@ -22,7 +22,7 @@ package org.dizitart.no2.filters;
  * collection scan.
  *
  * @since 4.0
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public abstract class IndexOnlyFilter extends ComparableFilter {
     /**

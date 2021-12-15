@@ -26,7 +26,7 @@ import org.dizitart.no2.repository.annotations.Embedded;
 import static org.dizitart.no2.collection.Document.createDocument;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 @Data
 public class BookId implements Mappable {

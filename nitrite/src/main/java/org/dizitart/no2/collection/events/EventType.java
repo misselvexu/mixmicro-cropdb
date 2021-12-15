@@ -19,7 +19,7 @@ package org.dizitart.no2.collection.events;
 /**
  * Represents different types of collection events.
  *
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 4.0
  */
 public enum EventType {

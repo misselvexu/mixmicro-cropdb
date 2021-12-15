@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * Nitrite v3 compatible classes used in data migration.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0.0
  */
 class Compat {

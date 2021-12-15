@@ -32,7 +32,7 @@ import static org.dizitart.no2.common.util.DocumentUtils.skeletonDocument;
 import static org.dizitart.no2.common.util.ValidationUtils.notNull;
 
 /**
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  */
 class ObjectCursor<T> implements Cursor<T> {
     private final DocumentCursor cursor;

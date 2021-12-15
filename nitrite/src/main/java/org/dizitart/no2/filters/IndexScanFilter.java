@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Represents a set of filter which can be applied on an index.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 @ToString

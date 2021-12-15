@@ -12,7 +12,7 @@ import org.dizitart.no2.index.IndexDescriptor;
  * A command to delete a field from the document of
  * a collection.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 @AllArgsConstructor

@@ -25,7 +25,7 @@ import java.util.Set;
 /**
  * Japanese stop words
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 2.1.0
  */
 public class Japanese implements Language {

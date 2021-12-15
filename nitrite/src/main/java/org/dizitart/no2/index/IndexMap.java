@@ -30,7 +30,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * Represents an index map.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 @SuppressWarnings("unchecked")

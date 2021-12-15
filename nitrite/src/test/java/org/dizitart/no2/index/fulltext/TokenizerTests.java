@@ -28,7 +28,7 @@ import java.util.Set;
 import static org.junit.Assert.assertArrayEquals;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class TokenizerTests {
     @Rule

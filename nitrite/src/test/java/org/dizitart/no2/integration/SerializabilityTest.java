@@ -32,7 +32,7 @@ import java.io.Serializable;
 import static org.dizitart.no2.integration.TestUtil.createDb;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class SerializabilityTest {
     private NitriteCollection collection;

@@ -44,7 +44,7 @@ import static org.dizitart.no2.common.util.ValidationUtils.validateStringIterabl
 /**
  * Represents a nitrite full-text index.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public class TextIndex implements NitriteIndex {

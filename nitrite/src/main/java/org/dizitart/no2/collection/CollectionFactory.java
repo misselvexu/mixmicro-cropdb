@@ -35,7 +35,7 @@ import static org.dizitart.no2.common.util.ValidationUtils.notNull;
 /**
  * A factory class to create {@link NitriteCollection}.
  * <p>NOTE: Internal API</p>
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class CollectionFactory {
     private final Map<String, NitriteCollection> collectionMap;

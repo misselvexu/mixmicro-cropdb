@@ -24,7 +24,7 @@ import org.dizitart.no2.sync.message.Receipt;
 import org.dizitart.no2.sync.message.ReceiptAware;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public interface ReceiptAckSender<Ack extends DataGateMessage> {
     ReplicationTemplate getReplicationTemplate();

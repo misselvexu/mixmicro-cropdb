@@ -25,7 +25,7 @@ import org.dizitart.no2.common.mapper.NitriteMapper;
 import org.dizitart.no2.repository.annotations.Index;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 @Data
 @Index(value = "firstName")

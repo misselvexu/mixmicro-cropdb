@@ -20,7 +20,7 @@ package org.dizitart.no2.common.crypto;
 /**
  * Represents a symmetric key string encryptor.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public interface Encryptor {

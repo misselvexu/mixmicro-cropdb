@@ -26,7 +26,7 @@ import java.util.Arrays;
  * needed or garbage collected.
  *
  * @since 4.0
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class SecureString implements CharSequence {
 

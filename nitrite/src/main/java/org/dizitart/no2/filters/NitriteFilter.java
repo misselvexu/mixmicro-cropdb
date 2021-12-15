@@ -25,7 +25,7 @@ import java.util.Objects;
 /**
  * Represents a nitrite filter.
  *
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 4.0
  */
 @Getter

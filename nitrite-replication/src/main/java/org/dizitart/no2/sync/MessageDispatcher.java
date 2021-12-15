@@ -30,7 +30,7 @@ import org.dizitart.no2.sync.net.DataGateSocketListener;
 import java.util.concurrent.ExecutorService;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 @Slf4j
 class MessageDispatcher implements DataGateSocketListener, AutoCloseable {

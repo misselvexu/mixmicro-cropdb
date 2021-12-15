@@ -19,7 +19,7 @@ package org.dizitart.no2.sync.message;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  */
 public enum MessageType {
     Error("no2.sync.error"),

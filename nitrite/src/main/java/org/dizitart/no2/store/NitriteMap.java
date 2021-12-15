@@ -30,7 +30,7 @@ import static org.dizitart.no2.common.util.StringUtils.isNullOrEmpty;
  *
  * @param <Key>   the type of key
  * @param <Value> the type of value
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 1.0
  */
 public interface NitriteMap<Key, Value> extends MetadataAware, AutoCloseable {

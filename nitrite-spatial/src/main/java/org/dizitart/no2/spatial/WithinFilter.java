@@ -23,7 +23,7 @@ import java.util.List;
 
 /**
  * @since 4.0
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 class WithinFilter extends SpatialFilter {
     protected WithinFilter(String field, Geometry geometry) {

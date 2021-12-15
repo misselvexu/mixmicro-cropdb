@@ -22,7 +22,7 @@ import org.dizitart.no2.sync.message.*;
 import java.util.UUID;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class MessageFactory {
     public Connect createConnect(Config config, String replicaId) {

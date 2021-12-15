@@ -25,7 +25,7 @@ import java.net.Proxy;
 import java.util.concurrent.Callable;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 @Data
 public class Config {

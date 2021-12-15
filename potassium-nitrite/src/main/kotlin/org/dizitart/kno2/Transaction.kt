@@ -23,7 +23,7 @@ import org.dizitart.no2.transaction.Transaction
 
 /**
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 fun Nitrite.session(op: (Session.() -> Unit)? = null): Session {
     val session = this.createSession()

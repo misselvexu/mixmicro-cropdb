@@ -35,7 +35,7 @@ import static org.dizitart.no2.common.Constants.*;
 import static org.dizitart.no2.index.IndexOptions.indexOptions;
 
 /**
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  */
 class NitriteJsonImporter {
     private JsonParser parser;

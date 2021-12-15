@@ -37,7 +37,7 @@ import java.util.*;
 import static org.junit.Assert.assertTrue;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 @Slf4j
 public class TestUtil {

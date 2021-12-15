@@ -19,7 +19,7 @@ package org.dizitart.no2.exceptions;
 /**
  * Exception thrown when a nitrite plugin fails to load properly.
  *
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 4.0
  */
 public class PluginException extends NitriteException {

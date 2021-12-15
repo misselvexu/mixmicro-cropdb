@@ -29,7 +29,7 @@ import static org.dizitart.no2.common.util.StringUtils.stringTokenizer;
  * It discards certain words known as stop word depending on
  * the language chosen.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 2.1.0
  */
 public abstract class BaseTextTokenizer implements TextTokenizer {

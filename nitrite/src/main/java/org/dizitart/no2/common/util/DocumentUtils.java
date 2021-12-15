@@ -31,7 +31,7 @@ import static org.dizitart.no2.common.util.ObjectUtils.newInstance;
 /**
  * A utility class for {@link Document}.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 1.0
  */
 public class DocumentUtils {

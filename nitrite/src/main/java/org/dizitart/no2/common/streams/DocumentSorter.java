@@ -35,7 +35,7 @@ import java.util.List;
  * By default null is considered the lowest value.
  * </p>
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public class DocumentSorter implements Comparator<Pair<NitriteId, Document>> {

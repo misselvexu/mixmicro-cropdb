@@ -25,7 +25,7 @@ import org.dizitart.no2.filters.Filter;
 /**
  * Settings to control update operation in {@link NitriteCollection}.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @see NitriteCollection#update(Filter, Document, UpdateOptions)
  * @since 1.0
  */

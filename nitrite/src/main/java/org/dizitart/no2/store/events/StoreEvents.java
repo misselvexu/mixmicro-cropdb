@@ -19,7 +19,7 @@ package org.dizitart.no2.store.events;
 /**
  * Nitrite store related events.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public enum StoreEvents {

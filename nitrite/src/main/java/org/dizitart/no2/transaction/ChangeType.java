@@ -3,7 +3,7 @@ package org.dizitart.no2.transaction;
 /**
  * Represents a change type in a transaction.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 enum ChangeType {

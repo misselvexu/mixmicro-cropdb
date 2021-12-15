@@ -19,7 +19,7 @@ package org.dizitart.no2.common;
 /**
  * An enum to specify a sort order.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 1.0
  */
 public enum SortOrder {

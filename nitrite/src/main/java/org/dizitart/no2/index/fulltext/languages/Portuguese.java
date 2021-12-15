@@ -25,7 +25,7 @@ import java.util.Set;
 /**
  * Portuguese stop words
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 2.1.0
  */
 public class Portuguese implements Language {

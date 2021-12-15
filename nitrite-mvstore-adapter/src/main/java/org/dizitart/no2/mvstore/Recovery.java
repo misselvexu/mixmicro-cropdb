@@ -43,8 +43,7 @@ import static org.h2.mvstore.Chunk.fromString;
 /**
  * The nitrite database recovery utility.
  *
- * @author H2 Group
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 1.0
  */
 @Slf4j

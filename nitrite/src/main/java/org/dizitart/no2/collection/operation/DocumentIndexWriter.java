@@ -29,7 +29,7 @@ import java.util.Collection;
 /**
  *
  * @since 4.0
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 class DocumentIndexWriter {
     private final NitriteConfig nitriteConfig;

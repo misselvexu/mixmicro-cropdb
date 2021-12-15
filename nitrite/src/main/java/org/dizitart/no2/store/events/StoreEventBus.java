@@ -22,7 +22,7 @@ import org.dizitart.no2.common.event.NitriteEventBus;
  * The event bus for nitrite store events.
  *
  * @see StoreEvents
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 4.0.0
  */
 public class StoreEventBus extends NitriteEventBus<EventInfo, StoreEventListener> {

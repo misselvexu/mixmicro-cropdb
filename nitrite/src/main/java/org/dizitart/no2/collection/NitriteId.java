@@ -36,7 +36,7 @@ import static org.dizitart.no2.common.Constants.ID_SUFFIX;
  * create a new {@link NitriteId}. If that is not supplied, then nitrite
  * will auto generate one and supply it in the '_id' field of the document.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @see NitriteCollection#getById(NitriteId)
  * @since 1.0
  */

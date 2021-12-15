@@ -65,7 +65,7 @@ import static org.dizitart.no2.common.util.ValidationUtils.notNull;
  * </pre>
  *
  * @param <T> the type of the object to store.
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @see EventAware
  * @see Document
  * @see NitriteId

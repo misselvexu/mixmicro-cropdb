@@ -38,7 +38,7 @@ import java.util.*;
 import static org.dizitart.no2.common.util.Iterables.listOf;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 @Slf4j
 public class JacksonMapper extends MappableMapper {

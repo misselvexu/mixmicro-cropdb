@@ -23,7 +23,7 @@ import java.lang.annotation.*;
 /**
  * Specifies a field to be indexed.
  *
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 1.0
  */
 @Retention(RetentionPolicy.RUNTIME)

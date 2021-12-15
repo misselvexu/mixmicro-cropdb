@@ -42,7 +42,7 @@ import static org.dizitart.no2.filters.Filter.ALL;
 import static org.junit.Assert.*;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class RepositoryJoinTest extends BaseObjectRepositoryTest {
     private ObjectRepository<Person> personRepository;

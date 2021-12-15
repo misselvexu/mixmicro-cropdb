@@ -24,7 +24,7 @@ import java.math.BigInteger;
 /**
  * A utility class for {@link Number}s.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 1.0
  */
 public class Numbers {

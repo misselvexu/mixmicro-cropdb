@@ -15,7 +15,7 @@ import static org.dizitart.no2.common.Constants.NITRITE_VERSION;
 /**
  * The nitrite in-memory store.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public final class InMemoryStore extends AbstractNitriteStore<InMemoryConfig> {

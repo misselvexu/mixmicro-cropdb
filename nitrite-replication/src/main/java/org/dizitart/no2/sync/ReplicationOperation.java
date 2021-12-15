@@ -31,7 +31,7 @@ import static org.dizitart.no2.collection.meta.Attributes.TOMBSTONE;
 import static org.dizitart.no2.common.Constants.INTERNAL_NAME_SEPARATOR;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 interface ReplicationOperation {
     NitriteCollection getCollection();

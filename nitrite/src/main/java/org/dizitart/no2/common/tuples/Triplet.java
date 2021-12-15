@@ -15,7 +15,7 @@ import java.io.Serializable;
  * @param <A> the type parameter
  * @param <B> the type parameter
  * @param <C> the type parameter
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 4.0
  */
 @Data

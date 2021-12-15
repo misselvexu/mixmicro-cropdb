@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class DocumentDeserializer extends JsonDeserializer<Document> {
 

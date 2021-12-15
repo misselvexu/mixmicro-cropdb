@@ -27,7 +27,7 @@ import org.dizitart.no2.repository.annotations.Id;
 import org.dizitart.no2.repository.annotations.Index;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 @Data
 @Entity(value = "new", indices = {

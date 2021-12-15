@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public interface JournalAware {
     ReplicationTemplate getReplicationTemplate();

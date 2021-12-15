@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 /**
  * Specifies multiple indexed fields for a class.
 
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @see Index
  * @since 1.0
  */

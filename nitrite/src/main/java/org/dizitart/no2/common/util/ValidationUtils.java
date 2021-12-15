@@ -28,7 +28,7 @@ import static org.dizitart.no2.common.util.StringUtils.isNullOrEmpty;
 /**
  * A validation utility class.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 1.0
  */
 public class ValidationUtils {

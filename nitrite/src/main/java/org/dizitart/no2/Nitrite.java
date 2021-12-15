@@ -36,7 +36,7 @@ import static org.dizitart.no2.common.util.ValidationUtils.notNull;
  * An in-memory, single-file based embedded nosql persistent document store. The store
  * can contains multiple named document collections.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 1.0
  */
 public interface Nitrite extends AutoCloseable {

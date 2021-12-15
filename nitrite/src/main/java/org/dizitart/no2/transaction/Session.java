@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * data gets discarded for the session.
  * </p>
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public class Session implements AutoCloseable {

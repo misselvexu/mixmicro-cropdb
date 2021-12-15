@@ -25,7 +25,7 @@ import org.junit.Test;
 import java.util.AbstractCollection;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class ObjectCursorTest extends BaseObjectRepositoryTest {
 

@@ -45,7 +45,7 @@ import static org.junit.Assert.assertTrue;
 
 
 /**
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  */
 @RunWith(Parameterized.class)
 public class MultiThreadedTest {

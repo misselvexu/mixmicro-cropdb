@@ -28,7 +28,7 @@ import static org.dizitart.no2.collection.FindOptions.skipBy;
 import static org.junit.Assert.*;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class ProjectionTest extends BaseObjectRepositoryTest {
 

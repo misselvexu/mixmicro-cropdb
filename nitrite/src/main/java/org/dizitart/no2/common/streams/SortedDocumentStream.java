@@ -32,7 +32,7 @@ import java.util.List;
  * Represents a sorted nitrite document stream
  *
  * @since 4.0
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  */
 public class SortedDocumentStream implements RecordStream<Pair<NitriteId, Document>> {
     private final FindPlan findPlan;

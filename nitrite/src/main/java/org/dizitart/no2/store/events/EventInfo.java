@@ -24,7 +24,7 @@ import org.dizitart.no2.NitriteConfig;
 /**
  * The nitrite event details.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 @Data

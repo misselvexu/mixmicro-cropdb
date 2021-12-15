@@ -30,7 +30,7 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 @Data
 @Entity(value = "MyPerson", indices = {

@@ -29,7 +29,7 @@ import java.util.Set;
  * Represents a storage for Nitrite database.
  *
  * @param <Config> the type parameter
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 1.0
  */
 public interface NitriteStore<Config extends StoreConfig> extends NitritePlugin {

@@ -7,7 +7,7 @@ import org.dizitart.no2.common.util.SecureString;
 /**
  * Represents a migration instruction set for the nitrite database.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public interface DatabaseInstruction extends Instruction {

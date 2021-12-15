@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.dizitart.no2.collection.Document;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class DocumentModule extends SimpleModule {
     @Override

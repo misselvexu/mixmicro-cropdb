@@ -20,7 +20,7 @@ package org.dizitart.no2.store.events;
  * Represents an event listener for store events.
  *
  * @see StoreEvents
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public interface StoreEventListener {

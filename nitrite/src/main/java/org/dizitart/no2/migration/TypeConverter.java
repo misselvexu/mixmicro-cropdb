@@ -5,7 +5,7 @@ package org.dizitart.no2.migration;
  *
  * @param <S> the type parameter
  * @param <T> the type parameter
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public interface TypeConverter<S, T> {

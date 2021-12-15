@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class ReverseIterator<Key, Value> implements Iterator<Pair<Key, Value>> {
     private final MVMap<Key, Value> mvMap;

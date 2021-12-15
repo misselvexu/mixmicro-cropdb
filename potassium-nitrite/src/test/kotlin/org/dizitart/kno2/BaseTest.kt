@@ -24,7 +24,7 @@ import java.util.*
 
 /**
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 fun getRandomTempDbFile(): String {
     val dataDir = System.getProperty("java.io.tmpdir") +

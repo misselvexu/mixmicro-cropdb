@@ -29,7 +29,7 @@ import java.util.Set;
  * Breton stop words
  *
  * @since 2.1.0
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class BrazilianPortuguese implements Language {
     @Override

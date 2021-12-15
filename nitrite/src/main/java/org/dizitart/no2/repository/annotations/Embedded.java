@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 /**
  * Indicates that an annotated field is used to construct a composite id field.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0.0
  */
 @Retention(RetentionPolicy.RUNTIME)

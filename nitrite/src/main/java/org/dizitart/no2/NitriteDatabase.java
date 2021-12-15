@@ -43,7 +43,7 @@ import static org.dizitart.no2.common.util.ObjectUtils.findRepositoryName;
 import static org.dizitart.no2.common.util.StringUtils.isNullOrEmpty;
 
 /**
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 4.0
  */
 @Slf4j

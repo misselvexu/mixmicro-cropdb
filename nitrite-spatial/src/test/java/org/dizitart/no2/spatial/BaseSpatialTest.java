@@ -32,7 +32,7 @@ import static org.dizitart.no2.common.Constants.*;
 import static org.dizitart.no2.spatial.TestUtil.*;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public abstract class BaseSpatialTest {
     private String fileName;

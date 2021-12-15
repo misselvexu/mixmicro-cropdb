@@ -7,7 +7,7 @@ import org.dizitart.no2.common.tuples.Triplet;
 /**
  * Represents a migration instruction set for {@link org.dizitart.no2.collection.NitriteCollection}.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public interface CollectionInstruction extends Instruction {

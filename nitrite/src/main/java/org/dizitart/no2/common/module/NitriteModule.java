@@ -24,7 +24,7 @@ import static org.dizitart.no2.common.util.Iterables.setOf;
  * Represents a nitrite plugin modules which may contains
  * one or more nitrite plugins.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public interface NitriteModule {

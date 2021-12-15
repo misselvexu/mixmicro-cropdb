@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  * This class acts as a surrogate for null key.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 1.0
  */
 public class DBNull extends DBValue implements Serializable {

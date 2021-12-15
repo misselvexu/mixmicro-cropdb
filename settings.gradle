@@ -16,7 +16,7 @@
 
 rootProject.name = 'nitrite-java'
 include 'nitrite'
-include 'nitrite-android-example'
+//include 'nitrite-android-example'
 include 'nitrite-mvstore-adapter'
 include 'nitrite-jackson-mapper'
 include 'nitrite-spatial'

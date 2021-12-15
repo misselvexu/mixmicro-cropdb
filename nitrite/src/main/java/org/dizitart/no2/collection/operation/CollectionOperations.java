@@ -39,7 +39,7 @@ import static org.dizitart.no2.common.util.DocumentUtils.createUniqueFilter;
 /**
  * The collection operations.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 1.0
  */
 public class CollectionOperations implements AutoCloseable {

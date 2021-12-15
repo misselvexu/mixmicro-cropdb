@@ -41,7 +41,7 @@ import static org.dizitart.no2.common.util.ValidationUtils.notNull;
  * The interface Persistent collection.
  *
  * @param <T> the type parameter
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @see NitriteCollection
  * @see ObjectRepository
  * @since 1.0

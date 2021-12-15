@@ -33,7 +33,7 @@ import java.util.Map;
 /**
  * Represents an execution plan of a find operation after optimization.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0.0
  */
 @Data

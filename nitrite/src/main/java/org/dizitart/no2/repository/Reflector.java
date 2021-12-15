@@ -33,7 +33,7 @@ import static org.dizitart.no2.common.util.StringUtils.isNullOrEmpty;
 import static org.dizitart.no2.common.util.ValidationUtils.notNull;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 class Reflector {
     @SuppressWarnings("rawtypes")

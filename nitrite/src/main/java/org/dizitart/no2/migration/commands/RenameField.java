@@ -14,7 +14,7 @@ import java.util.Collection;
 /**
  * A command to rename a document field.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 @AllArgsConstructor

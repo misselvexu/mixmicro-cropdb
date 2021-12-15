@@ -26,7 +26,7 @@ import static org.dizitart.no2.common.util.Iterables.arrayContains;
 /**
  * A {@link TextTokenizer} implementation for various languages.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @see Languages
  * @since 2.1.0
  */

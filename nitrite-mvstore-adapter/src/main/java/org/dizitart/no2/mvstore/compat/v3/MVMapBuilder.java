@@ -25,7 +25,7 @@ import org.h2.mvstore.MVMap;
  * @param <V> the type parameter
  *
  * @since 4.0.0
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  */
 class MVMapBuilder<K, V> extends MVMap.Builder<K, V> {
     /**

@@ -25,7 +25,7 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class SpatialViewer {
     public static void main(String[] args) {

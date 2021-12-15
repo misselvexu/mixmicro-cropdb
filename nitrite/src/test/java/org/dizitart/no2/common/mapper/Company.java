@@ -22,7 +22,7 @@ import org.dizitart.no2.collection.Document;
 import java.io.Serializable;
 
 /**
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  */
 @Data
 public class Company implements Mappable {

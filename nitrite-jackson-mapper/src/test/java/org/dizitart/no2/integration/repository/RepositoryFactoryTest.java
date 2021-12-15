@@ -43,7 +43,7 @@ import static org.dizitart.no2.integration.repository.BaseObjectRepositoryTest.g
 import static org.junit.Assert.assertNotNull;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class RepositoryFactoryTest {
     private final String fileName = getRandomTempDbFile();

@@ -13,7 +13,7 @@ import org.dizitart.no2.migration.TypeConverter;
  * A migration command to change the datatype of a document field
  * in a collection.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 @AllArgsConstructor

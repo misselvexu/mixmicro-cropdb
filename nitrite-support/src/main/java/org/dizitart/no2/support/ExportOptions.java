@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Represents export options.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @see Exporter
  * @since 1.0
  */

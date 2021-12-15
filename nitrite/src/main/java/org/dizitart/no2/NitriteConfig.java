@@ -38,7 +38,7 @@ import java.util.TreeMap;
 /**
  * A class to configure {@link Nitrite} database.
  *
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 4.0.0
  */
 @Slf4j

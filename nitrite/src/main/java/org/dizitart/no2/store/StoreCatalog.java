@@ -33,7 +33,7 @@ import static org.dizitart.no2.common.util.ObjectUtils.getKeyedRepositoryType;
  * The nitrite store catalog containing the name of all collections,
  * repositories and keyed-repositories.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0.0
  */
 public class StoreCatalog {

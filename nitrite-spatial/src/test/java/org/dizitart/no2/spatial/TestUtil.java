@@ -31,7 +31,7 @@ import java.util.UUID;
 import static org.junit.Assert.assertTrue;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class TestUtil {
     public static String getRandomTempDbFile() {

@@ -22,7 +22,7 @@ import org.dizitart.no2.collection.Document;
  * Exception thrown while mapping of {@link Document} from
  * objects fails or vice versa.
  *
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 1.0
  */
 public class ObjectMappingException extends NitriteException {

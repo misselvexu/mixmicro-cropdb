@@ -12,7 +12,7 @@ import java.util.NavigableMap;
 import static org.dizitart.no2.common.util.ObjectUtils.deepEquals;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 class NotEqualsFilter extends ComparableFilter {
     protected NotEqualsFilter(String field, Object value) {

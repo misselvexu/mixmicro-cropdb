@@ -30,7 +30,7 @@ import java.util.List;
 import static org.dizitart.no2.common.util.DocumentUtils.skeletonDocument;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class IndexValidator {
     private final Reflector reflector;

@@ -35,7 +35,7 @@ import static org.dizitart.no2.common.util.ObjectUtils.findRepositoryName;
 /**
  * The {@link ObjectRepository} factory.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 1.0
  */
 public class RepositoryFactory {

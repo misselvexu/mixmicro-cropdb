@@ -4,7 +4,7 @@ package org.dizitart.no2.common.util;
  * A utility class for comparables.
  *
  * @since 1.0
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class Comparables {
     private Comparables() {}

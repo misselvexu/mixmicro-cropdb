@@ -34,7 +34,7 @@ import java.util.*
 /**
  * Default [JacksonMapper] for potassium nitrite.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @author Stefan Mandel
  * @since 2.1.0
  */

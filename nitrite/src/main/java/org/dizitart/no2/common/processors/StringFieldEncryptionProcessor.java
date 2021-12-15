@@ -33,7 +33,7 @@ import java.util.List;
  * A string field encryption processor. It encrypts the field value
  * of type {@link String} in a nitrite document using the provided {@link Encryptor}.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 @Slf4j

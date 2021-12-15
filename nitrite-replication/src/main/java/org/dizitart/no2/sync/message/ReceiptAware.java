@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public interface ReceiptAware extends DataGateMessage {
     LastWriteWinState getFeed();

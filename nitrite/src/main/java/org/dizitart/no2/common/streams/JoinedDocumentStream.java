@@ -36,7 +36,7 @@ import static org.dizitart.no2.common.util.ObjectUtils.deepEquals;
 /**
  * Represents a joined document stream.
  *
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 1.0
  */
 public class JoinedDocumentStream implements RecordStream<Document> {

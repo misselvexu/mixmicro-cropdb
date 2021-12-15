@@ -9,7 +9,7 @@ import org.dizitart.no2.common.module.NitriteModule;
 import org.dizitart.no2.store.NitriteStore;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 @Slf4j

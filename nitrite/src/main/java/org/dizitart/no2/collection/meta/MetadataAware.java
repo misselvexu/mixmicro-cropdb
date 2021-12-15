@@ -20,7 +20,7 @@ package org.dizitart.no2.collection.meta;
  * Interface to be implemented by database objects that wish to be
  * aware of their meta data.
  *
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 1.0
  */
 public interface MetadataAware {

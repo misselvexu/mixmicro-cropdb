@@ -8,7 +8,7 @@ import java.util.Queue;
 /**
  * Default implementation of {@link Instructions}.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 class NitriteInstructions implements Instructions {

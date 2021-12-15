@@ -42,7 +42,7 @@ import static org.dizitart.no2.common.util.ObjectUtils.convertToObjectArray;
  * An utility class to migrate the.
  *
  * @since 4.0.0
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class MigrationUtil {
 

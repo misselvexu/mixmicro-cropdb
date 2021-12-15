@@ -37,7 +37,7 @@ import java.util.Iterator;
  * Represents a nitrite document stream.
  *
  * @since 4.0
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  */
 public class DocumentStream implements DocumentCursor {
     private final RecordStream<Pair<NitriteId, Document>> recordStream;

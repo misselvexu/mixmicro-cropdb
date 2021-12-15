@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 /**
  * Represents an entity for an {@link org.dizitart.no2.repository.ObjectRepository}.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 @Retention(RetentionPolicy.RUNTIME)

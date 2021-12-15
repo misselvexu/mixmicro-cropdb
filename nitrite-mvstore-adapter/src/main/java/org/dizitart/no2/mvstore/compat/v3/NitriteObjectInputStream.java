@@ -29,7 +29,7 @@ import java.util.Map;
  * A specialized version of {@link ObjectInputStream} for nitrite.
  *
  * @since 4.0.0
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  */
 @Slf4j
 class NitriteObjectInputStream extends ObjectInputStream {

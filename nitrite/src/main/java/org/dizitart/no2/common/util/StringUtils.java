@@ -22,7 +22,7 @@ import java.util.StringTokenizer;
 /**
  * A utility class for {@link String}.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 1.0
  */
 public class StringUtils {

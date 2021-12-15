@@ -21,7 +21,7 @@ package org.dizitart.no2.common.event;
  *
  * @param <EventInfo>     the event information type parameter
  * @param <EventListener> the event listener type parameter
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 1.0
  */
 public interface EventBus<EventInfo, EventListener> extends AutoCloseable {

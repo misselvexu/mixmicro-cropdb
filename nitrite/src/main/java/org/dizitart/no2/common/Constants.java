@@ -28,7 +28,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * Constants used in Nitrite.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 1.0
  */
 public class Constants {

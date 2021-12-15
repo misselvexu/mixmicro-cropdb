@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.Module;
 import java.util.List;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public interface JacksonExtension {
     List<Class<?>> getSupportedTypes();

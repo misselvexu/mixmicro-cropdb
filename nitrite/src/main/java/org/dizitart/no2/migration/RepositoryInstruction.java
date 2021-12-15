@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Represents a migration instruction set for {@link org.dizitart.no2.repository.ObjectRepository}.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public interface RepositoryInstruction extends Instruction {

@@ -24,7 +24,7 @@ import org.dizitart.no2.spatial.SpatialIndexer
 
 /**
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 open class KNO2Module(private vararg val extensions: JacksonExtension) : NitriteModule {
 

@@ -21,7 +21,7 @@ import java.io.Serializable;
 /**
  * Represents a bounding box for spatial indexing.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public interface BoundingBox extends Serializable {
     /**

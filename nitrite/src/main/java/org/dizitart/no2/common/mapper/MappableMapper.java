@@ -29,7 +29,7 @@ import static org.dizitart.no2.common.util.ObjectUtils.newInstance;
 /**
  * A {@link NitriteMapper} based on {@link Mappable} implementation.
  *
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 4.0
  */
 public class MappableMapper implements NitriteMapper {

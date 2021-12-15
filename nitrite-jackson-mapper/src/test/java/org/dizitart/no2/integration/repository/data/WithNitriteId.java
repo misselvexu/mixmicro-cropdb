@@ -22,7 +22,7 @@ import org.dizitart.no2.collection.NitriteId;
 import org.dizitart.no2.repository.annotations.Id;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 @Data
 public class WithNitriteId {

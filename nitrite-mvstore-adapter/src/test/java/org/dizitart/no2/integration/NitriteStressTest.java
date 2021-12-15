@@ -51,7 +51,7 @@ import static org.junit.Assert.assertNotNull;
 
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class NitriteStressTest {
     private static final int TEST_SET_COUNT = 15000;

@@ -24,7 +24,7 @@ import java.util.concurrent.ThreadFactory;
  * A {@link ThreadFactory} implementation which creates
  * {@link Thread} which is aware of any uncaught exception.
  *
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 1.0
  */
 @Slf4j

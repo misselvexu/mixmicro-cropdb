@@ -21,7 +21,7 @@ import java.util.Set;
 /**
  * A stop-word based string tokenizer.
  *
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @see EnglishTextTokenizer
  * @since 1.0
  */

@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 /**
  * Represents a collection event data.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 @Data

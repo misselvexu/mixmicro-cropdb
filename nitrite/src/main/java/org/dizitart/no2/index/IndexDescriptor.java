@@ -33,7 +33,7 @@ import static org.dizitart.no2.common.util.ValidationUtils.notNull;
 /**
  * Represents a nitrite database index.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 1.0
  */
 @Data

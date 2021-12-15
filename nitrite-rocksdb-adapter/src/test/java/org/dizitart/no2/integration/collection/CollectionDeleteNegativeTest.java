@@ -29,7 +29,7 @@ import static org.dizitart.no2.filters.FluentFilter.where;
 import static org.junit.Assert.assertEquals;
 
 /**
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  */
 public class CollectionDeleteNegativeTest extends BaseCollectionTest {
     @Test(expected = NitriteIOException.class)

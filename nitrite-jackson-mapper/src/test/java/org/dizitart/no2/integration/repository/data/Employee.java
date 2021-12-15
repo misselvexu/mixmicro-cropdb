@@ -29,7 +29,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  */
 @ToString
 @EqualsAndHashCode

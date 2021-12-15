@@ -17,7 +17,7 @@
 package org.dizitart.no2.rocksdb;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class Constants {
     public static final byte[] DB_NULL = new byte[]{-1};

@@ -3,7 +3,7 @@ package org.dizitart.no2.common;
 /**
  * Represents an unknown type.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public class UnknownType implements Comparable<UnknownType> {

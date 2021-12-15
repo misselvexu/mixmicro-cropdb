@@ -38,7 +38,7 @@ import java.util.function.Consumer
 
 /**
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 class TransactionTest: BaseTest() {
     @Before

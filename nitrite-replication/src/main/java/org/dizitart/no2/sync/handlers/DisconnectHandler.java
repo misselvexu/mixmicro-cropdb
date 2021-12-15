@@ -20,7 +20,7 @@ import org.dizitart.no2.sync.ReplicationTemplate;
 import org.dizitart.no2.sync.message.Disconnect;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class DisconnectHandler implements MessageHandler<Disconnect> {
     private final ReplicationTemplate replicationTemplate;

@@ -26,7 +26,7 @@ import java.util.List;
  * Represents a {@link Processor} chain. It executes a
  * list of processor on a document.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public class ProcessorChain implements Processor {

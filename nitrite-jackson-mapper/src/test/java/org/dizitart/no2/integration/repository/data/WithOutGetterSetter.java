@@ -20,7 +20,7 @@ package org.dizitart.no2.integration.repository.data;
 import lombok.EqualsAndHashCode;
 
 /**
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  */
 @EqualsAndHashCode
 public class WithOutGetterSetter {

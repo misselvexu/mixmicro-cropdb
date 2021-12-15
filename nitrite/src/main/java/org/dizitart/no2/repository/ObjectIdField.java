@@ -36,7 +36,7 @@ import java.util.TreeMap;
 import static org.dizitart.no2.filters.FluentFilter.where;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 class ObjectIdField {
     private final Reflector reflector;

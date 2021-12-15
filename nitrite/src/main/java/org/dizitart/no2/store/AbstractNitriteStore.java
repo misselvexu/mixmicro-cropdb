@@ -17,7 +17,7 @@ import java.util.Set;
  * An abstract {@link NitriteStore} implementation.
  *
  * @param <Config> the type parameter
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 @Slf4j

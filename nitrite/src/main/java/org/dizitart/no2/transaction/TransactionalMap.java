@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static org.dizitart.no2.common.util.ObjectUtils.deepCopy;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 @SuppressWarnings("SortedCollectionWithNonComparableKeys")

@@ -29,7 +29,7 @@ import java.util.NavigableMap;
 import static org.dizitart.no2.common.util.Numbers.compare;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 class GreaterEqualFilter extends ComparableFilter {
     GreaterEqualFilter(String field, Comparable<?> value) {

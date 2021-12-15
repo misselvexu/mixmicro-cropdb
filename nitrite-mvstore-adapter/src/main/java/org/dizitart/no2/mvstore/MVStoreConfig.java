@@ -32,7 +32,7 @@ import java.util.Set;
  * Represents MV store configuration
  *
  * @since 4.0.0
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 @Accessors(fluent = true)
 public class MVStoreConfig implements StoreConfig {

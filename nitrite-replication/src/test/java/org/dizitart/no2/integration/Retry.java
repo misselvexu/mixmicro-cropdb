@@ -5,7 +5,7 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class Retry implements TestRule {
     private final int retryCount;

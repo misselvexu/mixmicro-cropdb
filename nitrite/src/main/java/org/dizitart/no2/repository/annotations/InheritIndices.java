@@ -23,7 +23,7 @@ import java.lang.annotation.*;
  * annotations - <code>@Id</code>, <code>@Index</code>,
  * <code>@Indices</code> from its superclass.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 2.1.0
  */
 @Inherited

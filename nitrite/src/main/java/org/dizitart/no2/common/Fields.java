@@ -21,7 +21,7 @@ import static org.dizitart.no2.common.util.ValidationUtils.notNull;
 /**
  * Represents a list of document fields.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 @EqualsAndHashCode

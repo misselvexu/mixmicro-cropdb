@@ -6,7 +6,7 @@ import org.dizitart.no2.Nitrite;
 /**
  * A command to drop a nitrite collection.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 @AllArgsConstructor

@@ -3,7 +3,7 @@ package org.dizitart.no2.exceptions;
 /**
  * Exception thrown when a migration step fails.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public class MigrationException extends NitriteException {

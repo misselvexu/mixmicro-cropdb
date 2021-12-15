@@ -21,7 +21,7 @@ import org.dizitart.no2.NitriteConfig;
 /**
  * Represents a nitrite database plugin component.
  *
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 4.0
  */
 public interface NitritePlugin extends AutoCloseable {

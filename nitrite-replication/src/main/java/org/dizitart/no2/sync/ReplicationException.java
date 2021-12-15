@@ -19,7 +19,7 @@ package org.dizitart.no2.sync;
 import org.dizitart.no2.exceptions.NitriteException;
 
 /**
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  */
 public class ReplicationException extends NitriteException {
     private final boolean fatal;

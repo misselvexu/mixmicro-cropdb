@@ -17,7 +17,7 @@
 package org.dizitart.no2.sync.message;
 
 /**
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  */
 public interface DataGateMessage {
     MessageHeader getHeader();

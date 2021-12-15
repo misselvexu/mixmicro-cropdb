@@ -24,7 +24,7 @@ import org.dizitart.no2.sync.message.BatchChangeContinue;
 import org.dizitart.no2.sync.message.Receipt;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 @Data
 public class BatchChangeContinueHandler implements MessageHandler<BatchChangeContinue>, ReceiptAckSender<BatchAck> {

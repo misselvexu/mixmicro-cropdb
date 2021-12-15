@@ -24,7 +24,7 @@ import java.util.concurrent.ExecutorService;
 import static org.dizitart.no2.common.Constants.SYNC_THREAD_NAME;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class ReplicationEventBus extends NitriteEventBus<ReplicationEvent, ReplicationEventListener> {
     private ExecutorService executorService;

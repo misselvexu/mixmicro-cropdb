@@ -35,7 +35,7 @@ import static org.dizitart.no2.support.Exporter.createObjectMapper;
  * [[app-listing]]
  * include::/src/docs/asciidoc/tools/data-format.adoc[]
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 1.0
  */
 public class Importer {

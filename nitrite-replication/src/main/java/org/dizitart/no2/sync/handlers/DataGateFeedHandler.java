@@ -24,7 +24,7 @@ import org.dizitart.no2.sync.message.DataGateFeedAck;
 import org.dizitart.no2.sync.message.Receipt;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 @Data
 public class DataGateFeedHandler implements MessageHandler<DataGateFeed>, ReceiptAckSender<DataGateFeedAck> {

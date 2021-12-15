@@ -29,7 +29,7 @@ import java.io.IOException;
 import static org.dizitart.no2.spatial.mapper.GeometryExtension.GEOMETRY_ID;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 @Slf4j
 class GeometryDeserializer extends StdScalarDeserializer<Geometry> {

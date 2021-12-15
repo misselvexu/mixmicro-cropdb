@@ -31,7 +31,7 @@ import java.io.File;
 import java.io.Serializable;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class SerializabilityTest {
     private NitriteCollection collection;

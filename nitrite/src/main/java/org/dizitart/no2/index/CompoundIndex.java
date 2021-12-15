@@ -40,7 +40,7 @@ import static org.dizitart.no2.common.util.ObjectUtils.convertToObjectArray;
 /**
  * Represents a nitrite compound index.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public class CompoundIndex implements NitriteIndex {

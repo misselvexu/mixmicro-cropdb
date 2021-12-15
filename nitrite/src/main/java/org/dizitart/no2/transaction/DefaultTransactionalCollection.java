@@ -38,7 +38,7 @@ import static org.dizitart.no2.common.util.ValidationUtils.notNull;
 import static org.dizitart.no2.index.IndexOptions.indexOptions;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 @Getter @Setter

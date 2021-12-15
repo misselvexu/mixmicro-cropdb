@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @since 1.0
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 @Slf4j
 public class NitriteMVStore extends AbstractNitriteStore<MVStoreConfig> {

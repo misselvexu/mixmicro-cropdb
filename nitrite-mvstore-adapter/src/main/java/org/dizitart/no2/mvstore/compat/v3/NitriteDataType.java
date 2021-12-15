@@ -40,8 +40,7 @@ import java.util.UUID;
  *
  * <b>NOTE:</b> This code is a modification of h2 mvstore's {@link ObjectDataType}
  * @since 4.0.0
- * @author H2 Group
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 class NitriteDataType extends ObjectDataType {
     /**

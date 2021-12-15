@@ -28,7 +28,7 @@ import java.util.LinkedHashSet;
 /**
  * Represents an indexer for creating a nitrite index.
  *
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 4.0
  */
 public interface NitriteIndexer extends NitritePlugin {

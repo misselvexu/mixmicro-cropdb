@@ -22,7 +22,7 @@ import org.dizitart.no2.sync.event.ReplicationEventListener;
 import org.dizitart.no2.sync.event.ReplicationEventType;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 @Slf4j
 public final class Replica implements AutoCloseable {

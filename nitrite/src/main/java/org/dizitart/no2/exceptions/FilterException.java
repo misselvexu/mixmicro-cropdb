@@ -20,7 +20,7 @@ package org.dizitart.no2.exceptions;
  * Exception thrown during find operations due to
  * invalid filter configuration.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 1.0
  */
 public class FilterException extends NitriteException {

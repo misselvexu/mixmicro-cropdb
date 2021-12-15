@@ -19,7 +19,7 @@ import static org.dizitart.no2.common.util.ValidationUtils.notNull;
  *
  * @param <Key>   the type parameter
  * @param <Value> the type parameter
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public class InMemoryMap<Key, Value> implements NitriteMap<Key, Value> {

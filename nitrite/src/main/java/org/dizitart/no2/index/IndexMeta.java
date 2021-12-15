@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Represents index metadata.
  *
  * @since 1.0
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 @Data
 @NoArgsConstructor

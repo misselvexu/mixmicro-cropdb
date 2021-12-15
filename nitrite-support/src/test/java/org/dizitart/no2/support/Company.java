@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  */
 @ToString
 @EqualsAndHashCode

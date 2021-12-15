@@ -31,7 +31,7 @@ import java.util.NoSuchElementException;
 /**
  * Represents a filtered nitrite document stream.
  *
- * @author Anindya Chatterjee.
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 4.0
  */
 public class FilteredStream implements RecordStream<Pair<NitriteId, Document>> {

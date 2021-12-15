@@ -28,7 +28,7 @@ import java.io.ObjectOutputStream;
 /**
  *
  * @since 4.0
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 @Data
 class NitriteBoundingBox implements BoundingBox {

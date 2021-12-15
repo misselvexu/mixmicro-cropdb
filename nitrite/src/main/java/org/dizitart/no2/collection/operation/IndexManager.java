@@ -34,7 +34,7 @@ import static org.dizitart.no2.common.util.IndexUtils.deriveIndexMetaMapName;
 /**
  * Represents the index manager for a collection.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public class IndexManager implements AutoCloseable {

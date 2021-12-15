@@ -5,7 +5,7 @@ import org.dizitart.no2.Nitrite;
 /**
  * Represents a custom instruction for database migration.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public interface CustomInstruction {

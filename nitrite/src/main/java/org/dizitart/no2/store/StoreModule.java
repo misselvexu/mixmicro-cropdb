@@ -5,7 +5,7 @@ import org.dizitart.no2.common.module.NitriteModule;
 /**
  * Represents a nitrite store module to load as a storage engine for the database.
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public interface StoreModule extends NitriteModule {

@@ -27,7 +27,7 @@ import java.util.AbstractCollection;
 import java.util.Date;
 
 /**
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class ObjectCursorTest extends BaseObjectRepositoryTest {
 

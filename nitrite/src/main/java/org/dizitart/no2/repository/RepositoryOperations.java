@@ -37,7 +37,7 @@ import static org.dizitart.no2.common.util.StringUtils.isNullOrEmpty;
  * This class is for internal use only.
  * </p>
  *
- * @author Anindya Chatterjee
+ * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public class RepositoryOperations {
