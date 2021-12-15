@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2020. Nitrite author or authors.
+ * Copyright (c) 2021-2022. CropDB author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-rootProject.name = 'nitrite-java'
-include 'nitrite'
-//include 'nitrite-android-example'
-include 'nitrite-mvstore-adapter'
-include 'nitrite-jackson-mapper'
-include 'nitrite-spatial'
-include 'nitrite-replication'
-include 'nitrite-support'
-include 'potassium-nitrite'
-include 'nitrite-rocksdb-adapter'
-include 'nitrite-bom'
+rootProject.name = 'mixmicro-cropdb'
+include 'cropdb'
+include 'cropdb-mvstore-adapter'
+include 'cropdb-jackson-mapper'
+include 'cropdb-spatial'
+include 'cropdb-replication'
+include 'cropdb-support'
+include 'potassium-cropdb'
+include 'cropdb-rocksdb-adapter'
+include 'cropdb-bom'
 

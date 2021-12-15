@@ -1,22 +1,10 @@
-# Nitrite Database
+# Mixmicro Crop Database
 
-![Build](https://github.com/nitrite/nitrite-java/workflows/Gradle%20Build/badge.svg?branch=develop)
-![CodeQL](https://github.com/nitrite/nitrite-java/workflows/CodeQL/badge.svg?branch=develop)
-[![Codacy](https://app.codacy.com/project/badge/Grade/3ee6a6f3f0044b0c9e75d48e47e5d012)](https://www.codacy.com/gh/nitrite/nitrite-java/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=nitrite/nitrite-java&amp;utm_campaign=Badge_Grade)
-[![codecov](https://codecov.io/gh/nitrite/nitrite-java/branch/develop/graph/badge.svg)](https://codecov.io/gh/nitrite/nitrite-java)
-![Javadocs](https://javadoc.io/badge/org.dizitart/nitrite.svg)
-[![Discussion](https://img.shields.io/badge/chat-Discussion-blueviolet)](https://github.com/nitrite/nitrite-java/discussions)
-![Backers on Open Collective](https://opencollective.com/nitrite-database/backers/badge.svg)
-![Backers on Open Collective](https://opencollective.com/nitrite-database/sponsors/badge.svg)
-[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/nitrite/nitrite-java)
-
-<img src="http://www.dizitart.org/nitrite-database/logo/nitrite-logo.svg" alt="Logo" width="200"/>
-
-**NO**sql **O**bject (**NO<sub>2</sub>** a.k.a Nitrite) database is an open source nosql embedded
+**NO**sql **O**bject (**NO<sub>2</sub>** a.k.a Crop) database is an open source nosql embedded
 document store written in Java. It has MongoDB like API. It supports both
 in-memory and file based persistent store.
 
-Nitrite is an embedded database ideal for desktop, mobile or small web applications.
+CropDB is an embedded database ideal for desktop, mobile or small web applications.
 
 **It features**:
 
@@ -27,23 +15,23 @@ Nitrite is an embedded database ideal for desktop, mobile or small web applicati
 -   Schema migration
 -   Indexing
 -   Full text search
--   Both way replication via Nitrite DataGate server
+-   Both way replication via Crop DataGate server
 -   Very fast, lightweight and fluent API 
 -   Android compatibility (API Level 19)
 
 ## Kotlin Extension
 
-Nitrite has a kotlin extension called **Potassium Nitrite** for kotlin developers.
-Visit [here](https://github.com/nitrite/nitrite-java/tree/develop/potassium-nitrite) for more details.
+Crop has a kotlin extension called **Potassium Crop** for kotlin developers.
+Visit [here](https://github.com/misselvexu/mixmicro-cropdb/tree/develop/potassium-corpdb) for more details.
 
-## Getting Started with Nitrite
+## Getting Started with Crop
 
 **NOTE:** There are breaking api changes in version 4.x.x. So please exercise caution when upgrading from 3.x.x  
 especially for **package name changes**.
 
 ### How To Install
 
-To use Nitrite in any Java application, first add the nitrite bill of materials, 
+To use Crop in any Java application, first add the cropdb bill of materials, 
 then add required dependencies:
 
 **Maven**
@@ -52,8 +40,8 @@ then add required dependencies:
 <dependencyManagement>
     <dependencies>
         <dependency>
-            <groupId>org.dizitart</groupId>
-            <artifactId>nitrite-bom</artifactId>
+            <groupId>xyz.vopen.framework</groupId>
+            <artifactId>cropdb-bom</artifactId>
             <version>4.0.0-SNAPSHOT</version>
             <type>pom</type>
             <scope>import</scope>
@@ -63,13 +51,13 @@ then add required dependencies:
 
 <dependencies>
     <dependency>
-        <groupId>org.dizitart</groupId>
-        <artifactId>nitrite</artifactId>
+        <groupId>xyz.vopen.framework</groupId>
+        <artifactId>cropdb</artifactId>
     </dependency>
 
     <dependency>
-        <groupId>org.dizitart</groupId>
-        <artifactId>nitrite-mvstore-adapter</artifactId>
+        <groupId>xyz.vopen.framework</groupId>
+        <artifactId>cropdb-mvstore-adapter</artifactId>
     </dependency>
 </dependencies>
 ```
@@ -79,10 +67,10 @@ then add required dependencies:
 
 ```groovy
 
-implementation(platform("org.dizitart:nitrite-bom:4.0.0-SNAPSHOT"))
+implementation(platform("xyz.vopen.framework:cropdb-bom:4.0.0-SNAPSHOT"))
     
-implementation 'org.dizitart:nitrite'
-implementation 'org.dizitart:nitrite-mvstore-adapter'
+implementation 'xyz.vopen.framework:cropdb'
+implementation 'xyz.vopen.framework:cropdb-mvstore-adapter'
 
 ```
     
@@ -105,7 +93,7 @@ RocksDBModule storeModule = RocksDBModule.withConfig()
 
 
 // initialization using builder
-Nitrite db = Nitrite.builder()
+Crop db = Crop.builder()
         .loadModule(storeModule)
         .loadModule(new JacksonMapperModule())  // optional
         .openOrCreate("user", "password");
@@ -115,8 +103,8 @@ Nitrite db = Nitrite.builder()
 **Create a Collection**
 
 ```java
-// Create a Nitrite Collection
-NitriteCollection collection = db.getCollection("test");
+// Create a Crop Collection
+CropCollection collection = db.getCollection("test");
 
 // Create an Object Repository
 ObjectRepository<Employee> repository = db.getRepository(Employee.class);
@@ -214,7 +202,7 @@ for (Document document : cursor) {
 }
 
 // get document by id
-Document document = collection.getById(nitriteId);
+Document document = collection.getById(cropId);
 
 // query an object repository and create the first result
 Cursor<Employee> cursor = repository.find(where("firstName").eq("John"));
@@ -228,7 +216,7 @@ Employee employee = cursor.firstOrNull();
 try (Session session = db.createSession()) {
     Transaction transaction = session.beginTransaction();
     try {
-        NitriteCollection txCol = transaction.getCollection("test");
+        CropCollection txCol = transaction.getCollection("test");
 
         Document document = createDocument("firstName", "John");
         txCol.insert(document);
@@ -299,7 +287,7 @@ MVStoreModule storeModule = MVStoreModule.withConfig()
     .compressHigh(true)
     .build();
 
-db = Nitrite.builder()
+db = Crop.builder()
     .loadModule(storeModule)
     
     // schema versioning is must for migration
@@ -315,7 +303,7 @@ db = Nitrite.builder()
 
 ```java
 
-NitriteCollection collection = db.getCollection("products");
+CropCollection collection = db.getCollection("products");
 
 Replica replica = Replica.builder()
     .of(collection)
@@ -346,7 +334,7 @@ More details are available in the reference document.
 
 ## Release Notes
 
-Release notes are available [here](https://github.com/nitrite/nitrite-java/releases).
+Release notes are available [here](https://github.com/misselvexu/mixmicro-cropdb/releases).
 
 ## Documentation
 
@@ -363,31 +351,27 @@ Release notes are available [here](https://github.com/nitrite/nitrite-java/relea
 </thead>
 <tbody>
 <tr class="odd">
-<td><p><a href="http://www.dizitart.org/nitrite-database">Document</a></p></td>
-<td><p><a href="https://javadoc.io/doc/org.dizitart/nitrite">JavaDoc</a></p></td>
+<td><p><a href="http://www.dizitart.org/cropdb-database">Document</a></p></td>
+<td><p><a href="https://javadoc.io/doc/xyz.vopen.framework/cropdb">JavaDoc</a></p></td>
 </tr>
 </tbody>
 </table>
 
 ## Build
 
-To build and test Nitrite
+To build and test Crop
 
 ```shell script
 
-git clone https://github.com/nitrite/nitrite-java.git
-cd nitrite-java
+git clone https://github.com/misselvexu/mixmicro-cropdb.git
+cd mixmicro-cropdb
 ./gradlew build
 
 ```
 
-## Support / Feedback
-
-For issues with, questions about, or feedback talk to us at [Gitter](https://gitter.im/nitrite-db/nitrite-java).
-
 ## Bugs / Feature Requests
 
-Think you’ve found a bug? Want to see a new feature in the Nitrite? Please open an issue [here](https://github.com/nitrite/nitrite-java/issues). But
+Think you’ve found a bug? Want to see a new feature in the Crop? Please open an issue [here](https://github.com/misselvexu/mixmicro-cropdb/issues). But
 before you file an issue please check if it is already existing or not.
 
 ## Maintainers
@@ -396,28 +380,28 @@ before you file an issue please check if it is already existing or not.
 
 ## Contributors
 
-This project exists thanks to all the people who contribute. [Contribute](https://github.com/dizitart/nitrite-database/blob/master/CONTRIBUTING.md).
-![Contributors](https://opencollective.com/nitrite-database/contributors.svg?width=890)
+This project exists thanks to all the people who contribute. [Contribute](https://github.com/dizitart/cropdb-database/blob/master/CONTRIBUTING.md).
+![Contributors](https://opencollective.com/cropdb-database/contributors.svg?width=890)
 
 ## Backers
 
-Thank you to all our backers! 🙏 [Become a backer](https://opencollective.com/nitrite-database#backer)
+Thank you to all our backers! 🙏 [Become a backer](https://opencollective.com/cropdb-database#backer)
 
-![Backers](https://opencollective.com/nitrite-database/backers.svg?width=890)
+![Backers](https://opencollective.com/cropdb-database/backers.svg?width=890)
 
 ## Sponsors
 
-Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [Become a sponsor](https://opencollective.com/nitrite-database#sponsor)
+Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [Become a sponsor](https://opencollective.com/cropdb-database#sponsor)
 
-![Sponsor](https://opencollective.com/nitrite-database/sponsor/0/avatar.svg)
-![Sponsor](https://opencollective.com/nitrite-database/sponsor/1/avatar.svg)
-![Sponsor](https://opencollective.com/nitrite-database/sponsor/2/avatar.svg)
-![Sponsor](https://opencollective.com/nitrite-database/sponsor/3/avatar.svg)
-![Sponsor](https://opencollective.com/nitrite-database/sponsor/4/avatar.svg)
+![Sponsor](https://opencollective.com/cropdb-database/sponsor/0/avatar.svg)
+![Sponsor](https://opencollective.com/cropdb-database/sponsor/1/avatar.svg)
+![Sponsor](https://opencollective.com/cropdb-database/sponsor/2/avatar.svg)
+![Sponsor](https://opencollective.com/cropdb-database/sponsor/3/avatar.svg)
+![Sponsor](https://opencollective.com/cropdb-database/sponsor/4/avatar.svg)
 
 ## Presentation & Talks
 
-[Idan Sheinberg](https://github.com/sheinbergon) has given a talk on Nitrite at [**Kotlin Everywhere - TLV Edition**](https://www.meetup.com/KotlinTLV/events/265145254/) meetup on October 27, 2019. Please find his presentation [here](https://www.slideshare.net/IdanShinberg/nitrite-choosing-the-rite-embedded-database).
+[Idan Sheinberg](https://github.com/sheinbergon) has given a talk on Crop at [**Kotlin Everywhere - TLV Edition**](https://www.meetup.com/KotlinTLV/events/265145254/) meetup on October 27, 2019. Please find his presentation [here](https://www.slideshare.net/IdanShinberg/cropdb-choosing-the-rite-embedded-database).
 
 ## Special Thanks
 

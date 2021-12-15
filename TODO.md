@@ -1,11 +1,11 @@
 ##TODO:
 
 1. fix codacy issues
-2. nitrite explorer
+2. cropdb explorer
 4. add p2p replications via jgroups
 5. add lucene indexer
-6. nitrite cluster via jgroups
-7. spring data rest / graphql api over nitrite cluster
+6. cropdb cluster via jgroups
+7. spring data rest / graphql api over cropdb cluster
 8. data views (like rdbms view)
 
 
@@ -60,10 +60,10 @@ send over websocket
     
     Replica (R1)->Server: BatchChangeStart Message
     note right of Replica (R1)
-        In replica keep the list of NitriteIds of
+        In replica keep the list of CropIds of
         the Documents sending to servers. Server
         would send back BatchChangeAck message with
-        list of NitriteIds accepted by Server. Replica
+        list of CropIds accepted by Server. Replica
         will remove those ids from it's list. Finally
         after exchange is completed this list size should
         be 0.
@@ -78,7 +78,7 @@ send over websocket
     Server->Replica (R1): BatchAck
     note left of Server
         BatchChangeAck will contain list of
-        NitriteIds accepted by Server.
+        CropIds accepted by Server.
     end note
     
     Replica (R1)->Server: BatchChangeContinue Message
@@ -113,7 +113,7 @@ send over websocket
     Replica (R1)->Server: BatchAck
     note left of Server:
         Server should ensure all message sent to replica
-        by keeping track of replicaId and nitriteId map
+        by keeping track of replicaId and cropId map
     end note
     
     Server->Replica (R1): BatchChangeContinue Message

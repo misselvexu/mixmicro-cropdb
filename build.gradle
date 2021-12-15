@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2020. Nitrite author or authors.
+ * Copyright (c) 2021-2022. CropDB author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,8 +42,8 @@ subprojects {
     apply plugin: 'io.freefair.lombok'
     apply plugin: 'com.adarshr.test-logger'
 
-    group = 'org.dizitart'
-    version = "$nitriteVersion"
+    group = 'xyz.vopen.framework'
+    version = "$cropdbVersion"
 
     testlogger {
         theme 'mocha'
@@ -65,13 +65,13 @@ configurations.errorprone {
 }
 
 nexusStaging {
-    packageGroup = "org.dizitart"
+    packageGroup = "xyz.vopen.framework"
 }
 
 
 gradle.buildFinished { BuildResult result ->
     if (result.failure && !JavaVersion.current().isJava8Compatible()) {
-        println("\n* Warning:\nJDK ${JavaVersion.VERSION_1_8} is minimal requirement for building nitrite. " +
+        println("\n* Warning:\nJDK ${JavaVersion.VERSION_1_8} is minimal requirement for building crop. " +
             "You have ${JavaVersion.current()}.")
     }
 }

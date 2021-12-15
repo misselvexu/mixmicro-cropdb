@@ -1,15 +1,15 @@
-The Nitrite uses third-party libraries or other resources that may
-be distributed under licenses different than the Nitrite software.
+The Crop uses third-party libraries or other resources that may
+be distributed under licenses different than the Crop software.
 
 In the event that we accidentally failed to list a required notice,
 please bring it to our attention through any of the ways detailed here:
 
-    https://gitter.im/dizitart/nitrite-database
+    https://gitter.im/dizitart/cropdb-database
 
 The attached notices are provided for information only.
 
 For any licenses that require disclosure of source, sources are available at
-https://github.com/dizitart/nitrite-database.
+https://github.com/dizitart/cropdb-database.
 
 1) The following files: ObjectId.java
 
@@ -30,7 +30,7 @@ https://github.com/dizitart/nitrite-database.
 
 
 THE FOLLOWING SETS FORTH ATTRIBUTION NOTICES FOR THIRD PARTY SOFTWARE
-THAT MAY BE CONTAINED IN PORTIONS OF NITRITE PRODUCT.
+THAT MAY BE CONTAINED IN PORTIONS OF CROP PRODUCT.
 
 -----
 

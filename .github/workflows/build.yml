@@ -25,7 +25,7 @@ jobs:
       MAVEN_USERNAME: ${{ secrets.OSSRH_USER }}
       MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
       PGP_KEY_ID: ${{ secrets.PGP_KEY_ID }}
-      GITHUB_TOKEN: ${{ secrets.NITRITE_GH_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.CROP_GH_TOKEN }}
     name: Build with Java ${{ matrix.Java }}
 
     steps:
@@ -74,4 +74,4 @@ jobs:
           MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
           PGP_KEY_ID: ${{ secrets.PGP_KEY_ID }}
           PGP_KEY_PASSWORD: ${{ secrets.PGP_KEY_PASSWORD }}
-          GITHUB_TOKEN: ${{ secrets.NITRITE_GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.CROP_GH_TOKEN }}

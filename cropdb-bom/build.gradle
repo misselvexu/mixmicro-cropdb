@@ -1,0 +1,67 @@
+plugins {
+    id 'java-platform'
+    id 'signing'
+    id 'maven-publish'
+}
+
+version = "$cropdbVersion"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    constraints {
+        api project(":cropdb")
+        api project(":cropdb-jackson-mapper")
+        api project(":cropdb-spatial")
+        api project(":cropdb-replication")
+        api project(":cropdb-support")
+        api project(":potassium-cropdb")
+        api project(":cropdb-mvstore-adapter")
+        api project(":cropdb-rocksdb-adapter")
+
+        api "org.slf4j:slf4j-api:1.7.32"
+        api "org.objenesis:objenesis:2.6"
+        api "org.jasypt:jasypt:1.9.3"
+        api "com.fasterxml.jackson.core:jackson-databind:2.13.0"
+        api "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.4"
+        api "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.13.0"
+        api "com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0"
+        api "org.mapdb:mapdb:3.0.8"
+        api "com.h2database:h2-mvstore:1.4.200"
+        api "com.squareup.okhttp3:okhttp:4.9.3"
+        api "org.rocksdb:rocksdbjni:6.26.1"
+        api "com.esotericsoftware.kryo:kryo5:5.2.0"
+        api "org.locationtech.jts:jts-core:1.18.2"
+        api "commons-codec:commons-codec:1.15"
+        api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.0"
+        api "org.jetbrains.kotlin:kotlin-reflect:1.6.0"
+    }
+}
+
+publishing {
+    publications {
+        myPlatform(MavenPublication) {
+            from components.javaPlatform
+        }
+    }
+    repositories {
+        if (version.endsWith('SNAPSHOT') || project.hasProperty('release')) {
+            maven {
+                name = "OSSRH"
+                def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+                def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
+                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+                credentials {
+                    username System.getenv('MAVEN_USERNAME')
+                    password System.getenv('MAVEN_PASSWORD')
+                }
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.myPlatform
+}
