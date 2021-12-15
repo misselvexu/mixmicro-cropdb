@@ -1,6 +1,6 @@
 # Mixmicro Crop Database
 
-**NO**sql **O**bject (**NO<sub>2</sub>** a.k.a Crop) database is an open source nosql embedded
+Crop database is an open source nosql embedded
 document store written in Java. It has MongoDB like API. It supports both
 in-memory and file based persistent store.
 
@@ -22,12 +22,9 @@ CropDB is an embedded database ideal for desktop, mobile or small web applicatio
 ## Kotlin Extension
 
 Crop has a kotlin extension called **Potassium Crop** for kotlin developers.
-Visit [here](https://github.com/misselvexu/mixmicro-cropdb/tree/develop/potassium-corpdb) for more details.
+Visit [here](https://github.com/misselvexu/mixmicro-cropdb/tree/rebuild/potassium-corpdb) for more details.
 
 ## Getting Started with Crop
-
-**NOTE:** There are breaking api changes in version 4.x.x. So please exercise caution when upgrading from 3.x.x  
-especially for **package name changes**.
 
 ### How To Install
 
@@ -373,44 +370,3 @@ cd mixmicro-cropdb
 
 Think you’ve found a bug? Want to see a new feature in the Crop? Please open an issue [here](https://github.com/misselvexu/mixmicro-cropdb/issues). But
 before you file an issue please check if it is already existing or not.
-
-## Maintainers
-
--   Anindya Chatterjee
-
-## Contributors
-
-This project exists thanks to all the people who contribute. [Contribute](https://github.com/dizitart/cropdb-database/blob/master/CONTRIBUTING.md).
-![Contributors](https://opencollective.com/cropdb-database/contributors.svg?width=890)
-
-## Backers
-
-Thank you to all our backers! 🙏 [Become a backer](https://opencollective.com/cropdb-database#backer)
-
-![Backers](https://opencollective.com/cropdb-database/backers.svg?width=890)
-
-## Sponsors
-
-Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [Become a sponsor](https://opencollective.com/cropdb-database#sponsor)
-
-![Sponsor](https://opencollective.com/cropdb-database/sponsor/0/avatar.svg)
-![Sponsor](https://opencollective.com/cropdb-database/sponsor/1/avatar.svg)
-![Sponsor](https://opencollective.com/cropdb-database/sponsor/2/avatar.svg)
-![Sponsor](https://opencollective.com/cropdb-database/sponsor/3/avatar.svg)
-![Sponsor](https://opencollective.com/cropdb-database/sponsor/4/avatar.svg)
-
-## Presentation & Talks
-
-[Idan Sheinberg](https://github.com/sheinbergon) has given a talk on Crop at [**Kotlin Everywhere - TLV Edition**](https://www.meetup.com/KotlinTLV/events/265145254/) meetup on October 27, 2019. Please find his presentation [here](https://www.slideshare.net/IdanShinberg/cropdb-choosing-the-rite-embedded-database).
-
-## Special Thanks
-
-<div>
-<a href="https://www.ej-technologies.com/products/jprofiler/overview.html" style="padding-right:20px">
-    <img src="https://www.ej-technologies.com/images/product_banners/jprofiler_medium.png" alt="JProfiler"/>
-</a>
-
-<a href="https://www.yourkit.com/" style="padding-right:20px">
-    <img src="https://www.yourkit.com/images/yklogo.png" alt="YourKit"/>
-</a>
-</div>

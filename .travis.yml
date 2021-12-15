@@ -28,5 +28,5 @@ after_success:
 
 env:
   global:
-    - CROPDB_VERSION=4.0.1-SNAPSHOT
+    - CROPDB_VERSION=2021.12.0.BUILD-SHAPSHOT
     - PGP_KEY_FILE=~/secring.gpg
