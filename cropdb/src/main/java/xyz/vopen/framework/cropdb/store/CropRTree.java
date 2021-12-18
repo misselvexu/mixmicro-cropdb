@@ -22,63 +22,57 @@ import xyz.vopen.framework.cropdb.common.RecordStream;
 /**
  * Represents an R-Tree in the crop database.
  *
- * @param <Key>   the type parameter
+ * @param <Key> the type parameter
  * @param <Value> the type parameter
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 4.0
  */
 public interface CropRTree<Key, Value> extends AutoCloseable {
-    /**
-     * Adds a key to the rtree.
-     *
-     * @param key       the key
-     * @param cropId the crop id
-     */
-    void add(Key key, CropId cropId);
+  /**
+   * Adds a key to the rtree.
+   *
+   * @param key the key
+   * @param cropId the crop id
+   */
+  void add(Key key, CropId cropId);
 
-    /**
-     * Removes a key from the rtree.
-     *
-     * @param key       the key
-     * @param cropId the crop id
-     */
-    void remove(Key key, CropId cropId);
+  /**
+   * Removes a key from the rtree.
+   *
+   * @param key the key
+   * @param cropId the crop id
+   */
+  void remove(Key key, CropId cropId);
 
-    /**
-     * Finds the intersecting keys from the rtree.
-     *
-     * @param key the key
-     * @return the record stream
-     */
-    RecordStream<CropId> findIntersectingKeys(Key key);
+  /**
+   * Finds the intersecting keys from the rtree.
+   *
+   * @param key the key
+   * @return the record stream
+   */
+  RecordStream<CropId> findIntersectingKeys(Key key);
 
-    /**
-     * Finds the contained keys from the rtree.
-     *
-     * @param key the key
-     * @return the record stream
-     */
-    RecordStream<CropId> findContainedKeys(Key key);
+  /**
+   * Finds the contained keys from the rtree.
+   *
+   * @param key the key
+   * @return the record stream
+   */
+  RecordStream<CropId> findContainedKeys(Key key);
 
-    /**
-     * Gets the size of the rtree.
-     *
-     * @return the size
-     */
-    long size();
+  /**
+   * Gets the size of the rtree.
+   *
+   * @return the size
+   */
+  long size();
 
-    /**
-     * Closes this {@link CropRTree} instance.
-     * */
-    void close();
+  /** Closes this {@link CropRTree} instance. */
+  void close();
 
-    /**
-     * Clears the data.
-     */
-    void clear();
+  /** Clears the data. */
+  void clear();
 
-    /**
-     * Drops this instance.
-     */
-    void drop();
+  /** Drops this instance. */
+  void drop();
 }

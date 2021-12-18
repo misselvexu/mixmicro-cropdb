@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 class JournalEntry {
-    private ChangeType changeType;
-    private Command commit;
-    private Command rollback;
+  private ChangeType changeType;
+  private Command commit;
+  private Command rollback;
 }

@@ -29,37 +29,37 @@ import xyz.vopen.framework.cropdb.collection.Document;
 @Data
 @NoArgsConstructor
 public class StoreMetaData implements MetaData {
-    private Long createTime;
-    private String storeVersion;
-    private String cropdbVersion;
-    private Integer schemaVersion;
+  private Long createTime;
+  private String storeVersion;
+  private String cropdbVersion;
+  private Integer schemaVersion;
 
-    /**
-     * Instantiates a new {@link StoreMetaData}.
-     *
-     * @param document the document
-     */
-    public StoreMetaData(Document document) {
-        populateInfo(document);
-    }
+  /**
+   * Instantiates a new {@link StoreMetaData}.
+   *
+   * @param document the document
+   */
+  public StoreMetaData(Document document) {
+    populateInfo(document);
+  }
 
-    /**
-     * Gets the database info ina document.
-     *
-     * @return the info
-     */
-    public Document getInfo() {
-        return Document.createDocument()
-            .put("createTime", createTime)
-            .put("storeVersion", storeVersion)
-            .put("cropdbVersion", cropdbVersion)
-            .put("schemaVersion", schemaVersion);
-    }
+  /**
+   * Gets the database info ina document.
+   *
+   * @return the info
+   */
+  public Document getInfo() {
+    return Document.createDocument()
+        .put("createTime", createTime)
+        .put("storeVersion", storeVersion)
+        .put("cropdbVersion", cropdbVersion)
+        .put("schemaVersion", schemaVersion);
+  }
 
-    private void populateInfo(Document document) {
-        createTime = document.get("createTime", Long.class);
-        storeVersion = document.get("storeVersion", String.class);
-        cropdbVersion = document.get("cropdbVersion", String.class);
-        schemaVersion = document.get("schemaVersion", Integer.class);
-    }
+  private void populateInfo(Document document) {
+    createTime = document.get("createTime", Long.class);
+    storeVersion = document.get("storeVersion", String.class);
+    cropdbVersion = document.get("cropdbVersion", String.class);
+    schemaVersion = document.get("schemaVersion", Integer.class);
+  }
 }

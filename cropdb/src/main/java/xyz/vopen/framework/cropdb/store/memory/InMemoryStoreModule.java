@@ -17,34 +17,32 @@ import java.util.Set;
  */
 public class InMemoryStoreModule implements StoreModule {
 
-    @Setter(AccessLevel.PACKAGE)
-    private InMemoryConfig storeConfig;
+  @Setter(AccessLevel.PACKAGE)
+  private InMemoryConfig storeConfig;
 
-    /**
-     * Instantiates a new {@link InMemoryStoreModule}.
-     */
-    public InMemoryStoreModule() {
-        this.storeConfig = new InMemoryConfig();
-    }
+  /** Instantiates a new {@link InMemoryStoreModule}. */
+  public InMemoryStoreModule() {
+    this.storeConfig = new InMemoryConfig();
+  }
 
-    /**
-     * Creates an {@link InMemoryModuleBuilder} to configure the in-memory store.
-     *
-     * @return the in memory module builder
-     */
-    public static InMemoryModuleBuilder withConfig() {
-        return new InMemoryModuleBuilder();
-    }
+  /**
+   * Creates an {@link InMemoryModuleBuilder} to configure the in-memory store.
+   *
+   * @return the in memory module builder
+   */
+  public static InMemoryModuleBuilder withConfig() {
+    return new InMemoryModuleBuilder();
+  }
 
-    @Override
-    public CropStore<?> getStore() {
-        InMemoryStore store = new InMemoryStore();
-        store.setStoreConfig(storeConfig);
-        return store;
-    }
+  @Override
+  public CropStore<?> getStore() {
+    InMemoryStore store = new InMemoryStore();
+    store.setStoreConfig(storeConfig);
+    return store;
+  }
 
-    @Override
-    public Set<CropPlugin> plugins() {
-        return Iterables.setOf(getStore());
-    }
+  @Override
+  public Set<CropPlugin> plugins() {
+    return Iterables.setOf(getStore());
+  }
 }

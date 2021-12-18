@@ -25,92 +25,93 @@ import xyz.vopen.framework.cropdb.store.CropMap;
 
 import java.util.Map;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>. */
 @Data
 public class LastWriteWinMap {
-    private CropCollection collection;
-    private CropMap<CropId, Long> tombstones;
+  private CropCollection collection;
+  private CropMap<CropId, Long> tombstones;
 
-    public LastWriteWinMap(CropCollection collection, CropMap<CropId, Long> tombstones) {
-        this.collection = collection;
-        this.tombstones = tombstones;
+  public LastWriteWinMap(CropCollection collection, CropMap<CropId, Long> tombstones) {
+    this.collection = collection;
+    this.tombstones = tombstones;
+  }
+
+  public void merge(LastWriteWinState snapshot) {
+    if (snapshot.getChanges() != null) {
+      for (Document entry : snapshot.getChanges()) {
+        put(entry);
+      }
     }
 
-    public void merge(LastWriteWinState snapshot) {
-        if (snapshot.getChanges() != null) {
-            for (Document entry : snapshot.getChanges()) {
-                put(entry);
-            }
-        }
+    if (snapshot.getTombstones() != null) {
+      for (Map.Entry<String, Long> entry : snapshot.getTombstones().entrySet()) {
+        remove(CropId.createId(entry.getKey()), entry.getValue());
+      }
+    }
+  }
 
-        if (snapshot.getTombstones() != null) {
-            for (Map.Entry<String, Long> entry : snapshot.getTombstones().entrySet()) {
-                remove(CropId.createId(entry.getKey()), entry.getValue());
-            }
+  public LastWriteWinState getChangesSince(Long since, int offset, int size) {
+    LastWriteWinState state = new LastWriteWinState();
+
+    DocumentCursor cursor =
+        collection.find(
+            FluentFilter.where(Constants.DOC_MODIFIED).gte(since),
+            FindOptions.skipBy(offset).limit(size));
+    state.getChanges().addAll(cursor.toSet());
+
+    if (offset == 0) {
+      // don't repeat for other offsets
+      for (Pair<CropId, Long> entry : tombstones.entries()) {
+        Long timestamp = entry.getSecond();
+        if (timestamp >= since) {
+          state.getTombstones().put(entry.getFirst().getIdValue(), entry.getSecond());
         }
+      }
     }
 
-    public LastWriteWinState getChangesSince(Long since, int offset, int size) {
-        LastWriteWinState state = new LastWriteWinState();
+    return state;
+  }
 
-        DocumentCursor cursor = collection.find(FluentFilter.where(Constants.DOC_MODIFIED).gte(since), FindOptions.skipBy(offset).limit(size));
-        state.getChanges().addAll(cursor.toSet());
+  private void put(Document value) {
+    if (value != null) {
+      CropId key = value.getId();
 
-        if (offset == 0) {
-            // don't repeat for other offsets
-            for (Pair<CropId, Long> entry : tombstones.entries()) {
-                Long timestamp = entry.getSecond();
-                if (timestamp >= since) {
-                    state.getTombstones().put(entry.getFirst().getIdValue(), entry.getSecond());
-                }
-            }
+      Document entry = collection.getById(key);
+      if (entry == null) {
+        if (tombstones.containsKey(key)) {
+          Long tombstoneTime = tombstones.get(key);
+          Long docModifiedTime = value.getLastModifiedSinceEpoch();
+
+          if (docModifiedTime >= tombstoneTime) {
+            value.put(Constants.DOC_SOURCE, Constants.REPLICATOR);
+            collection.insert(value);
+            tombstones.remove(key);
+          }
+        } else {
+          value.put(Constants.DOC_SOURCE, Constants.REPLICATOR);
+          collection.insert(value);
         }
+      } else {
+        Long oldTime = entry.getLastModifiedSinceEpoch();
+        Long newTime = value.getLastModifiedSinceEpoch();
 
-        return state;
-    }
+        if (newTime > oldTime) {
+          entry.put(Constants.DOC_SOURCE, Constants.REPLICATOR);
+          collection.remove(entry);
 
-    private void put(Document value) {
-        if (value != null) {
-            CropId key = value.getId();
-
-            Document entry = collection.getById(key);
-            if (entry == null) {
-                if (tombstones.containsKey(key)) {
-                    Long tombstoneTime = tombstones.get(key);
-                    Long docModifiedTime = value.getLastModifiedSinceEpoch();
-
-                    if (docModifiedTime >= tombstoneTime) {
-                        value.put(Constants.DOC_SOURCE, Constants.REPLICATOR);
-                        collection.insert(value);
-                        tombstones.remove(key);
-                    }
-                } else {
-                    value.put(Constants.DOC_SOURCE, Constants.REPLICATOR);
-                    collection.insert(value);
-                }
-            } else {
-                Long oldTime = entry.getLastModifiedSinceEpoch();
-                Long newTime = value.getLastModifiedSinceEpoch();
-
-                if (newTime > oldTime) {
-                    entry.put(Constants.DOC_SOURCE, Constants.REPLICATOR);
-                    collection.remove(entry);
-
-                    value.put(Constants.DOC_SOURCE, Constants.REPLICATOR);
-                    collection.insert(value);
-                }
-            }
+          value.put(Constants.DOC_SOURCE, Constants.REPLICATOR);
+          collection.insert(value);
         }
+      }
     }
+  }
 
-    private void remove(CropId key, long timestamp) {
-        Document entry = collection.getById(key);
-        if (entry != null) {
-            entry.put(Constants.DOC_SOURCE, Constants.REPLICATOR);
-            collection.remove(entry);
-            tombstones.put(key, timestamp);
-        }
+  private void remove(CropId key, long timestamp) {
+    Document entry = collection.getById(key);
+    if (entry != null) {
+      entry.put(Constants.DOC_SOURCE, Constants.REPLICATOR);
+      collection.remove(entry);
+      tombstones.put(key, timestamp);
     }
+  }
 }

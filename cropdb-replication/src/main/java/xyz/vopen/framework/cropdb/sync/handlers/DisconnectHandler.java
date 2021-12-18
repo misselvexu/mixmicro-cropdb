@@ -19,18 +19,16 @@ package xyz.vopen.framework.cropdb.sync.handlers;
 import xyz.vopen.framework.cropdb.sync.ReplicationTemplate;
 import xyz.vopen.framework.cropdb.sync.message.Disconnect;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 public class DisconnectHandler implements MessageHandler<Disconnect> {
-    private final ReplicationTemplate replicationTemplate;
+  private final ReplicationTemplate replicationTemplate;
 
-    public DisconnectHandler(ReplicationTemplate replicationTemplate) {
-        this.replicationTemplate = replicationTemplate;
-    }
+  public DisconnectHandler(ReplicationTemplate replicationTemplate) {
+    this.replicationTemplate = replicationTemplate;
+  }
 
-    @Override
-    public void handleMessage(Disconnect message) {
-        replicationTemplate.stopReplication("Server disconnect");
-    }
+  @Override
+  public void handleMessage(Disconnect message) {
+    replicationTemplate.stopReplication("Server disconnect");
+  }
 }

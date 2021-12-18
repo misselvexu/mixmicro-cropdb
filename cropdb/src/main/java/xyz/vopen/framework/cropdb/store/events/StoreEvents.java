@@ -23,23 +23,15 @@ package xyz.vopen.framework.cropdb.store.events;
  * @since 4.0
  */
 public enum StoreEvents {
-    /**
-     * The store opened event.
-     */
-    Opened,
+  /** The store opened event. */
+  Opened,
 
-    /**
-     * The store commit event.
-     */
-    Commit,
+  /** The store commit event. */
+  Commit,
 
-    /**
-     * The store closing event.
-     */
-    Closing,
+  /** The store closing event. */
+  Closing,
 
-    /**
-     * The store closed event.
-     */
-    Closed
+  /** The store closed event. */
+  Closed
 }

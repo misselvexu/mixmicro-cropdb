@@ -36,167 +36,170 @@ import java.util.*;
  * @since 1.0
  */
 public class TextFilter extends StringFilter {
-    @Setter
-    private TextTokenizer textTokenizer;
+  @Setter private TextTokenizer textTokenizer;
 
-    /**
-     * Instantiates a new Text filter.
-     *
-     * @param field the field
-     * @param value the value
-     */
-    TextFilter(String field, String value) {
-        super(field, value);
+  /**
+   * Instantiates a new Text filter.
+   *
+   * @param field the field
+   * @param value the value
+   */
+  TextFilter(String field, String value) {
+    super(field, value);
+  }
+
+  @Override
+  public boolean apply(Pair<CropId, Document> element) {
+    ValidationUtils.notNull(getField(), "field cannot be null");
+    ValidationUtils.notNull(getStringValue(), "search term cannot be null");
+    String searchString = getStringValue();
+    Object docValue = element.getSecond().get(getField());
+
+    if (!(docValue instanceof String)) {
+      throw new FilterException("text filter can not be applied on non string field " + getField());
     }
 
-    @Override
-    public boolean apply(Pair<CropId, Document> element) {
-        ValidationUtils.notNull(getField(), "field cannot be null");
-        ValidationUtils.notNull(getStringValue(), "search term cannot be null");
-        String searchString = getStringValue();
-        Object docValue = element.getSecond().get(getField());
+    String docString = (String) docValue;
 
-        if (!(docValue instanceof String)) {
-            throw new FilterException("text filter can not be applied on non string field " + getField());
-        }
-
-        String docString = (String) docValue;
-
-        if (searchString.startsWith("*") || searchString.endsWith("*")) {
-            searchString = searchString.replace("*", "");
-        }
-
-        return docString.toLowerCase().contains(searchString.toLowerCase());
+    if (searchString.startsWith("*") || searchString.endsWith("*")) {
+      searchString = searchString.replace("*", "");
     }
 
-    @Override
-    public String toString() {
-        return "(" + getField() + " like " + getValue() + ")";
+    return docString.toLowerCase().contains(searchString.toLowerCase());
+  }
+
+  @Override
+  public String toString() {
+    return "(" + getField() + " like " + getValue() + ")";
+  }
+
+  /**
+   * Apply on index linked hash set.
+   *
+   * @param indexMap the index map
+   * @return the linked hash set
+   */
+  public LinkedHashSet<CropId> applyOnIndex(CropMap<String, List<?>> indexMap) {
+    ValidationUtils.notNull(getField(), "field cannot be null");
+    ValidationUtils.notNull(getStringValue(), "search term cannot be null");
+    String searchString = getStringValue();
+
+    if (searchString.startsWith("*") || searchString.endsWith("*")) {
+      return searchByWildCard(indexMap, searchString);
+    } else {
+      return searchExactByIndex(indexMap, searchString);
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private LinkedHashSet<CropId> searchExactByIndex(
+      CropMap<String, List<?>> indexMap, String searchString) {
+
+    Set<String> words = textTokenizer.tokenize(searchString);
+    Map<CropId, Integer> scoreMap = new HashMap<>();
+    for (String word : words) {
+      List<CropId> cropIds = (List<CropId>) indexMap.get(word);
+      if (cropIds != null) {
+        for (CropId id : cropIds) {
+          Integer score = scoreMap.get(id);
+          if (score == null) {
+            scoreMap.put(id, 1);
+          } else {
+            scoreMap.put(id, score + 1);
+          }
+        }
+      }
     }
 
-    /**
-     * Apply on index linked hash set.
-     *
-     * @param indexMap the index map
-     * @return the linked hash set
-     */
-    public LinkedHashSet<CropId> applyOnIndex(CropMap<String, List<?>> indexMap) {
-        ValidationUtils.notNull(getField(), "field cannot be null");
-        ValidationUtils.notNull(getStringValue(), "search term cannot be null");
-        String searchString = getStringValue();
+    return sortedIdsByScore(scoreMap);
+  }
 
-        if (searchString.startsWith("*") || searchString.endsWith("*")) {
-            return searchByWildCard(indexMap, searchString);
-        } else {
-            return searchExactByIndex(indexMap, searchString);
-        }
+  private LinkedHashSet<CropId> searchByWildCard(
+      CropMap<String, List<?>> indexMap, String searchString) {
+    if (searchString.contentEquals("*")) {
+      throw new FilterException("* is not a valid search string");
     }
 
-    @SuppressWarnings("unchecked")
-    private LinkedHashSet<CropId> searchExactByIndex(CropMap<String, List<?>> indexMap, String searchString) {
-
-        Set<String> words = textTokenizer.tokenize(searchString);
-        Map<CropId, Integer> scoreMap = new HashMap<>();
-        for (String word : words) {
-            List<CropId> cropIds = (List<CropId>) indexMap.get(word);
-            if (cropIds != null) {
-                for (CropId id : cropIds) {
-                    Integer score = scoreMap.get(id);
-                    if (score == null) {
-                        scoreMap.put(id, 1);
-                    } else {
-                        scoreMap.put(id, score + 1);
-                    }
-                }
-            }
-        }
-
-        return sortedIdsByScore(scoreMap);
+    StringTokenizer stringTokenizer = StringUtils.stringTokenizer(searchString);
+    if (stringTokenizer.countTokens() > 1) {
+      throw new FilterException("multiple words with wildcard is not supported");
     }
 
-    private LinkedHashSet<CropId> searchByWildCard(CropMap<String, List<?>> indexMap, String searchString) {
-        if (searchString.contentEquals("*")) {
-            throw new FilterException("* is not a valid search string");
-        }
+    if (searchString.startsWith("*") && !searchString.endsWith("*")) {
+      return searchByLeadingWildCard(indexMap, searchString);
+    } else if (searchString.endsWith("*") && !searchString.startsWith("*")) {
+      return searchByTrailingWildCard(indexMap, searchString);
+    } else {
+      String term = searchString.substring(1, searchString.length() - 1);
+      return searchContains(indexMap, term);
+    }
+  }
 
-        StringTokenizer stringTokenizer = StringUtils.stringTokenizer(searchString);
-        if (stringTokenizer.countTokens() > 1) {
-            throw new FilterException("multiple words with wildcard is not supported");
-        }
-
-        if (searchString.startsWith("*") && !searchString.endsWith("*")) {
-            return searchByLeadingWildCard(indexMap, searchString);
-        } else if (searchString.endsWith("*") && !searchString.startsWith("*")) {
-            return searchByTrailingWildCard(indexMap, searchString);
-        } else {
-            String term = searchString.substring(1, searchString.length() - 1);
-            return searchContains(indexMap, term);
-        }
+  @SuppressWarnings("unchecked")
+  private LinkedHashSet<CropId> searchByLeadingWildCard(
+      CropMap<String, List<?>> indexMap, String searchString) {
+    if (searchString.equalsIgnoreCase("*")) {
+      throw new FilterException("invalid search term '*'");
     }
 
-    @SuppressWarnings("unchecked")
-    private LinkedHashSet<CropId> searchByLeadingWildCard(CropMap<String, List<?>> indexMap, String searchString) {
-        if (searchString.equalsIgnoreCase("*")) {
-            throw new FilterException("invalid search term '*'");
-        }
+    LinkedHashSet<CropId> idSet = new LinkedHashSet<>();
+    String term = searchString.substring(1);
 
-        LinkedHashSet<CropId> idSet = new LinkedHashSet<>();
-        String term = searchString.substring(1);
+    for (Pair<String, List<?>> entry : indexMap.entries()) {
+      String key = entry.getFirst();
+      if (key.endsWith(term.toLowerCase())) {
+        idSet.addAll((List<CropId>) entry.getSecond());
+      }
+    }
+    return idSet;
+  }
 
-        for (Pair<String, List<?>> entry : indexMap.entries()) {
-            String key = entry.getFirst();
-            if (key.endsWith(term.toLowerCase())) {
-                idSet.addAll((List<CropId>) entry.getSecond());
-            }
-        }
-        return idSet;
+  @SuppressWarnings("unchecked")
+  private LinkedHashSet<CropId> searchByTrailingWildCard(
+      CropMap<String, List<?>> indexMap, String searchString) {
+    if (searchString.equalsIgnoreCase("*")) {
+      throw new FilterException("invalid search term '*'");
     }
 
-    @SuppressWarnings("unchecked")
-    private LinkedHashSet<CropId> searchByTrailingWildCard(CropMap<String, List<?>> indexMap, String searchString) {
-        if (searchString.equalsIgnoreCase("*")) {
-            throw new FilterException("invalid search term '*'");
-        }
+    LinkedHashSet<CropId> idSet = new LinkedHashSet<>();
+    String term = searchString.substring(0, searchString.length() - 1);
 
-        LinkedHashSet<CropId> idSet = new LinkedHashSet<>();
-        String term = searchString.substring(0, searchString.length() - 1);
+    for (Pair<String, List<?>> entry : indexMap.entries()) {
+      String key = entry.getFirst();
+      if (key.startsWith(term.toLowerCase())) {
+        idSet.addAll((List<CropId>) entry.getSecond());
+      }
+    }
+    return idSet;
+  }
 
-        for (Pair<String, List<?>> entry : indexMap.entries()) {
-            String key = entry.getFirst();
-            if (key.startsWith(term.toLowerCase())) {
-                idSet.addAll((List<CropId>) entry.getSecond());
-            }
-        }
-        return idSet;
+  @SuppressWarnings("unchecked")
+  private LinkedHashSet<CropId> searchContains(CropMap<String, List<?>> indexMap, String term) {
+    LinkedHashSet<CropId> idSet = new LinkedHashSet<>();
+
+    for (Pair<String, List<?>> entry : indexMap.entries()) {
+      String key = entry.getFirst();
+      if (key.contains(term.toLowerCase())) {
+        idSet.addAll((List<CropId>) entry.getSecond());
+      }
+    }
+    return idSet;
+  }
+
+  private LinkedHashSet<CropId> sortedIdsByScore(Map<CropId, Integer> unsortedMap) {
+    List<Map.Entry<CropId, Integer>> list = new LinkedList<>(unsortedMap.entrySet());
+    Collections.sort(list, (e1, e2) -> (e2.getValue()).compareTo(e1.getValue()));
+
+    LinkedHashSet<CropId> result = new LinkedHashSet<>();
+    for (Map.Entry<CropId, Integer> entry : list) {
+      result.add(entry.getKey());
     }
 
-    @SuppressWarnings("unchecked")
-    private LinkedHashSet<CropId> searchContains(CropMap<String, List<?>> indexMap, String term) {
-        LinkedHashSet<CropId> idSet = new LinkedHashSet<>();
+    return result;
+  }
 
-        for (Pair<String, List<?>> entry : indexMap.entries()) {
-            String key = entry.getFirst();
-            if (key.contains(term.toLowerCase())) {
-                idSet.addAll((List<CropId>) entry.getSecond());
-            }
-        }
-        return idSet;
-    }
-
-    private LinkedHashSet<CropId> sortedIdsByScore(Map<CropId, Integer> unsortedMap) {
-        List<Map.Entry<CropId, Integer>> list = new LinkedList<>(unsortedMap.entrySet());
-        Collections.sort(list, (e1, e2) -> (e2.getValue()).compareTo(e1.getValue()));
-
-        LinkedHashSet<CropId> result = new LinkedHashSet<>();
-        for (Map.Entry<CropId, Integer> entry : list) {
-            result.add(entry.getKey());
-        }
-
-        return result;
-    }
-
-    @Override
-    public List<?> applyOnIndex(IndexMap indexMap) {
-        return null;
-    }
+  @Override
+  public List<?> applyOnIndex(IndexMap indexMap) {
+    return null;
+  }
 }

@@ -29,9 +29,10 @@ import java.util.Set;
  * @since 2.1.0
  */
 public class Yoruba implements Language {
-    @Override
-    public Set<String> stopWords() {
-        return new HashSet<>(Arrays.asList(
+  @Override
+  public Set<String> stopWords() {
+    return new HashSet<>(
+        Arrays.asList(
             "a",
             "an",
             "bá",
@@ -91,7 +92,6 @@ public class Yoruba implements Language {
             "ṣùgbọ́n",
             "ẹmọ́",
             "ọjọ́",
-            "ọ̀pọ̀lọpọ̀"
-        ));
-    }
+            "ọ̀pọ̀lọpọ̀"));
+  }
 }

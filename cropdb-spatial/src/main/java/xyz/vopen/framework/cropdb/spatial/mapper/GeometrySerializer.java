@@ -26,21 +26,20 @@ import java.io.IOException;
 
 import static xyz.vopen.framework.cropdb.spatial.mapper.GeometryExtension.GEOMETRY_ID;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 class GeometrySerializer extends StdScalarSerializer<Geometry> {
 
-    protected GeometrySerializer() {
-        super(Geometry.class);
-    }
+  protected GeometrySerializer() {
+    super(Geometry.class);
+  }
 
-    @Override
-    public void serialize(Geometry value, JsonGenerator gen, SerializerProvider provider) throws IOException {
-        if (value != null) {
-            WKTWriter writer = new WKTWriter();
-            String wktString = writer.write(value);
-            gen.writeString(GEOMETRY_ID + wktString);
-        }
+  @Override
+  public void serialize(Geometry value, JsonGenerator gen, SerializerProvider provider)
+      throws IOException {
+    if (value != null) {
+      WKTWriter writer = new WKTWriter();
+      String wktString = writer.write(value);
+      gen.writeString(GEOMETRY_ID + wktString);
     }
+  }
 }

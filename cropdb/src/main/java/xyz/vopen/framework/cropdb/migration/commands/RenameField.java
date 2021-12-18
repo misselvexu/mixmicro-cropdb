@@ -19,52 +19,52 @@ import java.util.Collection;
  */
 @AllArgsConstructor
 public class RenameField extends BaseCommand implements Command {
-    private final String collectionName;
-    private final String oldName;
-    private final String newName;
+  private final String collectionName;
+  private final String oldName;
+  private final String newName;
 
-    @Override
-    public void execute(CropDB cropdb) {
-        initialize(cropdb, collectionName);
+  @Override
+  public void execute(CropDB cropdb) {
+    initialize(cropdb, collectionName);
 
-        try(IndexManager indexManager = new IndexManager(oldName, cropdb.getConfig())) {
-            Fields oldField = Fields.withNames(oldName);
-            Collection<IndexDescriptor> matchingIndexDescriptors
-                = indexManager.findMatchingIndexDescriptors(oldField);
+    try (IndexManager indexManager = new IndexManager(oldName, cropdb.getConfig())) {
+      Fields oldField = Fields.withNames(oldName);
+      Collection<IndexDescriptor> matchingIndexDescriptors =
+          indexManager.findMatchingIndexDescriptors(oldField);
 
-            for (Pair<CropId, Document> entry : cropMap.entries()) {
-                Document document = entry.getSecond();
-                if (document.containsKey(oldName)) {
-                    Object value = document.get(oldName);
-                    document.put(newName, value);
-                    document.remove(oldName);
+      for (Pair<CropId, Document> entry : cropMap.entries()) {
+        Document document = entry.getSecond();
+        if (document.containsKey(oldName)) {
+          Object value = document.get(oldName);
+          document.put(newName, value);
+          document.remove(oldName);
 
-                    cropMap.put(entry.getFirst(), document);
-                }
-            }
-
-            if (!matchingIndexDescriptors.isEmpty()) {
-                for (IndexDescriptor matchingIndexDescriptor : matchingIndexDescriptors) {
-                    String indexType = matchingIndexDescriptor.getIndexType();
-
-                    Fields oldIndexFields = matchingIndexDescriptor.getIndexFields();
-                    Fields newIndexFields = getNewIndexFields(oldIndexFields, oldName, newName);
-                    operations.dropIndex(matchingIndexDescriptor.getIndexFields());
-                    operations.createIndex(newIndexFields, indexType);
-                }
-            }
+          cropMap.put(entry.getFirst(), document);
         }
-    }
+      }
 
-    private Fields getNewIndexFields(Fields oldIndexFields, String oldName, String newName) {
-        Fields newIndexFields = new Fields();
-        for (String fieldName : oldIndexFields.getFieldNames()) {
-            if (fieldName.equals(oldName)) {
-                newIndexFields.addField(newName);
-            } else {
-                newIndexFields.addField(fieldName);
-            }
+      if (!matchingIndexDescriptors.isEmpty()) {
+        for (IndexDescriptor matchingIndexDescriptor : matchingIndexDescriptors) {
+          String indexType = matchingIndexDescriptor.getIndexType();
+
+          Fields oldIndexFields = matchingIndexDescriptor.getIndexFields();
+          Fields newIndexFields = getNewIndexFields(oldIndexFields, oldName, newName);
+          operations.dropIndex(matchingIndexDescriptor.getIndexFields());
+          operations.createIndex(newIndexFields, indexType);
         }
-        return newIndexFields;
+      }
     }
+  }
+
+  private Fields getNewIndexFields(Fields oldIndexFields, String oldName, String newName) {
+    Fields newIndexFields = new Fields();
+    for (String fieldName : oldIndexFields.getFieldNames()) {
+      if (fieldName.equals(oldName)) {
+        newIndexFields.addField(newName);
+      } else {
+        newIndexFields.addField(fieldName);
+      }
+    }
+    return newIndexFields;
+  }
 }

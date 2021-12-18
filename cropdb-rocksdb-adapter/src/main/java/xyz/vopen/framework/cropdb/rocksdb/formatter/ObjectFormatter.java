@@ -16,13 +16,13 @@
 
 package xyz.vopen.framework.cropdb.rocksdb.formatter;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 public interface ObjectFormatter {
-    <T> byte[] encode(T object);
-    <T> byte[] encodeKey(T object);
+  <T> byte[] encode(T object);
 
-    <T> T decode(byte[] bytes, Class<T> type);
-    <T> T decodeKey(byte[] bytes, Class<T> type);
+  <T> byte[] encodeKey(T object);
+
+  <T> T decode(byte[] bytes, Class<T> type);
+
+  <T> T decodeKey(byte[] bytes, Class<T> type);
 }

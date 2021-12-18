@@ -21,66 +21,64 @@ import xyz.vopen.framework.cropdb.sync.event.ReplicationEvent;
 import xyz.vopen.framework.cropdb.sync.event.ReplicationEventListener;
 import xyz.vopen.framework.cropdb.sync.event.ReplicationEventType;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 @Slf4j
 public final class Replica implements AutoCloseable {
-    private final ReplicationTemplate replicationTemplate;
+  private final ReplicationTemplate replicationTemplate;
 
-    Replica(Config config) {
-        this.replicationTemplate = new ReplicationTemplate(config);
-    }
+  Replica(Config config) {
+    this.replicationTemplate = new ReplicationTemplate(config);
+  }
 
-    public static ReplicaBuilder builder() {
-        return new ReplicaBuilder();
-    }
+  public static ReplicaBuilder builder() {
+    return new ReplicaBuilder();
+  }
 
-    public void connect() {
-        try {
-            replicationTemplate.connect();
-        } catch (Exception e) {
-            log.error("Error while connecting the replica {}", getReplicaId(), e);
-            replicationTemplate.postEvent(new ReplicationEvent(ReplicationEventType.Error, e));
-            if (e instanceof ReplicationException) {
-                throw e;
-            }
-            throw new ReplicationException("failed to open connection", e, true);
-        }
+  public void connect() {
+    try {
+      replicationTemplate.connect();
+    } catch (Exception e) {
+      log.error("Error while connecting the replica {}", getReplicaId(), e);
+      replicationTemplate.postEvent(new ReplicationEvent(ReplicationEventType.Error, e));
+      if (e instanceof ReplicationException) {
+        throw e;
+      }
+      throw new ReplicationException("failed to open connection", e, true);
     }
+  }
 
-    public void disconnect() {
-        try {
-            replicationTemplate.disconnect();
-        } catch (Exception e) {
-            replicationTemplate.postEvent(new ReplicationEvent(ReplicationEventType.Error, e));
-            log.error("Error while disconnecting the replica {}", getReplicaId(), e);
-            if (e instanceof ReplicationException) {
-                throw e;
-            }
-            throw new ReplicationException("failed to disconnect the replica", e, true);
-        }
+  public void disconnect() {
+    try {
+      replicationTemplate.disconnect();
+    } catch (Exception e) {
+      replicationTemplate.postEvent(new ReplicationEvent(ReplicationEventType.Error, e));
+      log.error("Error while disconnecting the replica {}", getReplicaId(), e);
+      if (e instanceof ReplicationException) {
+        throw e;
+      }
+      throw new ReplicationException("failed to disconnect the replica", e, true);
     }
+  }
 
-    public void subscribe(ReplicationEventListener listener) {
-        replicationTemplate.subscribe(listener);
-    }
+  public void subscribe(ReplicationEventListener listener) {
+    replicationTemplate.subscribe(listener);
+  }
 
-    public void unsubscribe(ReplicationEventListener listener) {
-        replicationTemplate.unsubscribe(listener);
-    }
+  public void unsubscribe(ReplicationEventListener listener) {
+    replicationTemplate.unsubscribe(listener);
+  }
 
-    private String getReplicaId() {
-        return replicationTemplate.getReplicaId();
-    }
+  private String getReplicaId() {
+    return replicationTemplate.getReplicaId();
+  }
 
-    public boolean isConnected() {
-        return replicationTemplate.isConnected();
-    }
+  public boolean isConnected() {
+    return replicationTemplate.isConnected();
+  }
 
-    @Override
-    public void close() {
-        replicationTemplate.stopReplication("Normal shutdown");
-        replicationTemplate.close();
-    }
+  @Override
+  public void close() {
+    replicationTemplate.stopReplication("Normal shutdown");
+    replicationTemplate.close();
+  }
 }

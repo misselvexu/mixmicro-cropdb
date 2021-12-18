@@ -18,9 +18,7 @@ package xyz.vopen.framework.cropdb.sync.handlers;
 
 import xyz.vopen.framework.cropdb.sync.message.DataGateMessage;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 public interface MessageHandler<M extends DataGateMessage> {
-    void handleMessage(M message) throws Exception;
+  void handleMessage(M message) throws Exception;
 }

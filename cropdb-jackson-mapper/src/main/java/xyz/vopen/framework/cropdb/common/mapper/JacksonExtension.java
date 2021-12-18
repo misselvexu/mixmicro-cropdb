@@ -20,10 +20,9 @@ import com.fasterxml.jackson.databind.Module;
 
 import java.util.List;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 public interface JacksonExtension {
-    List<Class<?>> getSupportedTypes();
-    Module getModule();
+  List<Class<?>> getSupportedTypes();
+
+  Module getModule();
 }

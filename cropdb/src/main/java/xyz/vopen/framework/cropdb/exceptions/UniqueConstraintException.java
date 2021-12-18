@@ -17,19 +17,18 @@
 package xyz.vopen.framework.cropdb.exceptions;
 
 /**
- * Exception thrown when any modification in a collection
- * violates unique constraint.
+ * Exception thrown when any modification in a collection violates unique constraint.
  *
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 1.0
  */
 public class UniqueConstraintException extends CropException {
-    /**
-     * Instantiates a new Unique constraint exception.
-     *
-     * @param message the message
-     */
-    public UniqueConstraintException(String message) {
-        super(message);
-    }
+  /**
+   * Instantiates a new Unique constraint exception.
+   *
+   * @param message the message
+   */
+  public UniqueConstraintException(String message) {
+    super(message);
+  }
 }

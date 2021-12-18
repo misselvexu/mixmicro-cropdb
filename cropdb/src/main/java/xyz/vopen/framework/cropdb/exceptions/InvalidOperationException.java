@@ -17,19 +17,18 @@
 package xyz.vopen.framework.cropdb.exceptions;
 
 /**
- * Exception thrown when a requested operation is not
- * allowed to be executed.
+ * Exception thrown when a requested operation is not allowed to be executed.
  *
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 1.0
  */
 public class InvalidOperationException extends CropException {
-    /**
-     * Instantiates a new Invalid operation exception.
-     *
-     * @param message the message
-     */
-    public InvalidOperationException(String message) {
-        super(message);
-    }
+  /**
+   * Instantiates a new Invalid operation exception.
+   *
+   * @param message the message
+   */
+  public InvalidOperationException(String message) {
+    super(message);
+  }
 }

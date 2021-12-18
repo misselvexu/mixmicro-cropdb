@@ -31,75 +31,75 @@ import java.util.List;
 /**
  * Sorts documents based on the sort order provided.
  *
- * <p>
- * By default null is considered the lowest value.
- * </p>
+ * <p>By default null is considered the lowest value.
  *
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public class DocumentSorter implements Comparator<Pair<CropId, Document>> {
-    private final Collator collator;
-    private final List<Pair<String, SortOrder>> sortOrder;
+  private final Collator collator;
+  private final List<Pair<String, SortOrder>> sortOrder;
 
-    /**
-     * Instantiates a new Document sorter.
-     *
-     * @param collator  the collator
-     * @param sortOrder the sort order
-     */
-    public DocumentSorter(Collator collator, List<Pair<String, SortOrder>> sortOrder) {
-        this.collator = collator;
-        this.sortOrder = sortOrder;
-    }
+  /**
+   * Instantiates a new Document sorter.
+   *
+   * @param collator the collator
+   * @param sortOrder the sort order
+   */
+  public DocumentSorter(Collator collator, List<Pair<String, SortOrder>> sortOrder) {
+    this.collator = collator;
+    this.sortOrder = sortOrder;
+  }
 
-    @Override
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public int compare(Pair<CropId, Document> pair1, Pair<CropId, Document> pair2) {
-        if (sortOrder != null && !sortOrder.isEmpty()) {
-            for (Pair<String, SortOrder> pair : sortOrder) {
-                Document doc1 = pair1.getSecond();
-                Document doc2 = pair2.getSecond();
+  @Override
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public int compare(Pair<CropId, Document> pair1, Pair<CropId, Document> pair2) {
+    if (sortOrder != null && !sortOrder.isEmpty()) {
+      for (Pair<String, SortOrder> pair : sortOrder) {
+        Document doc1 = pair1.getSecond();
+        Document doc2 = pair2.getSecond();
 
-                Object value1 = doc1.get(pair.getFirst());
-                Object value2 = doc2.get(pair.getFirst());
+        Object value1 = doc1.get(pair.getFirst());
+        Object value2 = doc2.get(pair.getFirst());
 
-                // handle null values
-                int result;
-                if ((value1 == null || value1 instanceof DBNull) && value2 != null) {
-                    result = -1;
-                } else if (value1 != null && (value2 == null || value2 instanceof DBNull)) {
-                    result = 1;
-                } else if (value1 == null) {
-                    result = -1;
-                } else {
+        // handle null values
+        int result;
+        if ((value1 == null || value1 instanceof DBNull) && value2 != null) {
+          result = -1;
+        } else if (value1 != null && (value2 == null || value2 instanceof DBNull)) {
+          result = 1;
+        } else if (value1 == null) {
+          result = -1;
+        } else {
 
-                    // validate comparable
-                    if (value1.getClass().isArray() || value1 instanceof Iterable
-                        || value2.getClass().isArray() || value2 instanceof Iterable) {
-                        throw new ValidationException("cannot sort on an array or collection object");
-                    }
+          // validate comparable
+          if (value1.getClass().isArray()
+              || value1 instanceof Iterable
+              || value2.getClass().isArray()
+              || value2 instanceof Iterable) {
+            throw new ValidationException("cannot sort on an array or collection object");
+          }
 
-                    // compare values
-                    Comparable c1 = (Comparable) value1;
-                    Comparable c2 = (Comparable) value2;
+          // compare values
+          Comparable c1 = (Comparable) value1;
+          Comparable c2 = (Comparable) value2;
 
-                    if (c1 instanceof String && c2 instanceof String && collator != null) {
-                        result = collator.compare(c1, c2);
-                    } else {
-                        result = c1.compareTo(c2);
-                    }
-                }
-
-                if (pair.getSecond() == SortOrder.Descending) {
-                    result *= -1;
-                }
-
-                if (result != 0) {
-                    return result;
-                }
-            }
+          if (c1 instanceof String && c2 instanceof String && collator != null) {
+            result = collator.compare(c1, c2);
+          } else {
+            result = c1.compareTo(c2);
+          }
         }
-        return 0;
+
+        if (pair.getSecond() == SortOrder.Descending) {
+          result *= -1;
+        }
+
+        if (result != 0) {
+          return result;
+        }
+      }
     }
+    return 0;
+  }
 }

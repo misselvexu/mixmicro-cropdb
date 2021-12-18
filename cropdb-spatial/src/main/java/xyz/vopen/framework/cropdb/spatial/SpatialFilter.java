@@ -29,37 +29,36 @@ import org.locationtech.jts.geom.Geometry;
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public abstract class SpatialFilter extends IndexOnlyFilter {
-    private final Geometry geometry;
+  private final Geometry geometry;
 
-    /**
-     * Instantiates a new {@link SpatialFilter}.
-     *
-     * @param field    the field
-     * @param geometry the geometry
-     */
-    protected SpatialFilter(String field, Geometry geometry) {
-        super(field, geometry);
-        this.geometry = geometry;
-    }
+  /**
+   * Instantiates a new {@link SpatialFilter}.
+   *
+   * @param field the field
+   * @param geometry the geometry
+   */
+  protected SpatialFilter(String field, Geometry geometry) {
+    super(field, geometry);
+    this.geometry = geometry;
+  }
 
-    @Override
-    public Geometry getValue() {
-        return geometry;
-    }
+  @Override
+  public Geometry getValue() {
+    return geometry;
+  }
 
-    @Override
-    public boolean apply(Pair<CropId, Document> element) {
-        return false;
-    }
+  @Override
+  public boolean apply(Pair<CropId, Document> element) {
+    return false;
+  }
 
-    @Override
-    public String supportedIndexType() {
-        return SpatialIndexer.SPATIAL_INDEX;
-    }
+  @Override
+  public String supportedIndexType() {
+    return SpatialIndexer.SPATIAL_INDEX;
+  }
 
-    @Override
-    public boolean canBeGrouped(IndexOnlyFilter other) {
-        return other instanceof SpatialFilter
-            && other.getField().equals(getField());
-    }
+  @Override
+  public boolean canBeGrouped(IndexOnlyFilter other) {
+    return other instanceof SpatialFilter && other.getField().equals(getField());
+  }
 }

@@ -30,104 +30,102 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 @Slf4j
 public class FeedJournal {
-    private static final String JOURNAL = "journal";
+  private static final String JOURNAL = "journal";
 
-    private final ReplicationTemplate replicationTemplate;
-    private final ReentrantLock lock;
+  private final ReplicationTemplate replicationTemplate;
+  private final ReentrantLock lock;
 
-    public FeedJournal(ReplicationTemplate replicationTemplate) {
-        this.replicationTemplate = replicationTemplate;
-        this.lock = new ReentrantLock();
-    }
+  public FeedJournal(ReplicationTemplate replicationTemplate) {
+    this.replicationTemplate = replicationTemplate;
+    this.lock = new ReentrantLock();
+  }
 
-    public Receipt accumulate(Receipt receipt) {
-        try {
-            lock.lock();
-            Receipt current = getCurrent();
-            if (receipt != null && current != null) {
-                for (String id : receipt.getAdded()) {
-                    current.getAdded().remove(id);
-                }
-
-                for (String id : receipt.getRemoved()) {
-                    current.getRemoved().remove(id);
-                }
-            }
-            setCurrent(current);
-            return current;
-        } finally {
-            lock.unlock();
+  public Receipt accumulate(Receipt receipt) {
+    try {
+      lock.lock();
+      Receipt current = getCurrent();
+      if (receipt != null && current != null) {
+        for (String id : receipt.getAdded()) {
+          current.getAdded().remove(id);
         }
-    }
 
-    public void write(LastWriteWinState state) {
-        try {
-            lock.lock();
-            if (state != null) {
-                Receipt receipt = getCurrent();
-
-                Set<Document> changes = state.getChanges();
-                if (changes != null && !changes.isEmpty()) {
-                    for (Document change : changes) {
-                        receipt.getAdded().add(change.getId().getIdValue());
-                    }
-                }
-
-                Map<String, Long> tombstones = state.getTombstones();
-                if (tombstones != null && !tombstones.isEmpty()) {
-                    for (Map.Entry<String, Long> entry : tombstones.entrySet()) {
-                        receipt.getRemoved().add(entry.getKey());
-                    }
-                }
-
-                setCurrent(receipt);
-            }
-        } finally {
-            lock.unlock();
+        for (String id : receipt.getRemoved()) {
+          current.getRemoved().remove(id);
         }
+      }
+      setCurrent(current);
+      return current;
+    } finally {
+      lock.unlock();
     }
+  }
 
-    public Receipt getFinalReceipt() {
-        try {
-            lock.lock();
-            return getCurrent();
-        } finally {
-            lock.unlock();
+  public void write(LastWriteWinState state) {
+    try {
+      lock.lock();
+      if (state != null) {
+        Receipt receipt = getCurrent();
+
+        Set<Document> changes = state.getChanges();
+        if (changes != null && !changes.isEmpty()) {
+          for (Document change : changes) {
+            receipt.getAdded().add(change.getId().getIdValue());
+          }
         }
-    }
 
-    private Receipt getCurrent() {
-        try {
-            Attributes attributes = replicationTemplate.getAttributes();
-            String json = attributes.get(JOURNAL);
-            if (StringUtils.isNullOrEmpty(json)) {
-                return new Receipt(new HashSet<>(), new HashSet<>());
-            }
-
-            ObjectMapper objectMapper = replicationTemplate.getConfig().getObjectMapper();
-            return objectMapper.readValue(json, Receipt.class);
-        } catch (JsonProcessingException e) {
-            log.error("Error while opening replica ledger", e);
-            throw new ReplicationException("failed to open replica ledger", e, false);
+        Map<String, Long> tombstones = state.getTombstones();
+        if (tombstones != null && !tombstones.isEmpty()) {
+          for (Map.Entry<String, Long> entry : tombstones.entrySet()) {
+            receipt.getRemoved().add(entry.getKey());
+          }
         }
-    }
 
-    private void setCurrent(Receipt receipt) {
-        try {
-            ObjectMapper objectMapper = replicationTemplate.getConfig().getObjectMapper();
-            String json = objectMapper.writeValueAsString(receipt);
-            Attributes attributes = replicationTemplate.getAttributes();
-            attributes.set(JOURNAL, json);
-
-            replicationTemplate.saveAttributes(attributes);
-        } catch (JsonProcessingException e) {
-            log.error("Error while writing replica ledger", e);
-            throw new ReplicationException("failed to write replica ledger", e, false);
-        }
+        setCurrent(receipt);
+      }
+    } finally {
+      lock.unlock();
     }
+  }
+
+  public Receipt getFinalReceipt() {
+    try {
+      lock.lock();
+      return getCurrent();
+    } finally {
+      lock.unlock();
+    }
+  }
+
+  private Receipt getCurrent() {
+    try {
+      Attributes attributes = replicationTemplate.getAttributes();
+      String json = attributes.get(JOURNAL);
+      if (StringUtils.isNullOrEmpty(json)) {
+        return new Receipt(new HashSet<>(), new HashSet<>());
+      }
+
+      ObjectMapper objectMapper = replicationTemplate.getConfig().getObjectMapper();
+      return objectMapper.readValue(json, Receipt.class);
+    } catch (JsonProcessingException e) {
+      log.error("Error while opening replica ledger", e);
+      throw new ReplicationException("failed to open replica ledger", e, false);
+    }
+  }
+
+  private void setCurrent(Receipt receipt) {
+    try {
+      ObjectMapper objectMapper = replicationTemplate.getConfig().getObjectMapper();
+      String json = objectMapper.writeValueAsString(receipt);
+      Attributes attributes = replicationTemplate.getAttributes();
+      attributes.set(JOURNAL, json);
+
+      replicationTemplate.saveAttributes(attributes);
+    } catch (JsonProcessingException e) {
+      log.error("Error while writing replica ledger", e);
+      throw new ReplicationException("failed to write replica ledger", e, false);
+    }
+  }
 }

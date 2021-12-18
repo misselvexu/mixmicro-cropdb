@@ -39,7 +39,8 @@ import java.util.*
  * @since 2.1.0
  */
 open class KNO2JacksonMapper(vararg extensions: JacksonExtension) : JacksonMapper(
-    GeometryExtension(), *extensions) {
+    GeometryExtension(), *extensions
+) {
 
     override fun createObjectMapper(): ObjectMapper {
         // add value types from JavaTimeModule

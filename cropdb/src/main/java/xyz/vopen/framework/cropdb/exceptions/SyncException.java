@@ -24,22 +24,22 @@ package xyz.vopen.framework.cropdb.exceptions;
  */
 public class SyncException extends CropException {
 
-    /**
-     * Instantiates a new {@link SyncException}.
-     *
-     * @param errorMessage the error message
-     */
-    public SyncException(String errorMessage) {
-        super(errorMessage);
-    }
+  /**
+   * Instantiates a new {@link SyncException}.
+   *
+   * @param errorMessage the error message
+   */
+  public SyncException(String errorMessage) {
+    super(errorMessage);
+  }
 
-    /**
-     * Instantiates a new {@link SyncException}.
-     *
-     * @param errorMessage the error message
-     * @param cause        the cause
-     */
-    public SyncException(String errorMessage, Throwable cause) {
-        super(errorMessage, cause);
-    }
+  /**
+   * Instantiates a new {@link SyncException}.
+   *
+   * @param errorMessage the error message
+   * @param cause the cause
+   */
+  public SyncException(String errorMessage, Throwable cause) {
+    super(errorMessage, cause);
+  }
 }

@@ -18,23 +18,21 @@ package xyz.vopen.framework.cropdb.sync;
 
 import xyz.vopen.framework.cropdb.exceptions.CropException;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>. */
 public class ReplicationException extends CropException {
-    private final boolean fatal;
+  private final boolean fatal;
 
-    public ReplicationException(String errorMessage, boolean fatal) {
-        super(errorMessage);
-        this.fatal = fatal;
-    }
+  public ReplicationException(String errorMessage, boolean fatal) {
+    super(errorMessage);
+    this.fatal = fatal;
+  }
 
-    public ReplicationException(String errorMessage, Throwable cause, boolean fatal) {
-        super(errorMessage, cause);
-        this.fatal = fatal;
-    }
+  public ReplicationException(String errorMessage, Throwable cause, boolean fatal) {
+    super(errorMessage, cause);
+    this.fatal = fatal;
+  }
 
-    public boolean isFatal() {
-        return fatal;
-    }
+  public boolean isFatal() {
+    return fatal;
+  }
 }

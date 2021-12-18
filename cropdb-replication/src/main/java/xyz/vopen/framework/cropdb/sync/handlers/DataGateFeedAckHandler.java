@@ -21,27 +21,25 @@ import xyz.vopen.framework.cropdb.sync.ReplicationTemplate;
 import xyz.vopen.framework.cropdb.sync.message.DataGateFeedAck;
 import xyz.vopen.framework.cropdb.sync.message.Receipt;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 @Getter
 public class DataGateFeedAckHandler implements MessageHandler<DataGateFeedAck>, JournalAware {
-    private final ReplicationTemplate replicationTemplate;
+  private final ReplicationTemplate replicationTemplate;
 
-    public DataGateFeedAckHandler(ReplicationTemplate replicationTemplate) {
-        this.replicationTemplate = replicationTemplate;
+  public DataGateFeedAckHandler(ReplicationTemplate replicationTemplate) {
+    this.replicationTemplate = replicationTemplate;
+  }
+
+  @Override
+  public void handleMessage(DataGateFeedAck message) {
+    Receipt receipt = message.getReceipt();
+
+    Receipt finalReceipt = getJournal().accumulate(receipt);
+    retryFailed(finalReceipt);
+
+    if (replicationTemplate.shouldAcceptCheckpoint()) {
+      Long time = message.getHeader().getTimestamp();
+      replicationTemplate.saveLastSyncTime(time);
     }
-
-    @Override
-    public void handleMessage(DataGateFeedAck message) {
-        Receipt receipt = message.getReceipt();
-
-        Receipt finalReceipt = getJournal().accumulate(receipt);
-        retryFailed(finalReceipt);
-
-        if (replicationTemplate.shouldAcceptCheckpoint()) {
-            Long time = message.getHeader().getTimestamp();
-            replicationTemplate.saveLastSyncTime(time);
-        }
-    }
+  }
 }

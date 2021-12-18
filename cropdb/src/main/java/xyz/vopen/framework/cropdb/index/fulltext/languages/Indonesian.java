@@ -29,9 +29,10 @@ import java.util.Set;
  * @since 2.1.0
  */
 public class Indonesian implements Language {
-    @Override
-    public Set<String> stopWords() {
-        return new HashSet<>(Arrays.asList(
+  @Override
+  public Set<String> stopWords() {
+    return new HashSet<>(
+        Arrays.asList(
             "ada",
             "adalah",
             "adanya",
@@ -789,7 +790,6 @@ public class Indonesian implements Language {
             "yaitu",
             "yakin",
             "yakni",
-            "yang"
-        ));
-    }
+            "yang"));
+  }
 }

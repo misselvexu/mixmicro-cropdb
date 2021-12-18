@@ -27,19 +27,19 @@ import java.util.Set;
  * @since 1.0
  */
 public class EnglishTextTokenizer extends BaseTextTokenizer {
-    private final Language language;
+  private final Language language;
 
-    public EnglishTextTokenizer() {
-        language = new English();
-    }
+  public EnglishTextTokenizer() {
+    language = new English();
+  }
 
-    @Override
-    public Languages getLanguage() {
-        return Languages.English;
-    }
+  @Override
+  public Languages getLanguage() {
+    return Languages.English;
+  }
 
-    @Override
-    public Set<String> stopWords() {
-        return language.stopWords();
-    }
+  @Override
+  public Set<String> stopWords() {
+    return language.stopWords();
+  }
 }

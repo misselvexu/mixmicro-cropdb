@@ -32,20 +32,20 @@ import java.util.List;
  */
 public class CropIdExtension implements JacksonExtension {
 
-    @Override
-    public List<Class<?>> getSupportedTypes() {
-        return Iterables.listOf(CropId.class);
-    }
+  @Override
+  public List<Class<?>> getSupportedTypes() {
+    return Iterables.listOf(CropId.class);
+  }
 
-    @Override
-    public Module getModule() {
-        return new SimpleModule() {
-            @Override
-            public void setupModule(SetupContext context) {
-                addSerializer(CropId.class, new CropIdSerializer());
-                addDeserializer(CropId.class, new CropIdDeserializer());
-                super.setupModule(context);
-            }
-        };
-    }
+  @Override
+  public Module getModule() {
+    return new SimpleModule() {
+      @Override
+      public void setupModule(SetupContext context) {
+        addSerializer(CropId.class, new CropIdSerializer());
+        addDeserializer(CropId.class, new CropIdDeserializer());
+        super.setupModule(context);
+      }
+    };
+  }
 }

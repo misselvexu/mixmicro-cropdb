@@ -29,78 +29,57 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @since 4.0.0
  */
 class Compat {
-    /**
-     * The enum Index type.
-     */
-    enum IndexType {
-        /**
-         * Unique index type.
-         */
-        Unique,
-        /**
-         * Non unique index type.
-         */
-        NonUnique,
-        /**
-         * Fulltext index type.
-         */
-        Fulltext
-    }
+  /** The enum Index type. */
+  enum IndexType {
+    /** Unique index type. */
+    Unique,
+    /** Non unique index type. */
+    NonUnique,
+    /** Fulltext index type. */
+    Fulltext
+  }
 
-    /**
-     * The type User credential.
-     */
-    @Data
-    static class UserCredential implements Serializable {
-        private byte[] passwordHash;
-        private byte[] passwordSalt;
-    }
+  /** The type User credential. */
+  @Data
+  static class UserCredential implements Serializable {
+    private byte[] passwordHash;
+    private byte[] passwordSalt;
+  }
 
-    /**
-     * The type Document.
-     */
-    static class Document extends LinkedHashMap<String, Object> implements Serializable {
-    }
+  /** The type Document. */
+  static class Document extends LinkedHashMap<String, Object> implements Serializable {}
 
-    /**
-     * The type Index.
-     */
-    @Data
-    static class Index implements Serializable {
-        private IndexType indexType;
-        private String field;
-        private String collectionName;
-    }
+  /** The type Index. */
+  @Data
+  static class Index implements Serializable {
+    private IndexType indexType;
+    private String field;
+    private String collectionName;
+  }
 
-    /**
-     * The type Index meta.
-     */
-    @Data
-    static class IndexMeta implements Serializable {
-        private Index index;
-        private String indexMap;
-        private AtomicBoolean isDirty;
-    }
+  /** The type Index meta. */
+  @Data
+  static class IndexMeta implements Serializable {
+    private Index index;
+    private String indexMap;
+    private AtomicBoolean isDirty;
+  }
 
-    /**
-     * The type Attributes.
-     */
-    @Data
-    static class Attributes implements Serializable {
-        private long createdTime;
-        private long lastModifiedTime;
-        private long lastSynced;
-        private long syncLock;
-        private long expiryWait;
-        private String collection;
-        private String uuid;
-    }
+  /** The type Attributes. */
+  @Data
+  static class Attributes implements Serializable {
+    private long createdTime;
+    private long lastModifiedTime;
+    private long lastSynced;
+    private long syncLock;
+    private long expiryWait;
+    private String collection;
+    private String uuid;
+  }
 
-    /**
-     * The type Crop id.
-     */
-    @Data
-    static class CropId implements Serializable {
-        private Long idValue;
-    }
+  /** The type Crop id. */
+  @Data
+  static class CropId implements Serializable {
+    private Long idValue;
+  }
 }

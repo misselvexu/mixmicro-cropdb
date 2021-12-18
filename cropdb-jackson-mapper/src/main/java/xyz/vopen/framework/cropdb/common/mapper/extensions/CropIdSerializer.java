@@ -23,19 +23,18 @@ import xyz.vopen.framework.cropdb.collection.CropId;
 
 import java.io.IOException;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 class CropIdSerializer extends StdScalarSerializer<CropId> {
 
-    protected CropIdSerializer() {
-        super(CropId.class);
-    }
+  protected CropIdSerializer() {
+    super(CropId.class);
+  }
 
-    @Override
-    public void serialize(CropId value, JsonGenerator gen, SerializerProvider provider) throws IOException {
-        if (value.getIdValue() != null) {
-            gen.writeString(value.getIdValue());
-        }
+  @Override
+  public void serialize(CropId value, JsonGenerator gen, SerializerProvider provider)
+      throws IOException {
+    if (value.getIdValue() != null) {
+      gen.writeString(value.getIdValue());
     }
+  }
 }

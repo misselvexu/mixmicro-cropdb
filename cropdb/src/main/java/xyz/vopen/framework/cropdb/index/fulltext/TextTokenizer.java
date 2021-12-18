@@ -27,25 +27,25 @@ import java.util.Set;
  */
 public interface TextTokenizer {
 
-    /**
-     * Gets the language for the tokenizer.
-     *
-     * @return the language for this tokenizer.
-     */
-    Languages getLanguage();
+  /**
+   * Gets the language for the tokenizer.
+   *
+   * @return the language for this tokenizer.
+   */
+  Languages getLanguage();
 
-    /**
-     * Tokenize a `text` and discards all stop-words from it.
-     *
-     * @param text the text to tokenize
-     * @return the set of tokens.
-     */
-    Set<String> tokenize(String text);
+  /**
+   * Tokenize a `text` and discards all stop-words from it.
+   *
+   * @param text the text to tokenize
+   * @return the set of tokens.
+   */
+  Set<String> tokenize(String text);
 
-    /**
-     * Gets all stop-words for a language.
-     *
-     * @return the set of all stop-words.
-     */
-    Set<String> stopWords();
+  /**
+   * Gets all stop-words for a language.
+   *
+   * @return the set of all stop-words.
+   */
+  Set<String> stopWords();
 }

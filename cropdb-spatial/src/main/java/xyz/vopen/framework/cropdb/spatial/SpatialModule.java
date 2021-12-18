@@ -29,13 +29,13 @@ import java.util.Set;
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class SpatialModule implements CropModule {
-    private SpatialIndexer spatialIndexer;
+  private SpatialIndexer spatialIndexer;
 
-    @Override
-    public Set<CropPlugin> plugins() {
-        if (spatialIndexer == null) {
-            spatialIndexer = new SpatialIndexer();
-        }
-        return Iterables.setOf(spatialIndexer);
+  @Override
+  public Set<CropPlugin> plugins() {
+    if (spatialIndexer == null) {
+      spatialIndexer = new SpatialIndexer();
     }
+    return Iterables.setOf(spatialIndexer);
+  }
 }

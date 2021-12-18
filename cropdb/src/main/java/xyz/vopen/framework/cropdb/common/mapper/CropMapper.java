@@ -25,30 +25,30 @@ import xyz.vopen.framework.cropdb.common.module.CropPlugin;
  * @since 4.0
  */
 public interface CropMapper extends CropPlugin {
-    /**
-     * Converts an object of type <code>Source</code> to an object of type <code>Target</code>.
-     *
-     * @param <Source> the type parameter
-     * @param <Target> the type parameter
-     * @param source   the source
-     * @param type     the type
-     * @return the target
-     */
-    <Source, Target> Target convert(Source source, Class<Target> type);
+  /**
+   * Converts an object of type <code>Source</code> to an object of type <code>Target</code>.
+   *
+   * @param <Source> the type parameter
+   * @param <Target> the type parameter
+   * @param source the source
+   * @param type the type
+   * @return the target
+   */
+  <Source, Target> Target convert(Source source, Class<Target> type);
 
-    /**
-     * Checks if the provided type is registered as a value type.
-     *
-     * @param type the type
-     * @return the boolean
-     */
-    boolean isValueType(Class<?> type);
+  /**
+   * Checks if the provided type is registered as a value type.
+   *
+   * @param type the type
+   * @return the boolean
+   */
+  boolean isValueType(Class<?> type);
 
-    /**
-     * Checks if an object is of a value type.
-     *
-     * @param object the object
-     * @return the boolean
-     */
-    boolean isValue(Object object);
+  /**
+   * Checks if an object is of a value type.
+   *
+   * @param object the object
+   * @return the boolean
+   */
+  boolean isValue(Object object);
 }

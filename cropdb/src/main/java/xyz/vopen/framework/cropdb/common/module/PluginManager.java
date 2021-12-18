@@ -31,8 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The crop database plugin manager. It loads the crop plugins
- * before opening the database.
+ * The crop database plugin manager. It loads the crop plugins before opening the database.
  *
  * @see CropModule
  * @see CropPlugin
@@ -42,159 +41,155 @@ import java.util.Map;
 @Slf4j
 @Getter
 public class PluginManager implements AutoCloseable {
-    private final Map<String, CropIndexer> indexerMap;
-    private final CropConfig cropConfig;
-    private CropMapper cropMapper;
-    private CropStore<?> cropStore;
+  private final Map<String, CropIndexer> indexerMap;
+  private final CropConfig cropConfig;
+  private CropMapper cropMapper;
+  private CropStore<?> cropStore;
 
-    /**
-     * Instantiates a new {@link PluginManager}.
-     *
-     * @param cropConfig the crop config
-     */
-    public PluginManager(CropConfig cropConfig) {
-        this.indexerMap = new HashMap<>();
-        this.cropConfig = cropConfig;
+  /**
+   * Instantiates a new {@link PluginManager}.
+   *
+   * @param cropConfig the crop config
+   */
+  public PluginManager(CropConfig cropConfig) {
+    this.indexerMap = new HashMap<>();
+    this.cropConfig = cropConfig;
+  }
+
+  /**
+   * Loads a {@link CropModule} instance.
+   *
+   * @param module the module
+   */
+  public void loadModule(CropModule module) {
+    if (module != null && module.plugins() != null) {
+      for (CropPlugin plugin : module.plugins()) {
+        loadPlugin(plugin);
+      }
+    }
+  }
+
+  /** Find and loads all crop plugins configured. */
+  public void findAndLoadPlugins() {
+    try {
+      loadInternalPlugins();
+    } catch (Exception e) {
+      log.error("Error while loading internal plugins", e);
+      throw new PluginException("error while loading internal plugins", e);
+    }
+  }
+
+  /** Initializes all plugins instances. */
+  public void initializePlugins() {
+    if (cropStore != null) {
+      initializePlugin(cropStore);
+    } else {
+      log.error(
+          "No storage engine found. Please ensure that a storage module has been loaded properly");
+      throw new CropIOException("no storage engine found");
     }
 
-    /**
-     * Loads a {@link CropModule} instance.
-     *
-     * @param module the module
-     */
-    public void loadModule(CropModule module) {
-        if (module != null && module.plugins() != null) {
-            for (CropPlugin plugin : module.plugins()) {
-                loadPlugin(plugin);
-            }
-        }
+    if (cropMapper != null) {
+      initializePlugin(cropMapper);
     }
 
-    /**
-     * Find and loads all crop plugins configured.
-     */
-    public void findAndLoadPlugins() {
-        try {
-            loadInternalPlugins();
-        } catch (Exception e) {
-            log.error("Error while loading internal plugins", e);
-            throw new PluginException("error while loading internal plugins", e);
-        }
+    if (!indexerMap.isEmpty()) {
+      for (CropIndexer cropIndexer : indexerMap.values()) {
+        initializePlugin(cropIndexer);
+      }
+    }
+  }
+
+  @Override
+  public void close() {
+    for (CropIndexer cropIndexer : indexerMap.values()) {
+      cropIndexer.close();
     }
 
-    /**
-     * Initializes all plugins instances.
-     */
-    public void initializePlugins() {
-        if (cropStore != null) {
-            initializePlugin(cropStore);
-        } else {
-            log.error("No storage engine found. Please ensure that a storage module has been loaded properly");
-            throw new CropIOException("no storage engine found");
-        }
-
-        if (cropMapper != null) {
-            initializePlugin(cropMapper);
-        }
-
-        if (!indexerMap.isEmpty()) {
-            for (CropIndexer cropIndexer : indexerMap.values()) {
-                initializePlugin(cropIndexer);
-            }
-        }
+    if (cropMapper != null) {
+      cropMapper.close();
     }
 
-    @Override
-    public void close() {
-        for (CropIndexer cropIndexer : indexerMap.values()) {
-            cropIndexer.close();
-        }
+    if (cropStore != null) {
+      cropStore.close();
+    }
+  }
 
-        if (cropMapper != null) {
-            cropMapper.close();
-        }
+  private void loadPlugin(CropPlugin plugin) {
+    populatePlugins(plugin);
+  }
 
-        if (cropStore != null) {
-            cropStore.close();
-        }
+  private void initializePlugin(CropPlugin plugin) {
+    plugin.initialize(cropConfig);
+  }
+
+  private void populatePlugins(CropPlugin plugin) {
+    if (plugin != null) {
+      if (plugin instanceof CropIndexer) {
+        loadIndexer((CropIndexer) plugin);
+      } else if (plugin instanceof CropMapper) {
+        loadCropMapper((CropMapper) plugin);
+      } else if (plugin instanceof CropStore) {
+        loadCropStore((CropStore<?>) plugin);
+      } else {
+        plugin.close();
+        throw new PluginException("invalid plugin loaded " + plugin);
+      }
+    }
+  }
+
+  private void loadCropStore(CropStore<?> cropStore) {
+    if (this.cropStore != null) {
+      cropStore.close();
+      throw new PluginException("multiple CropStore found");
+    }
+    this.cropStore = cropStore;
+  }
+
+  private void loadCropMapper(CropMapper cropMapper) {
+    if (this.cropMapper != null) {
+      cropMapper.close();
+      throw new PluginException("multiple CropMapper found");
+    }
+    this.cropMapper = cropMapper;
+  }
+
+  private synchronized void loadIndexer(CropIndexer cropIndexer) {
+    if (indexerMap.containsKey(cropIndexer.getIndexType())) {
+      cropIndexer.close();
+      throw new PluginException("multiple Indexer found for type " + cropIndexer.getIndexType());
+    }
+    this.indexerMap.put(cropIndexer.getIndexType(), cropIndexer);
+  }
+
+  protected void loadInternalPlugins() {
+    if (!indexerMap.containsKey(IndexType.UNIQUE)) {
+      log.debug("Loading default unique indexer");
+      CropPlugin plugin = new UniqueIndexer();
+      loadPlugin(plugin);
     }
 
-    private void loadPlugin(CropPlugin plugin) {
-        populatePlugins(plugin);
+    if (!indexerMap.containsKey(IndexType.NON_UNIQUE)) {
+      log.debug("Loading default non-unique indexer");
+      CropPlugin plugin = new NonUniqueIndexer();
+      loadPlugin(plugin);
     }
 
-    private void initializePlugin(CropPlugin plugin) {
-        plugin.initialize(cropConfig);
+    if (!indexerMap.containsKey(IndexType.FULL_TEXT)) {
+      log.debug("Loading crop text indexer");
+      CropPlugin plugin = new CropTextIndexer();
+      loadPlugin(plugin);
     }
 
-    private void populatePlugins(CropPlugin plugin) {
-        if (plugin != null) {
-            if (plugin instanceof CropIndexer) {
-                loadIndexer((CropIndexer) plugin);
-            } else if (plugin instanceof CropMapper) {
-                loadCropMapper((CropMapper) plugin);
-            } else if (plugin instanceof CropStore) {
-                loadCropStore((CropStore<?>) plugin);
-            } else {
-                plugin.close();
-                throw new PluginException("invalid plugin loaded " + plugin);
-            }
-        }
+    if (cropMapper == null) {
+      log.debug("Loading mappable mapper");
+      CropPlugin plugin = new MappableMapper();
+      loadPlugin(plugin);
     }
 
-    private void loadCropStore(CropStore<?> cropStore) {
-        if (this.cropStore != null) {
-            cropStore.close();
-            throw new PluginException("multiple CropStore found");
-        }
-        this.cropStore = cropStore;
+    if (cropStore == null) {
+      loadModule(new InMemoryStoreModule());
+      log.warn("No persistent storage module found, creating an in-memory database");
     }
-
-    private void loadCropMapper(CropMapper cropMapper) {
-        if (this.cropMapper != null) {
-            cropMapper.close();
-            throw new PluginException("multiple CropMapper found");
-        }
-        this.cropMapper = cropMapper;
-    }
-
-    private synchronized void loadIndexer(CropIndexer cropIndexer) {
-        if (indexerMap.containsKey(cropIndexer.getIndexType())) {
-            cropIndexer.close();
-            throw new PluginException("multiple Indexer found for type "
-                + cropIndexer.getIndexType());
-        }
-        this.indexerMap.put(cropIndexer.getIndexType(), cropIndexer);
-    }
-
-    protected void loadInternalPlugins() {
-        if (!indexerMap.containsKey(IndexType.UNIQUE)) {
-            log.debug("Loading default unique indexer");
-            CropPlugin plugin = new UniqueIndexer();
-            loadPlugin(plugin);
-        }
-
-        if (!indexerMap.containsKey(IndexType.NON_UNIQUE)) {
-            log.debug("Loading default non-unique indexer");
-            CropPlugin plugin = new NonUniqueIndexer();
-            loadPlugin(plugin);
-        }
-
-        if (!indexerMap.containsKey(IndexType.FULL_TEXT)) {
-            log.debug("Loading crop text indexer");
-            CropPlugin plugin = new CropTextIndexer();
-            loadPlugin(plugin);
-        }
-
-        if (cropMapper == null) {
-            log.debug("Loading mappable mapper");
-            CropPlugin plugin = new MappableMapper();
-            loadPlugin(plugin);
-        }
-
-        if (cropStore == null) {
-            loadModule(new InMemoryStoreModule());
-            log.warn("No persistent storage module found, creating an in-memory database");
-        }
-    }
+  }
 }

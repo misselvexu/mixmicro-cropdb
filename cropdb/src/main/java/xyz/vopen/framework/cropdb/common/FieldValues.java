@@ -16,52 +16,50 @@ import java.util.List;
  */
 @Data
 public class FieldValues {
-    private CropId cropId;
-    private Fields fields;
-    private List<Pair<String, Object>> values;
+  private CropId cropId;
+  private Fields fields;
+  private List<Pair<String, Object>> values;
 
-    /**
-     * Instantiates a new Field values.
-     */
-    public FieldValues() {
-        values = new ArrayList<>();
+  /** Instantiates a new Field values. */
+  public FieldValues() {
+    values = new ArrayList<>();
+  }
+
+  /**
+   * Get the value of the field.
+   *
+   * @param field the field
+   * @return the value
+   */
+  public Object get(String field) {
+    if (fields.getFieldNames().contains(field)) {
+      for (Pair<String, Object> value : values) {
+        if (value.getFirst().equals(field)) {
+          return value.getSecond();
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Gets the {@link Fields}.
+   *
+   * @return the fields
+   */
+  public Fields getFields() {
+    if (fields != null) {
+      return fields;
     }
 
-    /**
-     * Get the value of the field.
-     *
-     * @param field the field
-     * @return the value
-     */
-    public Object get(String field) {
-        if (fields.getFieldNames().contains(field)) {
-            for (Pair<String, Object> value : values) {
-                if (value.getFirst().equals(field)) {
-                    return value.getSecond();
-                }
-            }
-        }
-        return null;
+    this.fields = new Fields();
+    List<String> fieldNames = new ArrayList<>();
+    for (Pair<String, Object> value : getValues()) {
+      if (!StringUtils.isNullOrEmpty(value.getFirst())) {
+        fieldNames.add(value.getFirst());
+      }
     }
-
-    /**
-     * Gets the {@link Fields}.
-     *
-     * @return the fields
-     */
-    public Fields getFields() {
-        if (fields != null) {
-            return fields;
-        }
-
-        this.fields = new Fields();
-        List<String> fieldNames = new ArrayList<>();
-        for (Pair<String, Object> value : getValues()) {
-            if (!StringUtils.isNullOrEmpty(value.getFirst())) {
-                fieldNames.add(value.getFirst());
-            }
-        }
-        fields.setFieldNames(fieldNames);
-        return fields;
-    }
+    fields.setFieldNames(fieldNames);
+    return fields;
+  }
 }

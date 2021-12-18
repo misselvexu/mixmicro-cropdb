@@ -23,13 +23,13 @@ package xyz.vopen.framework.cropdb.index;
  * @since 4.0
  */
 public final class UniqueIndexer extends ComparableIndexer {
-    @Override
-    public String getIndexType() {
-        return IndexType.UNIQUE;
-    }
+  @Override
+  public String getIndexType() {
+    return IndexType.UNIQUE;
+  }
 
-    @Override
-    public boolean isUnique() {
-        return true;
-    }
+  @Override
+  public boolean isUnique() {
+    return true;
+  }
 }

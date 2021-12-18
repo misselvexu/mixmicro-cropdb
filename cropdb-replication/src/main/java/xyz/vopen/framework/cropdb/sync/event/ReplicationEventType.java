@@ -16,11 +16,9 @@
 
 package xyz.vopen.framework.cropdb.sync.event;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 public enum ReplicationEventType {
-    Started,
-    Stopped,
-    Error
+  Started,
+  Stopped,
+  Error
 }

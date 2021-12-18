@@ -18,29 +18,27 @@ import java.util.Set;
  */
 @Accessors(fluent = true)
 public class InMemoryConfig implements StoreConfig {
-    @Getter
-    @Setter(AccessLevel.PACKAGE)
-    private Set<StoreEventListener> eventListeners;
+  @Getter
+  @Setter(AccessLevel.PACKAGE)
+  private Set<StoreEventListener> eventListeners;
 
-    /**
-     * Instantiates a new {@link InMemoryConfig}.
-     */
-    InMemoryConfig() {
-        this.eventListeners = new HashSet<>();
-    }
+  /** Instantiates a new {@link InMemoryConfig}. */
+  InMemoryConfig() {
+    this.eventListeners = new HashSet<>();
+  }
 
-    @Override
-    public final String filePath() {
-        return null;
-    }
+  @Override
+  public final String filePath() {
+    return null;
+  }
 
-    @Override
-    public Boolean isReadOnly() {
-        return false;
-    }
+  @Override
+  public Boolean isReadOnly() {
+    return false;
+  }
 
-    @Override
-    public void addStoreEventListener(StoreEventListener listener) {
-        eventListeners.add(listener);
-    }
+  @Override
+  public void addStoreEventListener(StoreEventListener listener) {
+    eventListeners.add(listener);
+  }
 }

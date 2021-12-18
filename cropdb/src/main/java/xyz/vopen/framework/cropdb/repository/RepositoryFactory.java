@@ -39,116 +39,115 @@ import static xyz.vopen.framework.cropdb.common.util.ObjectUtils.findRepositoryN
  * @since 1.0
  */
 public class RepositoryFactory {
-    private final Map<String, ObjectRepository<?>> repositoryMap;
-    private final CollectionFactory collectionFactory;
-    private final ReentrantLock lock;
+  private final Map<String, ObjectRepository<?>> repositoryMap;
+  private final CollectionFactory collectionFactory;
+  private final ReentrantLock lock;
 
-    /**
-     * Instantiates a new {@link RepositoryFactory}.
-     *
-     * @param collectionFactory the collection factory
-     */
-    public RepositoryFactory(CollectionFactory collectionFactory) {
-        this.collectionFactory = collectionFactory;
-        this.repositoryMap = new HashMap<>();
-        this.lock = new ReentrantLock();
+  /**
+   * Instantiates a new {@link RepositoryFactory}.
+   *
+   * @param collectionFactory the collection factory
+   */
+  public RepositoryFactory(CollectionFactory collectionFactory) {
+    this.collectionFactory = collectionFactory;
+    this.repositoryMap = new HashMap<>();
+    this.lock = new ReentrantLock();
+  }
+
+  /**
+   * Gets an {@link ObjectRepository} by type.
+   *
+   * @param <T> the type parameter
+   * @param cropConfig the crop config
+   * @param type the type
+   * @return the repository
+   */
+  public <T> ObjectRepository<T> getRepository(CropConfig cropConfig, Class<T> type) {
+    return getRepository(cropConfig, type, null);
+  }
+
+  /**
+   * Gets an {@link ObjectRepository} by type and a key.
+   *
+   * @param <T> the type parameter
+   * @param cropConfig the crop config
+   * @param type the type
+   * @param key the key
+   * @return the repository
+   */
+  @SuppressWarnings("unchecked")
+  public <T> ObjectRepository<T> getRepository(CropConfig cropConfig, Class<T> type, String key) {
+    if (type == null) {
+      throw new ValidationException("type cannot be null");
     }
 
-    /**
-     * Gets an {@link ObjectRepository} by type.
-     *
-     * @param <T>           the type parameter
-     * @param cropConfig the crop config
-     * @param type          the type
-     * @return the repository
-     */
-    public <T> ObjectRepository<T> getRepository(CropConfig cropConfig, Class<T> type) {
-        return getRepository(cropConfig, type, null);
+    if (cropConfig == null) {
+      throw new ValidationException("cropConfig cannot be null");
     }
 
-    /**
-     * Gets an {@link ObjectRepository} by type and a key.
-     *
-     * @param <T>           the type parameter
-     * @param cropConfig the crop config
-     * @param type          the type
-     * @param key           the key
-     * @return the repository
-     */
-    @SuppressWarnings("unchecked")
-    public <T> ObjectRepository<T> getRepository(CropConfig cropConfig, Class<T> type, String key) {
-        if (type == null) {
-            throw new ValidationException("type cannot be null");
-        }
+    String collectionName = findRepositoryName(type, key);
 
-        if (cropConfig == null) {
-            throw new ValidationException("cropConfig cannot be null");
-        }
-
-        String collectionName = findRepositoryName(type, key);
-
-        try {
-            lock.lock();
-            if (repositoryMap.containsKey(collectionName)) {
-                ObjectRepository<T> repository = (ObjectRepository<T>) repositoryMap.get(collectionName);
-                if (repository.isDropped() || !repository.isOpen()) {
-                    repositoryMap.remove(collectionName);
-                    return createRepository(cropConfig, type, collectionName, key);
-                } else {
-                    return repository;
-                }
-            } else {
-                return createRepository(cropConfig, type, collectionName, key);
-            }
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    /**
-     * Closes all opened {@link ObjectRepository}s and clear internal data from this class.
-     */
-    public void clear() {
-        try {
-            lock.lock();
-            for (ObjectRepository<?> repository : repositoryMap.values()) {
-                repository.close();
-            }
-            repositoryMap.clear();
-        } catch (Exception e) {
-            throw new CropIOException("failed to close an object repository", e);
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    private <T> ObjectRepository<T> createRepository(CropConfig cropConfig, Class<T> type,
-                                                     String collectionName, String key) {
-        CropMapper cropMapper = cropConfig.cropMapper();
-        CropStore<?> store = cropConfig.getCropStore();
-        if (cropMapper.isValueType(type)) {
-            throw new ValidationException("a value type cannot be used to create repository");
-        }
-
-        if (store.getCollectionNames().contains(collectionName)) {
-            throw new ValidationException("a collection with same entity name already exists");
-        }
-
-        CropCollection cropCollection = collectionFactory.getCollection(collectionName,
-            cropConfig, false);
-        ObjectRepository<T> repository = new DefaultObjectRepository<>(type, cropCollection, cropConfig);
-        repositoryMap.put(collectionName, repository);
-
-        writeCatalog(store, collectionName, key);
-        return repository;
-    }
-
-    private void writeCatalog(CropStore<?> store, String name, String key) {
-        StoreCatalog storeCatalog = store.getCatalog();
-        if (StringUtils.isNullOrEmpty(key)) {
-            storeCatalog.writeRepositoryEntry(name);
+    try {
+      lock.lock();
+      if (repositoryMap.containsKey(collectionName)) {
+        ObjectRepository<T> repository = (ObjectRepository<T>) repositoryMap.get(collectionName);
+        if (repository.isDropped() || !repository.isOpen()) {
+          repositoryMap.remove(collectionName);
+          return createRepository(cropConfig, type, collectionName, key);
         } else {
-            storeCatalog.writeKeyedRepositoryEntries(name);
+          return repository;
         }
+      } else {
+        return createRepository(cropConfig, type, collectionName, key);
+      }
+    } finally {
+      lock.unlock();
     }
+  }
+
+  /** Closes all opened {@link ObjectRepository}s and clear internal data from this class. */
+  public void clear() {
+    try {
+      lock.lock();
+      for (ObjectRepository<?> repository : repositoryMap.values()) {
+        repository.close();
+      }
+      repositoryMap.clear();
+    } catch (Exception e) {
+      throw new CropIOException("failed to close an object repository", e);
+    } finally {
+      lock.unlock();
+    }
+  }
+
+  private <T> ObjectRepository<T> createRepository(
+      CropConfig cropConfig, Class<T> type, String collectionName, String key) {
+    CropMapper cropMapper = cropConfig.cropMapper();
+    CropStore<?> store = cropConfig.getCropStore();
+    if (cropMapper.isValueType(type)) {
+      throw new ValidationException("a value type cannot be used to create repository");
+    }
+
+    if (store.getCollectionNames().contains(collectionName)) {
+      throw new ValidationException("a collection with same entity name already exists");
+    }
+
+    CropCollection cropCollection =
+        collectionFactory.getCollection(collectionName, cropConfig, false);
+    ObjectRepository<T> repository =
+        new DefaultObjectRepository<>(type, cropCollection, cropConfig);
+    repositoryMap.put(collectionName, repository);
+
+    writeCatalog(store, collectionName, key);
+    return repository;
+  }
+
+  private void writeCatalog(CropStore<?> store, String name, String key) {
+    StoreCatalog storeCatalog = store.getCatalog();
+    if (StringUtils.isNullOrEmpty(key)) {
+      storeCatalog.writeRepositoryEntry(name);
+    } else {
+      storeCatalog.writeKeyedRepositoryEntries(name);
+    }
+  }
 }

@@ -23,12 +23,12 @@ package xyz.vopen.framework.cropdb.exceptions;
  * @since 1.0
  */
 public class NotIdentifiableException extends CropException {
-    /**
-     * Instantiates a new Not identifiable exception.
-     *
-     * @param message the message
-     */
-    public NotIdentifiableException(String message) {
-        super(message);
-    }
+  /**
+   * Instantiates a new Not identifiable exception.
+   *
+   * @param message the message
+   */
+  public NotIdentifiableException(String message) {
+    super(message);
+  }
 }

@@ -15,6 +15,6 @@ import lombok.Setter;
 @Setter(AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 public final class MigrationStep {
-    private InstructionType instructionType;
-    private Object arguments;
+  private InstructionType instructionType;
+  private Object arguments;
 }

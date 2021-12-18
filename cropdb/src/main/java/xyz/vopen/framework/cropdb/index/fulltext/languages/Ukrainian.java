@@ -29,37 +29,12 @@ import java.util.Set;
  * @since 2.1.0
  */
 public class Ukrainian implements Language {
-    @Override
-    public Set<String> stopWords() {
-        return new HashSet<>(Arrays.asList(
-            "але",
-            "ви",
-            "вона",
-            "вони",
-            "воно",
-            "він",
-            "в╡д",
-            "з",
-            "й",
-            "коли",
-            "ми",
-            "нам",
-            "про",
-            "та",
-            "ти",
-            "хоча",
-            "це",
-            "цей",
-            "чи",
-            "чого",
-            "що",
-            "як",
-            "яко╞",
-            "із",
-            "інших",
-            "╙",
-            "╞х",
-            "╡"
-        ));
-    }
+  @Override
+  public Set<String> stopWords() {
+    return new HashSet<>(
+        Arrays.asList(
+            "але", "ви", "вона", "вони", "воно", "він", "в╡д", "з", "й", "коли", "ми", "нам", "про",
+            "та", "ти", "хоча", "це", "цей", "чи", "чого", "що", "як", "яко╞", "із", "інших", "╙",
+            "╞х", "╡"));
+  }
 }

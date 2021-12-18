@@ -18,11 +18,9 @@ package xyz.vopen.framework.cropdb.sync.message;
 
 import lombok.Data;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 @Data
 public class ErrorMessage implements DataGateMessage {
-    private MessageHeader header;
-    private String error;
+  private MessageHeader header;
+  private String error;
 }

@@ -21,24 +21,21 @@ import xyz.vopen.framework.cropdb.collection.CropId;
 import xyz.vopen.framework.cropdb.collection.Document;
 import xyz.vopen.framework.cropdb.common.tuples.Pair;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 class NotFilter extends CropFilter {
-    @Getter
-    private final Filter filter;
+  @Getter private final Filter filter;
 
-    NotFilter(Filter filter) {
-        this.filter = filter;
-    }
+  NotFilter(Filter filter) {
+    this.filter = filter;
+  }
 
-    @Override
-    public boolean apply(Pair<CropId, Document> element) {
-        return !filter.apply(element);
-    }
+  @Override
+  public boolean apply(Pair<CropId, Document> element) {
+    return !filter.apply(element);
+  }
 
-    @Override
-    public String toString() {
-        return "(!(" + filter.toString() + "))";
-    }
+  @Override
+  public String toString() {
+    return "(!(" + filter.toString() + "))";
+  }
 }

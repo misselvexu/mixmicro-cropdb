@@ -24,53 +24,50 @@ import xyz.vopen.framework.cropdb.index.IndexMap;
 
 import java.util.*;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 class NotInFilter extends ComparableArrayFilter {
-    @Getter
-    private final Set<Comparable<?>> comparableSet;
+  @Getter private final Set<Comparable<?>> comparableSet;
 
-    NotInFilter(String field, Comparable<?>... values) {
-        super(field, values);
-        this.comparableSet = new HashSet<>();
-        Collections.addAll(this.comparableSet, values);
+  NotInFilter(String field, Comparable<?>... values) {
+    super(field, values);
+    this.comparableSet = new HashSet<>();
+    Collections.addAll(this.comparableSet, values);
+  }
+
+  @Override
+  public boolean apply(Pair<CropId, Document> element) {
+    Document document = element.getSecond();
+    Object fieldValue = document.get(getField());
+
+    if (fieldValue instanceof Comparable) {
+      Comparable<?> comparable = (Comparable<?>) fieldValue;
+      return !comparableSet.contains(comparable);
+    }
+    return true;
+  }
+
+  public List<?> applyOnIndex(IndexMap indexMap) {
+    List<NavigableMap<Comparable<?>, Object>> subMap = new ArrayList<>();
+    List<CropId> cropIds = new ArrayList<>();
+
+    for (Pair<Comparable<?>, ?> entry : indexMap.entries()) {
+      if (!comparableSet.contains(entry.getFirst())) {
+        processIndexValue(entry.getSecond(), subMap, cropIds);
+      }
     }
 
-    @Override
-    public boolean apply(Pair<CropId, Document> element) {
-        Document document = element.getSecond();
-        Object fieldValue = document.get(getField());
-
-        if (fieldValue instanceof Comparable) {
-            Comparable<?> comparable = (Comparable<?>) fieldValue;
-            return !comparableSet.contains(comparable);
-        }
-        return true;
+    if (!subMap.isEmpty()) {
+      // if sub-map is populated then filtering on compound index, return sub-map
+      return subMap;
+    } else {
+      // else it is filtering on either single field index,
+      // or it is a terminal filter on compound index, return only crop-ids
+      return cropIds;
     }
+  }
 
-    public List<?> applyOnIndex(IndexMap indexMap) {
-        List<NavigableMap<Comparable<?>, Object>> subMap = new ArrayList<>();
-        List<CropId> cropIds = new ArrayList<>();
-
-        for (Pair<Comparable<?>, ?> entry : indexMap.entries()) {
-            if (!comparableSet.contains(entry.getFirst())) {
-                processIndexValue(entry.getSecond(), subMap, cropIds);
-            }
-        }
-
-        if (!subMap.isEmpty()) {
-            // if sub-map is populated then filtering on compound index, return sub-map
-            return subMap;
-        } else {
-            // else it is filtering on either single field index,
-            // or it is a terminal filter on compound index, return only crop-ids
-            return cropIds;
-        }
-    }
-
-    @Override
-    public String toString() {
-        return "(" + getField() + " not in " + Arrays.toString((Comparable<?>[]) getValue()) + ")";
-    }
+  @Override
+  public String toString() {
+    return "(" + getField() + " not in " + Arrays.toString((Comparable<?>[]) getValue()) + ")";
+  }
 }

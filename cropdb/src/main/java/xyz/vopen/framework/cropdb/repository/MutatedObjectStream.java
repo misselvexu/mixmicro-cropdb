@@ -25,55 +25,52 @@ import java.util.Iterator;
 
 import static xyz.vopen.framework.cropdb.common.Constants.DOC_ID;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>. */
 class MutatedObjectStream<T> implements RecordStream<T> {
-    private final RecordStream<Document> recordIterable;
-    private final Class<T> mutationType;
-    private final CropMapper cropMapper;
+  private final RecordStream<Document> recordIterable;
+  private final Class<T> mutationType;
+  private final CropMapper cropMapper;
 
-    MutatedObjectStream(CropMapper cropMapper,
-                        RecordStream<Document> recordIterable,
-                        Class<T> mutationType) {
-        this.recordIterable = recordIterable;
-        this.mutationType = mutationType;
-        this.cropMapper = cropMapper;
+  MutatedObjectStream(
+      CropMapper cropMapper, RecordStream<Document> recordIterable, Class<T> mutationType) {
+    this.recordIterable = recordIterable;
+    this.mutationType = mutationType;
+    this.cropMapper = cropMapper;
+  }
+
+  @Override
+  public Iterator<T> iterator() {
+    return new MutatedObjectIterator(cropMapper);
+  }
+
+  private class MutatedObjectIterator implements Iterator<T> {
+    private final CropMapper cropMapper;
+    private final Iterator<Document> documentIterator;
+
+    MutatedObjectIterator(CropMapper cropMapper) {
+      this.cropMapper = cropMapper;
+      this.documentIterator = recordIterable.iterator();
     }
 
     @Override
-    public Iterator<T> iterator() {
-        return new MutatedObjectIterator(cropMapper);
+    public boolean hasNext() {
+      return documentIterator.hasNext();
     }
 
-    private class MutatedObjectIterator implements Iterator<T> {
-        private final CropMapper cropMapper;
-        private final Iterator<Document> documentIterator;
-
-        MutatedObjectIterator(CropMapper cropMapper) {
-            this.cropMapper = cropMapper;
-            this.documentIterator = recordIterable.iterator();
-        }
-
-        @Override
-        public boolean hasNext() {
-            return documentIterator.hasNext();
-        }
-
-        @Override
-        public T next() {
-            Document item = documentIterator.next();
-            if (item != null) {
-                Document record = item.clone();
-                record.remove(DOC_ID);
-                return cropMapper.convert(record, mutationType);
-            }
-            return null;
-        }
-
-        @Override
-        public void remove() {
-            throw new InvalidOperationException("remove on a cursor is not supported");
-        }
+    @Override
+    public T next() {
+      Document item = documentIterator.next();
+      if (item != null) {
+        Document record = item.clone();
+        record.remove(DOC_ID);
+        return cropMapper.convert(record, mutationType);
+      }
+      return null;
     }
+
+    @Override
+    public void remove() {
+      throw new InvalidOperationException("remove on a cursor is not supported");
+    }
+  }
 }

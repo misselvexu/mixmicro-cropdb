@@ -29,9 +29,10 @@ import java.util.Set;
  * @since 2.1.0
  */
 public class Slovenian implements Language {
-    @Override
-    public Set<String> stopWords() {
-        return new HashSet<>(Arrays.asList(
+  @Override
+  public Set<String> stopWords() {
+    return new HashSet<>(
+        Arrays.asList(
             "a",
             "ali",
             "april",
@@ -477,7 +478,6 @@ public class Slovenian implements Language {
             "šesto",
             "štiri",
             "ž",
-            "že"
-        ));
-    }
+            "že"));
+  }
 }

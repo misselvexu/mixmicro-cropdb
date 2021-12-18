@@ -16,9 +16,7 @@
 
 package xyz.vopen.framework.cropdb.sync.message;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>. */
 public interface DataGateMessage {
-    MessageHeader getHeader();
+  MessageHeader getHeader();
 }

@@ -23,22 +23,22 @@ package xyz.vopen.framework.cropdb.filters;
  * @since 1.0
  */
 public abstract class StringFilter extends ComparableFilter {
-    /**
-     * Instantiates a new String filter.
-     *
-     * @param field the field
-     * @param value the value
-     */
-    protected StringFilter(String field, String value) {
-        super(field, value);
-    }
+  /**
+   * Instantiates a new String filter.
+   *
+   * @param field the field
+   * @param value the value
+   */
+  protected StringFilter(String field, String value) {
+    super(field, value);
+  }
 
-    /**
-     * Gets string value.
-     *
-     * @return the string value
-     */
-    public String getStringValue() {
-        return (String) getValue();
-    }
+  /**
+   * Gets string value.
+   *
+   * @return the string value
+   */
+  public String getStringValue() {
+    return (String) getValue();
+  }
 }

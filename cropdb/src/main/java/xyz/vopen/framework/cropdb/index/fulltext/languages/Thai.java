@@ -29,9 +29,10 @@ import java.util.Set;
  * @since 2.1.0
  */
 public class Thai implements Language {
-    @Override
-    public Set<String> stopWords() {
-        return new HashSet<>(Arrays.asList(
+  @Override
+  public Set<String> stopWords() {
+    return new HashSet<>(
+        Arrays.asList(
             "กล่าว",
             "กว่า",
             "กัน",
@@ -147,7 +148,6 @@ public class Thai implements Language {
             "ไป",
             "ไม่",
             "ไว้",
-            "้ง"
-        ));
-    }
+            "้ง"));
+  }
 }

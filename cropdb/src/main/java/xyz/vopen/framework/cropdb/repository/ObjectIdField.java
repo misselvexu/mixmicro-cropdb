@@ -35,93 +35,87 @@ import java.util.TreeMap;
 
 import static xyz.vopen.framework.cropdb.filters.FluentFilter.where;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 class ObjectIdField {
-    private final Reflector reflector;
-    private final IndexValidator indexValidator;
-    private String[] embeddedFieldNames;
+  private final Reflector reflector;
+  private final IndexValidator indexValidator;
+  private String[] embeddedFieldNames;
 
-    @Getter
-    @Setter
-    private Field field;
+  @Getter @Setter private Field field;
 
-    @Getter
-    @Setter
-    private boolean isEmbedded;
+  @Getter @Setter private boolean isEmbedded;
 
-    @Getter
-    @Setter
-    private String idFieldName;
+  @Getter @Setter private String idFieldName;
 
-    public ObjectIdField() {
-        this.reflector = new Reflector();
-        this.indexValidator = new IndexValidator(reflector);
+  public ObjectIdField() {
+    this.reflector = new Reflector();
+    this.indexValidator = new IndexValidator(reflector);
+  }
+
+  public String[] getFieldNames(CropMapper cropMapper) {
+    if (embeddedFieldNames != null) {
+      return embeddedFieldNames;
     }
 
-    public String[] getFieldNames(CropMapper cropMapper) {
-        if (embeddedFieldNames != null) {
-            return embeddedFieldNames;
-        }
-
-        if (!isEmbedded) {
-            embeddedFieldNames = new String[]{ idFieldName };
-            return embeddedFieldNames;
-        }
-
-        List<Field> fieldList = reflector.getAllFields(field.getType());
-        NavigableMap<Integer, String> orderedFieldName = new TreeMap<>();
-
-        boolean embeddedFieldFound = false;
-        for (Field field : fieldList) {
-            if (field.isAnnotationPresent(Embedded.class)) {
-                embeddedFieldFound = true;
-                Embedded embedded = field.getAnnotation(Embedded.class);
-                int order = embedded.order();
-                String fieldName = StringUtils.isNullOrEmpty(embedded.fieldName())
-                    ? field.getName() : embedded.fieldName();
-
-                String name = this.idFieldName + CropConfig.getFieldSeparator() + fieldName;
-                indexValidator.validate(field.getType(), name, cropMapper);
-
-                orderedFieldName.put(order, name);
-            }
-        }
-
-        if (!embeddedFieldFound) {
-            throw new IndexingException("no embedded field found for " + field.getName());
-        }
-
-        embeddedFieldNames = orderedFieldName.values().toArray(new String[0]);
-        return embeddedFieldNames;
+    if (!isEmbedded) {
+      embeddedFieldNames = new String[] {idFieldName};
+      return embeddedFieldNames;
     }
 
-    public Filter createUniqueFilter(Object value, CropMapper cropMapper) {
-        if (embeddedFieldNames.length == 1) {
-            return where(idFieldName).eq(value);
-        } else {
-            Document document = cropMapper.convert(value, Document.class);
-            Filter[] filters = new Filter[embeddedFieldNames.length];
+    List<Field> fieldList = reflector.getAllFields(field.getType());
+    NavigableMap<Integer, String> orderedFieldName = new TreeMap<>();
 
-            int index = 0;
-            for (String field : embeddedFieldNames) {
-                String docFieldName = getEmbeddedFieldName(field);
-                Object fieldValue = document.get(docFieldName);
-                filters[index++] = where(field).eq(fieldValue);
-            }
+    boolean embeddedFieldFound = false;
+    for (Field field : fieldList) {
+      if (field.isAnnotationPresent(Embedded.class)) {
+        embeddedFieldFound = true;
+        Embedded embedded = field.getAnnotation(Embedded.class);
+        int order = embedded.order();
+        String fieldName =
+            StringUtils.isNullOrEmpty(embedded.fieldName())
+                ? field.getName()
+                : embedded.fieldName();
 
-            CropFilter cropFilter = (CropFilter) Filter.and(filters);
-            cropFilter.setObjectFilter(true);
-            return cropFilter;
-        }
+        String name = this.idFieldName + CropConfig.getFieldSeparator() + fieldName;
+        indexValidator.validate(field.getType(), name, cropMapper);
+
+        orderedFieldName.put(order, name);
+      }
     }
 
-    private String getEmbeddedFieldName(String fieldName) {
-        if (fieldName.contains(CropConfig.getFieldSeparator())) {
-            return fieldName.substring(fieldName.indexOf(CropConfig.getFieldSeparator()) + 1);
-        } else {
-            return fieldName;
-        }
+    if (!embeddedFieldFound) {
+      throw new IndexingException("no embedded field found for " + field.getName());
     }
+
+    embeddedFieldNames = orderedFieldName.values().toArray(new String[0]);
+    return embeddedFieldNames;
+  }
+
+  public Filter createUniqueFilter(Object value, CropMapper cropMapper) {
+    if (embeddedFieldNames.length == 1) {
+      return where(idFieldName).eq(value);
+    } else {
+      Document document = cropMapper.convert(value, Document.class);
+      Filter[] filters = new Filter[embeddedFieldNames.length];
+
+      int index = 0;
+      for (String field : embeddedFieldNames) {
+        String docFieldName = getEmbeddedFieldName(field);
+        Object fieldValue = document.get(docFieldName);
+        filters[index++] = where(field).eq(fieldValue);
+      }
+
+      CropFilter cropFilter = (CropFilter) Filter.and(filters);
+      cropFilter.setObjectFilter(true);
+      return cropFilter;
+    }
+  }
+
+  private String getEmbeddedFieldName(String fieldName) {
+    if (fieldName.contains(CropConfig.getFieldSeparator())) {
+      return fieldName.substring(fieldName.indexOf(CropConfig.getFieldSeparator()) + 1);
+    } else {
+      return fieldName;
+    }
+  }
 }

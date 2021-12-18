@@ -19,13 +19,11 @@ package xyz.vopen.framework.cropdb.sync.message;
 import lombok.Data;
 import xyz.vopen.framework.cropdb.sync.crdt.LastWriteWinState;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 @Data
 public class BatchChangeContinue implements ReceiptAware {
-    private MessageHeader header;
-    private LastWriteWinState feed;
-    private Integer batchSize;
-    private Integer debounce;
+  private MessageHeader header;
+  private LastWriteWinState feed;
+  private Integer batchSize;
+  private Integer debounce;
 }

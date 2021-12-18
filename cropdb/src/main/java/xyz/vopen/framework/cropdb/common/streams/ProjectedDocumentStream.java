@@ -34,104 +34,106 @@ import java.util.Iterator;
  * @since 1.0
  */
 public class ProjectedDocumentStream implements RecordStream<Document> {
-    private final RecordStream<Pair<CropId, Document>> recordStream;
-    private final Document projection;
+  private final RecordStream<Pair<CropId, Document>> recordStream;
+  private final Document projection;
+  private final ProcessorChain processorChain;
+
+  /**
+   * Instantiates a new Projected document stream.
+   *
+   * @param recordStream the record stream
+   * @param projection the projection
+   * @param processorChain the processor chain
+   */
+  public ProjectedDocumentStream(
+      RecordStream<Pair<CropId, Document>> recordStream,
+      Document projection,
+      ProcessorChain processorChain) {
+    this.recordStream = recordStream;
+    this.projection = projection;
+    this.processorChain = processorChain;
+  }
+
+  @Override
+  public Iterator<Document> iterator() {
+    Iterator<Pair<CropId, Document>> iterator =
+        recordStream == null ? Collections.emptyIterator() : recordStream.iterator();
+    return new ProjectedDocumentIterator(iterator, processorChain, projection);
+  }
+
+  @Override
+  public String toString() {
+    return toList().toString();
+  }
+
+  private static class ProjectedDocumentIterator implements Iterator<Document> {
+    private final Iterator<Pair<CropId, Document>> iterator;
     private final ProcessorChain processorChain;
+    private Document nextElement = null;
+    private final Document projection;
 
     /**
-     * Instantiates a new Projected document stream.
+     * Instantiates a new Projected document iterator.
      *
-     * @param recordStream   the record stream
-     * @param projection     the projection
+     * @param iterator the iterator
      * @param processorChain the processor chain
      */
-    public ProjectedDocumentStream(RecordStream<Pair<CropId, Document>> recordStream,
-                                   Document projection, ProcessorChain processorChain) {
-        this.recordStream = recordStream;
-        this.projection = projection;
-        this.processorChain = processorChain;
+    ProjectedDocumentIterator(
+        Iterator<Pair<CropId, Document>> iterator,
+        ProcessorChain processorChain,
+        Document projection) {
+      this.iterator = iterator;
+      this.processorChain = processorChain;
+      this.projection = projection;
+      nextMatch();
     }
 
     @Override
-    public Iterator<Document> iterator() {
-        Iterator<Pair<CropId, Document>> iterator = recordStream == null ? Collections.emptyIterator()
-            : recordStream.iterator();
-        return new ProjectedDocumentIterator(iterator, processorChain, projection);
+    public boolean hasNext() {
+      return nextElement != null;
     }
 
     @Override
-    public String toString() {
-        return toList().toString();
+    public Document next() {
+      Document returnValue = nextElement.clone();
+      nextMatch();
+      return returnValue;
     }
 
-    private static class ProjectedDocumentIterator implements Iterator<Document> {
-        private final Iterator<Pair<CropId, Document>> iterator;
-        private final ProcessorChain processorChain;
-        private Document nextElement = null;
-        private final Document projection;
-
-        /**
-         * Instantiates a new Projected document iterator.
-         *
-         * @param iterator       the iterator
-         * @param processorChain the processor chain
-         */
-        ProjectedDocumentIterator(Iterator<Pair<CropId, Document>> iterator,
-                                  ProcessorChain processorChain,
-                                  Document projection) {
-            this.iterator = iterator;
-            this.processorChain = processorChain;
-            this.projection = projection;
-            nextMatch();
+    private void nextMatch() {
+      while (iterator.hasNext()) {
+        Pair<CropId, Document> next = iterator.next();
+        Document document = next.getSecond();
+        if (document != null) {
+          Document projected = project(document.clone());
+          if (projected != null) {
+            nextElement = projected;
+            return;
+          }
         }
+      }
 
-        @Override
-        public boolean hasNext() {
-            return nextElement != null;
-        }
-
-        @Override
-        public Document next() {
-            Document returnValue = nextElement.clone();
-            nextMatch();
-            return returnValue;
-        }
-
-        private void nextMatch() {
-            while (iterator.hasNext()) {
-                Pair<CropId, Document> next = iterator.next();
-                Document document = next.getSecond();
-                if (document != null) {
-                    Document projected = project(document.clone());
-                    if (projected != null) {
-                        nextElement = projected;
-                        return;
-                    }
-                }
-            }
-
-            nextElement = null;
-        }
-
-        @Override
-        public void remove() {
-            throw new InvalidOperationException("remove on a cursor is not supported");
-        }
-
-        private Document project(Document original) {
-            if (projection == null) return original;
-            Document result = original.clone();
-
-            for (Pair<String, Object> pair : original) {
-                if (!projection.containsKey(pair.getFirst())) {
-                    result.remove(pair.getFirst());
-                }
-            }
-
-            // process the result
-            result = processorChain.processAfterRead(result);
-            return result;
-        }
+      nextElement = null;
     }
+
+    @Override
+    public void remove() {
+      throw new InvalidOperationException("remove on a cursor is not supported");
+    }
+
+    private Document project(Document original) {
+      if (projection == null) return original;
+      Document result = original.clone();
+
+      for (Pair<String, Object> pair : original) {
+        if (!projection.containsKey(pair.getFirst())) {
+          result.remove(pair.getFirst());
+        }
+      }
+
+      // process the result
+      result = processorChain.processAfterRead(result);
+      return result;
+    }
+  }
 }
-

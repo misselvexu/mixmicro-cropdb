@@ -7,8 +7,8 @@ package xyz.vopen.framework.cropdb.common;
  * @since 4.0
  */
 public class UnknownType implements Comparable<UnknownType> {
-    @Override
-    public int compareTo(UnknownType ignore) {
-        return 0;
-    }
+  @Override
+  public int compareTo(UnknownType ignore) {
+    return 0;
+  }
 }

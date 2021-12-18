@@ -19,11 +19,9 @@ package xyz.vopen.framework.cropdb.sync.message;
 import lombok.Data;
 import xyz.vopen.framework.cropdb.sync.crdt.LastWriteWinState;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>. */
 @Data
 public class DataGateFeed implements ReceiptAware {
-    private MessageHeader header;
-    private LastWriteWinState feed;
+  private MessageHeader header;
+  private LastWriteWinState feed;
 }

@@ -29,77 +29,77 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 @Slf4j
 @Getter
 @Setter
 public class RocksDBReference implements AutoCloseable {
-    private Options options;
-    private DBOptions dbOptions;
-    private ColumnFamilyOptions columnFamilyOptions;
-    private RocksDB rocksDB;
-    private BytewiseComparator dbComparator;
+  private Options options;
+  private DBOptions dbOptions;
+  private ColumnFamilyOptions columnFamilyOptions;
+  private RocksDB rocksDB;
+  private BytewiseComparator dbComparator;
 
-    private List<ColumnFamilyDescriptor> columnFamilyDescriptors;
-    private Map<String, ColumnFamilyHandle> columnFamilyHandleRegistry;
+  private List<ColumnFamilyDescriptor> columnFamilyDescriptors;
+  private Map<String, ColumnFamilyHandle> columnFamilyHandleRegistry;
 
-    public RocksDBReference() {
-        this.columnFamilyDescriptors = new ArrayList<>();
-        this.columnFamilyHandleRegistry = new ConcurrentHashMap<>();
-        this.dbComparator = null;
+  public RocksDBReference() {
+    this.columnFamilyDescriptors = new ArrayList<>();
+    this.columnFamilyHandleRegistry = new ConcurrentHashMap<>();
+    this.dbComparator = null;
+  }
+
+  @Override
+  public void close() throws RocksDBException {
+    // if crop maps are already closed, this will affect nothing
+    columnFamilyHandleRegistry.values().forEach(AbstractImmutableNativeReference::close);
+    columnFamilyHandleRegistry.clear();
+
+    rocksDB.closeE();
+    dbOptions.close();
+    dbComparator.close();
+    columnFamilyOptions.close();
+    options.close();
+  }
+
+  public synchronized ColumnFamilyHandle getOrCreateColumnFamily(String name) {
+    if (columnFamilyHandleRegistry.containsKey(name)) {
+      return columnFamilyHandleRegistry.get(name);
+    } else {
+      try {
+        ColumnFamilyHandle handle =
+            rocksDB.createColumnFamily(
+                new ColumnFamilyDescriptor(
+                    name.getBytes(StandardCharsets.UTF_8), columnFamilyOptions));
+        columnFamilyHandleRegistry.put(name, handle);
+        return handle;
+      } catch (RocksDBException e) {
+        log.error("Error while retrieving column family handle", e);
+        throw new CropIOException("failed to obtain column family handle", e);
+      }
     }
+  }
 
-    @Override
-    public void close() throws RocksDBException {
-        // if crop maps are already closed, this will affect nothing
-        columnFamilyHandleRegistry.values().forEach(AbstractImmutableNativeReference::close);
-        columnFamilyHandleRegistry.clear();
-
-        rocksDB.closeE();
-        dbOptions.close();
-        dbComparator.close();
-        columnFamilyOptions.close();
-        options.close();
+  public void dropColumnFamily(String mapName) {
+    if (columnFamilyHandleRegistry.containsKey(mapName)) {
+      try {
+        ColumnFamilyHandle handle = columnFamilyHandleRegistry.get(mapName);
+        rocksDB.dropColumnFamily(handle);
+        handle.close();
+        columnFamilyHandleRegistry.remove(mapName);
+      } catch (RocksDBException e) {
+        log.error("Error while dropping column family " + mapName, e);
+        throw new CropIOException("failed to drop column family", e);
+      }
     }
+  }
 
-    public synchronized ColumnFamilyHandle getOrCreateColumnFamily(String name) {
-        if (columnFamilyHandleRegistry.containsKey(name)) {
-            return columnFamilyHandleRegistry.get(name);
-        } else {
-            try {
-                ColumnFamilyHandle handle = rocksDB.createColumnFamily(
-                    new ColumnFamilyDescriptor(name.getBytes(StandardCharsets.UTF_8), columnFamilyOptions));
-                columnFamilyHandleRegistry.put(name, handle);
-                return handle;
-            } catch (RocksDBException e) {
-                log.error("Error while retrieving column family handle", e);
-                throw new CropIOException("failed to obtain column family handle", e);
-            }
-        }
+  public BytewiseComparator getDbComparator() {
+    // delayed initialization, otherwise initializing
+    // it in ctor is throwing java.lang.UnsatisfiedLinkError
+    if (dbComparator == null) {
+      dbComparator = new BytewiseComparator(new ComparatorOptions());
     }
-
-    public void dropColumnFamily(String mapName) {
-        if (columnFamilyHandleRegistry.containsKey(mapName)) {
-            try {
-                ColumnFamilyHandle handle = columnFamilyHandleRegistry.get(mapName);
-                rocksDB.dropColumnFamily(handle);
-                handle.close();
-                columnFamilyHandleRegistry.remove(mapName);
-            } catch (RocksDBException e) {
-                log.error("Error while dropping column family " + mapName, e);
-                throw new CropIOException("failed to drop column family", e);
-            }
-        }
-    }
-
-    public BytewiseComparator getDbComparator() {
-        // delayed initialization, otherwise initializing
-        // it in ctor is throwing java.lang.UnsatisfiedLinkError
-        if (dbComparator == null) {
-            dbComparator = new BytewiseComparator(new ComparatorOptions());
-        }
-        return dbComparator;
-    }
+    return dbComparator;
+  }
 }

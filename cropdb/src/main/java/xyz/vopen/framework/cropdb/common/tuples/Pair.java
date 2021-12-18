@@ -37,32 +37,32 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Pair<A, B> implements Serializable {
-    private static final long serialVersionUID = 1598774244L;
+  private static final long serialVersionUID = 1598774244L;
 
-    private A first;
-    private B second;
+  private A first;
+  private B second;
 
-    /**
-     * Creates a new pair.
-     *
-     * @param <A>    the type parameter
-     * @param <B>    the type parameter
-     * @param first  the first
-     * @param second the second
-     * @return the pair
-     */
-    public static <A, B> Pair<A, B> pair(A first, B second) {
-        return new Pair<>(first, second);
-    }
+  /**
+   * Creates a new pair.
+   *
+   * @param <A> the type parameter
+   * @param <B> the type parameter
+   * @param first the first
+   * @param second the second
+   * @return the pair
+   */
+  public static <A, B> Pair<A, B> pair(A first, B second) {
+    return new Pair<>(first, second);
+  }
 
-    private void writeObject(ObjectOutputStream stream) throws IOException {
-        stream.writeObject(first);
-        stream.writeObject(second);
-    }
+  private void writeObject(ObjectOutputStream stream) throws IOException {
+    stream.writeObject(first);
+    stream.writeObject(second);
+  }
 
-    @SuppressWarnings("unchecked")
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        first = (A) stream.readObject();
-        second = (B) stream.readObject();
-    }
+  @SuppressWarnings("unchecked")
+  private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    first = (A) stream.readObject();
+    second = (B) stream.readObject();
+  }
 }

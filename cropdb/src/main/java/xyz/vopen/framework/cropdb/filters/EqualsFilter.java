@@ -26,35 +26,33 @@ import java.util.List;
 
 import static xyz.vopen.framework.cropdb.common.util.ObjectUtils.deepEquals;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>. */
 public class EqualsFilter extends ComparableFilter {
-    EqualsFilter(String field, Object value) {
-        super(field, value);
+  EqualsFilter(String field, Object value) {
+    super(field, value);
+  }
+
+  @Override
+  public boolean apply(Pair<CropId, Document> element) {
+    Document document = element.getSecond();
+    Object fieldValue = document.get(getField());
+    return deepEquals(fieldValue, getValue());
+  }
+
+  @Override
+  public List<?> applyOnIndex(IndexMap indexMap) {
+    Object value = indexMap.get((Comparable<?>) getValue());
+    if (value instanceof List) {
+      return ((List<?>) value);
     }
 
-    @Override
-    public boolean apply(Pair<CropId, Document> element) {
-        Document document = element.getSecond();
-        Object fieldValue = document.get(getField());
-        return deepEquals(fieldValue, getValue());
-    }
+    List<Object> result = new ArrayList<>();
+    result.add(value);
+    return result;
+  }
 
-    @Override
-    public List<?> applyOnIndex(IndexMap indexMap) {
-        Object value = indexMap.get((Comparable<?>) getValue());
-        if (value instanceof List) {
-            return ((List<?>) value);
-        }
-
-        List<Object> result = new ArrayList<>();
-        result.add(value);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "(" + getField() + " == " + getValue() + ")";
-    }
+  @Override
+  public String toString() {
+    return "(" + getField() + " == " + getValue() + ")";
+  }
 }

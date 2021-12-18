@@ -21,20 +21,18 @@ import xyz.vopen.framework.cropdb.sync.ReplicationTemplate;
 import xyz.vopen.framework.cropdb.sync.message.BatchAck;
 import xyz.vopen.framework.cropdb.sync.message.Receipt;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 public class BatchAckHandler implements MessageHandler<BatchAck> {
-    private final ReplicationTemplate replicationTemplate;
+  private final ReplicationTemplate replicationTemplate;
 
-    public BatchAckHandler(ReplicationTemplate replicationTemplate) {
-        this.replicationTemplate = replicationTemplate;
-    }
+  public BatchAckHandler(ReplicationTemplate replicationTemplate) {
+    this.replicationTemplate = replicationTemplate;
+  }
 
-    @Override
-    public void handleMessage(BatchAck message) {
-        Receipt receipt = message.getReceipt();
-        FeedJournal journal = replicationTemplate.getFeedJournal();
-        journal.accumulate(receipt);
-    }
+  @Override
+  public void handleMessage(BatchAck message) {
+    Receipt receipt = message.getReceipt();
+    FeedJournal journal = replicationTemplate.getFeedJournal();
+    journal.accumulate(receipt);
+  }
 }

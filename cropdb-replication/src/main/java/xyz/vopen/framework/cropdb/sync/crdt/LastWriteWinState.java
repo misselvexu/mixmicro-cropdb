@@ -26,17 +26,16 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 @Data
 public class LastWriteWinState {
-    @JsonDeserialize(contentUsing = DocumentDeserializer.class)
-    private Set<Document> changes;
-    private Map<String, Long> tombstones;
+  @JsonDeserialize(contentUsing = DocumentDeserializer.class)
+  private Set<Document> changes;
 
-    public LastWriteWinState() {
-        changes = new LinkedHashSet<>();
-        tombstones = new LinkedHashMap<>();
-    }
+  private Map<String, Long> tombstones;
+
+  public LastWriteWinState() {
+    changes = new LinkedHashSet<>();
+    tombstones = new LinkedHashMap<>();
+  }
 }

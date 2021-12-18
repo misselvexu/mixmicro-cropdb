@@ -23,30 +23,28 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 public interface ReceiptAware extends DataGateMessage {
-    LastWriteWinState getFeed();
+  LastWriteWinState getFeed();
 
-    default Receipt calculateReceipt() {
-        Set<String> added = new HashSet<>();
-        Set<String> removed = new HashSet<>();
+  default Receipt calculateReceipt() {
+    Set<String> added = new HashSet<>();
+    Set<String> removed = new HashSet<>();
 
-        if (getFeed() != null) {
-            if (getFeed().getChanges() != null) {
-                for (Document change : getFeed().getChanges()) {
-                    added.add(change.getId().getIdValue());
-                }
-            }
-
-            if (getFeed().getTombstones() != null) {
-                for (Map.Entry<String, Long> entry : getFeed().getTombstones().entrySet()) {
-                    removed.add(entry.getKey());
-                }
-            }
+    if (getFeed() != null) {
+      if (getFeed().getChanges() != null) {
+        for (Document change : getFeed().getChanges()) {
+          added.add(change.getId().getIdValue());
         }
+      }
 
-        return new Receipt(added, removed);
+      if (getFeed().getTombstones() != null) {
+        for (Map.Entry<String, Long> entry : getFeed().getTombstones().entrySet()) {
+          removed.add(entry.getKey());
+        }
+      }
     }
+
+    return new Receipt(added, removed);
+  }
 }

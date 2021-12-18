@@ -29,9 +29,10 @@ import java.util.Set;
  * @since 2.1.0
  */
 public class Portuguese implements Language {
-    @Override
-    public Set<String> stopWords() {
-        return new HashSet<>(Arrays.asList(
+  @Override
+  public Set<String> stopWords() {
+    return new HashSet<>(
+        Arrays.asList(
             "a",
             "acerca",
             "adeus",
@@ -591,7 +592,6 @@ public class Portuguese implements Language {
             "é",
             "éramos",
             "és",
-            "último"
-        ));
-    }
+            "último"));
+  }
 }

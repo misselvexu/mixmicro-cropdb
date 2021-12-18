@@ -30,40 +30,40 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CollectionEventInfo<T> {
-    /**
-     * Specifies the item triggering the event.
-     *
-     * @param item the item that changed.
-     * @return the item.
-     */
-    private T item;
+  /**
+   * Specifies the item triggering the event.
+   *
+   * @param item the item that changed.
+   * @return the item.
+   */
+  private T item;
 
-    /**
-     * Specifies the event type.
-     *
-     * @param eventType the type of the event.
-     * @return the type of the event.
-     */
-    private EventType eventType;
+  /**
+   * Specifies the event type.
+   *
+   * @param eventType the type of the event.
+   * @return the type of the event.
+   */
+  private EventType eventType;
 
-    /**
-     * Specifies the unix timestamp of the change.
-     *
-     * @param timestamp the unix timestamp of the change.
-     * @return the unix timestamp of the change.
-     */
-    private long timestamp;
+  /**
+   * Specifies the unix timestamp of the change.
+   *
+   * @param timestamp the unix timestamp of the change.
+   * @return the unix timestamp of the change.
+   */
+  private long timestamp;
 
-    /**
-     * Specifies the name of the originator who has initiated this event.
-     *
-     * @param originator name of originator of the event.
-     * @return name of the originator.
-     * @since 4.0.0
-     */
-    private String originator;
+  /**
+   * Specifies the name of the originator who has initiated this event.
+   *
+   * @param originator name of originator of the event.
+   * @return name of the originator.
+   * @since 4.0.0
+   */
+  private String originator;
 
-    public CollectionEventInfo(EventType eventType) {
-        this.eventType = eventType;
-    }
+  public CollectionEventInfo(EventType eventType) {
+    this.eventType = eventType;
+  }
 }

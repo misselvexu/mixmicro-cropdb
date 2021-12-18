@@ -29,9 +29,10 @@ import java.util.Set;
  * @since 2.1.0
  */
 public class Arabic implements Language {
-    @Override
-    public Set<String> stopWords() {
-        return new HashSet<>(Arrays.asList(
+  @Override
+  public Set<String> stopWords() {
+    return new HashSet<>(
+        Arrays.asList(
             "،",
             "آض",
             "آمينَ",
@@ -511,7 +512,6 @@ public class Arabic implements Language {
             "يكون",
             "يمكن",
             "يوم",
-            "ّأيّان"
-        ));
-    }
+            "ّأيّان"));
+  }
 }

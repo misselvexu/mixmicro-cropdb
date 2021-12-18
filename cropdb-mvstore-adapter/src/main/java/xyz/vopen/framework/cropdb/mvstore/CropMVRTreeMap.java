@@ -32,99 +32,100 @@ import java.util.Iterator;
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 class CropMVRTreeMap<Key extends BoundingBox, Value> implements CropRTree<Key, Value> {
-    private final MVRTreeMap<Key> mvMap;
-    private final CropStore<?> cropStore;
-    private final MVStore mvStore;
+  private final MVRTreeMap<Key> mvMap;
+  private final CropStore<?> cropStore;
+  private final MVStore mvStore;
 
-    CropMVRTreeMap(MVRTreeMap<Key> mvMap, CropStore<?> cropStore) {
-        this.mvMap = mvMap;
-        this.cropStore = cropStore;
-        this.mvStore = mvMap.getStore();
+  CropMVRTreeMap(MVRTreeMap<Key> mvMap, CropStore<?> cropStore) {
+    this.mvMap = mvMap;
+    this.cropStore = cropStore;
+    this.mvStore = mvMap.getStore();
+  }
+
+  @Override
+  public void add(Key key, CropId cropId) {
+    if (cropId != null && cropId.getIdValue() != null) {
+      SpatialKey spatialKey = getKey(key, Long.parseLong(cropId.getIdValue()));
+      MVStore.TxCounter txCounter = mvStore.registerVersionUsage();
+      try {
+        mvMap.add(spatialKey, key);
+      } finally {
+        mvStore.deregisterVersionUsage(txCounter);
+      }
     }
+  }
 
-    @Override
-    public void add(Key key, CropId cropId) {
-        if (cropId != null && cropId.getIdValue() != null) {
-            SpatialKey spatialKey = getKey(key, Long.parseLong(cropId.getIdValue()));
-            MVStore.TxCounter txCounter = mvStore.registerVersionUsage();
-            try {
-                mvMap.add(spatialKey, key);
-            } finally {
-                mvStore.deregisterVersionUsage(txCounter);
-            }
-        }
+  @Override
+  public void remove(Key key, CropId cropId) {
+    if (cropId != null && cropId.getIdValue() != null) {
+      SpatialKey spatialKey = getKey(key, Long.parseLong(cropId.getIdValue()));
+      MVStore.TxCounter txCounter = mvStore.registerVersionUsage();
+      try {
+        mvMap.remove(spatialKey);
+      } finally {
+        mvStore.deregisterVersionUsage(txCounter);
+      }
     }
+  }
 
-    @Override
-    public void remove(Key key, CropId cropId) {
-        if (cropId != null && cropId.getIdValue() != null) {
-            SpatialKey spatialKey = getKey(key, Long.parseLong(cropId.getIdValue()));
-            MVStore.TxCounter txCounter = mvStore.registerVersionUsage();
-            try {
-                mvMap.remove(spatialKey);
-            } finally {
-                mvStore.deregisterVersionUsage(txCounter);
-            }
-        }
+  @Override
+  public RecordStream<CropId> findIntersectingKeys(Key key) {
+    SpatialKey spatialKey = getKey(key, 0L);
+    MVRTreeMap.RTreeCursor treeCursor = mvMap.findIntersectingKeys(spatialKey);
+    return getRecordStream(treeCursor);
+  }
+
+  @Override
+  public RecordStream<CropId> findContainedKeys(Key key) {
+    SpatialKey spatialKey = getKey(key, 0L);
+    MVRTreeMap.RTreeCursor treeCursor = mvMap.findContainedKeys(spatialKey);
+    return getRecordStream(treeCursor);
+  }
+
+  @Override
+  public long size() {
+    return mvMap.sizeAsLong();
+  }
+
+  private SpatialKey getKey(Key key, long id) {
+    if (key == null) {
+      return new SpatialKey(id);
+    } else {
+      return new SpatialKey(id, key.getMinX(), key.getMaxX(), key.getMinY(), key.getMaxY());
     }
+  }
 
-    @Override
-    public RecordStream<CropId> findIntersectingKeys(Key key) {
-        SpatialKey spatialKey = getKey(key, 0L);
-        MVRTreeMap.RTreeCursor treeCursor = mvMap.findIntersectingKeys(spatialKey);
-        return getRecordStream(treeCursor);
-    }
-
-    @Override
-    public RecordStream<CropId> findContainedKeys(Key key) {
-        SpatialKey spatialKey = getKey(key, 0L);
-        MVRTreeMap.RTreeCursor treeCursor = mvMap.findContainedKeys(spatialKey);
-        return getRecordStream(treeCursor);
-    }
-
-    @Override
-    public long size() {
-        return mvMap.sizeAsLong();
-    }
-
-    private SpatialKey getKey(Key key, long id) {
-        if (key == null) {
-            return new SpatialKey(id);
-        } else {
-            return new SpatialKey(id, key.getMinX(),
-                key.getMaxX(), key.getMinY(), key.getMaxY());
-        }
-    }
-
-    private RecordStream<CropId> getRecordStream(MVRTreeMap.RTreeCursor treeCursor) {
-        return RecordStream.fromIterable(() -> new Iterator<CropId>() {
-            @Override
-            public boolean hasNext() {
+  private RecordStream<CropId> getRecordStream(MVRTreeMap.RTreeCursor treeCursor) {
+    return RecordStream.fromIterable(
+        () ->
+            new Iterator<CropId>() {
+              @Override
+              public boolean hasNext() {
                 return treeCursor.hasNext();
-            }
+              }
 
-            @Override
-            public CropId next() {
+              @Override
+              public CropId next() {
                 SpatialKey next = treeCursor.next();
                 return CropId.createId(Long.toString(next.getId()));
-            }
-        });
-    }
+              }
+            });
+  }
 
-    @Override
-    public void close() {
-        cropStore.closeRTree(mvMap.getName());
-    }
+  @Override
+  public void close() {
+    cropStore.closeRTree(mvMap.getName());
+  }
 
-    @Override
-    public void clear() {
-        mvMap.clear();
-    }
+  @Override
+  public void clear() {
+    mvMap.clear();
+  }
 
-    @Override
-    public void drop() {
-        mvMap.clear();
-        cropStore.closeRTree(mvMap.getName());
-        cropStore.removeRTree(mvMap.getName());
-    }
+  @Override
+  public void drop() {
+    mvMap.clear();
+    cropStore.closeRTree(mvMap.getName());
+    cropStore.removeRTree(mvMap.getName());
+  }
 }

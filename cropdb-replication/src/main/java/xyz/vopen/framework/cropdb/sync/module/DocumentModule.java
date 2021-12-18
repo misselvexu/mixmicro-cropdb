@@ -19,15 +19,12 @@ package xyz.vopen.framework.cropdb.sync.module;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import xyz.vopen.framework.cropdb.collection.Document;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 public class DocumentModule extends SimpleModule {
-    @Override
-    public void setupModule(SetupContext context) {
-        addSerializer(Document.class, new DocumentSerializer());
-        addDeserializer(Document.class, new DocumentDeserializer());
-        super.setupModule(context);
-    }
-
+  @Override
+  public void setupModule(SetupContext context) {
+    addSerializer(Document.class, new DocumentSerializer());
+    addDeserializer(Document.class, new DocumentDeserializer());
+    super.setupModule(context);
+  }
 }

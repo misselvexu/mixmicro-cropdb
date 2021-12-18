@@ -27,87 +27,84 @@ import xyz.vopen.framework.cropdb.index.CropIndexer;
 import java.util.Collection;
 
 /**
- *
  * @since 4.0
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 class DocumentIndexWriter {
-    private final CropConfig cropConfig;
-    private final IndexOperations indexOperations;
+  private final CropConfig cropConfig;
+  private final IndexOperations indexOperations;
 
-    DocumentIndexWriter(CropConfig cropConfig,
-                        IndexOperations indexOperations) {
-        this.cropConfig = cropConfig;
-        this.indexOperations = indexOperations;
+  DocumentIndexWriter(CropConfig cropConfig, IndexOperations indexOperations) {
+    this.cropConfig = cropConfig;
+    this.indexOperations = indexOperations;
+  }
+
+  void writeIndexEntry(Document document) {
+    Collection<IndexDescriptor> indexEntries = indexOperations.listIndexes();
+    if (indexEntries != null) {
+      for (IndexDescriptor indexDescriptor : indexEntries) {
+        String indexType = indexDescriptor.getIndexType();
+        CropIndexer cropIndexer = cropConfig.findIndexer(indexType);
+
+        writeIndexEntryInternal(indexDescriptor, document, cropIndexer);
+      }
     }
+  }
 
-    void writeIndexEntry(Document document) {
-        Collection<IndexDescriptor> indexEntries = indexOperations.listIndexes();
-        if (indexEntries != null) {
-            for (IndexDescriptor indexDescriptor : indexEntries) {
-                String indexType = indexDescriptor.getIndexType();
-                CropIndexer cropIndexer = cropConfig.findIndexer(indexType);
+  void removeIndexEntry(Document document) {
+    Collection<IndexDescriptor> indexEntries = indexOperations.listIndexes();
+    if (indexEntries != null) {
+      for (IndexDescriptor indexDescriptor : indexEntries) {
+        String indexType = indexDescriptor.getIndexType();
+        CropIndexer cropIndexer = cropConfig.findIndexer(indexType);
 
-                writeIndexEntryInternal(indexDescriptor, document, cropIndexer);
-            }
-        }
+        removeIndexEntryInternal(indexDescriptor, document, cropIndexer);
+      }
     }
+  }
 
-    void removeIndexEntry(Document document) {
-        Collection<IndexDescriptor> indexEntries = indexOperations.listIndexes();
-        if (indexEntries != null) {
-            for (IndexDescriptor indexDescriptor : indexEntries) {
-                String indexType = indexDescriptor.getIndexType();
-                CropIndexer cropIndexer = cropConfig.findIndexer(indexType);
+  void updateIndexEntry(Document oldDocument, Document newDocument) {
+    Collection<IndexDescriptor> indexEntries = indexOperations.listIndexes();
+    if (indexEntries != null) {
+      for (IndexDescriptor indexDescriptor : indexEntries) {
+        String indexType = indexDescriptor.getIndexType();
+        CropIndexer cropIndexer = cropConfig.findIndexer(indexType);
 
-                removeIndexEntryInternal(indexDescriptor, document, cropIndexer);
-            }
-        }
+        removeIndexEntryInternal(indexDescriptor, oldDocument, cropIndexer);
+        writeIndexEntryInternal(indexDescriptor, newDocument, cropIndexer);
+      }
     }
+  }
 
-    void updateIndexEntry(Document oldDocument, Document newDocument) {
-        Collection<IndexDescriptor> indexEntries = indexOperations.listIndexes();
-        if (indexEntries != null) {
-            for (IndexDescriptor indexDescriptor : indexEntries) {
-                String indexType = indexDescriptor.getIndexType();
-                CropIndexer cropIndexer = cropConfig.findIndexer(indexType);
+  private void writeIndexEntryInternal(
+      IndexDescriptor indexDescriptor, Document document, CropIndexer cropIndexer) {
+    if (indexDescriptor != null) {
+      Fields fields = indexDescriptor.getIndexFields();
+      FieldValues fieldValues = DocumentUtils.getValues(document, fields);
 
-                removeIndexEntryInternal(indexDescriptor, oldDocument, cropIndexer);
-                writeIndexEntryInternal(indexDescriptor, newDocument, cropIndexer);
-            }
-        }
+      // if dirty index and currently indexing is not running, rebuild
+      if (indexOperations.shouldRebuildIndex(fields)) {
+        // rebuild will also take care of the current document
+        indexOperations.buildIndex(indexDescriptor, true);
+      } else if (cropIndexer != null) {
+        cropIndexer.writeIndexEntry(fieldValues, indexDescriptor, cropConfig);
+      }
     }
+  }
 
-    private void writeIndexEntryInternal(IndexDescriptor indexDescriptor, Document document,
-                                         CropIndexer cropIndexer) {
-        if (indexDescriptor != null) {
-            Fields fields = indexDescriptor.getIndexFields();
-            FieldValues fieldValues = DocumentUtils.getValues(document, fields);
+  private void removeIndexEntryInternal(
+      IndexDescriptor indexDescriptor, Document document, CropIndexer cropIndexer) {
+    if (indexDescriptor != null) {
+      Fields fields = indexDescriptor.getIndexFields();
+      FieldValues fieldValues = DocumentUtils.getValues(document, fields);
 
-            // if dirty index and currently indexing is not running, rebuild
-            if (indexOperations.shouldRebuildIndex(fields)) {
-                // rebuild will also take care of the current document
-                indexOperations.buildIndex(indexDescriptor, true);
-            } else if (cropIndexer != null) {
-                cropIndexer.writeIndexEntry(fieldValues, indexDescriptor, cropConfig);
-            }
-        }
+      // if dirty index and currently indexing is not running, rebuild
+      if (indexOperations.shouldRebuildIndex(fields)) {
+        // rebuild will also take care of the current document
+        indexOperations.buildIndex(indexDescriptor, true);
+      } else if (cropIndexer != null) {
+        cropIndexer.removeIndexEntry(fieldValues, indexDescriptor, cropConfig);
+      }
     }
-
-    private void removeIndexEntryInternal(IndexDescriptor indexDescriptor, Document document,
-                                          CropIndexer cropIndexer) {
-        if (indexDescriptor != null) {
-            Fields fields = indexDescriptor.getIndexFields();
-            FieldValues fieldValues = DocumentUtils.getValues(document, fields);
-
-            // if dirty index and currently indexing is not running, rebuild
-            if (indexOperations.shouldRebuildIndex(fields)) {
-                // rebuild will also take care of the current document
-                indexOperations.buildIndex(indexDescriptor, true);
-            } else if (cropIndexer != null) {
-                cropIndexer.removeIndexEntry(fieldValues, indexDescriptor, cropConfig);
-            }
-        }
-    }
-
+  }
 }

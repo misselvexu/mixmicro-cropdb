@@ -22,37 +22,37 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Triplet<A, B, C> implements Serializable {
-    private static final long serialVersionUID = 1599480644L;
+  private static final long serialVersionUID = 1599480644L;
 
-    private A first;
-    private B second;
-    private C third;
+  private A first;
+  private B second;
+  private C third;
 
-    /**
-     * Creates a new triplet.
-     *
-     * @param <A> the type parameter
-     * @param <B> the type parameter
-     * @param <C> the type parameter
-     * @param a   the a
-     * @param b   the b
-     * @param c   the c
-     * @return the triplet
-     */
-    public static <A, B, C> Triplet<A, B, C> triplet(A a, B b, C c) {
-        return new Triplet<>(a, b, c);
-    }
+  /**
+   * Creates a new triplet.
+   *
+   * @param <A> the type parameter
+   * @param <B> the type parameter
+   * @param <C> the type parameter
+   * @param a the a
+   * @param b the b
+   * @param c the c
+   * @return the triplet
+   */
+  public static <A, B, C> Triplet<A, B, C> triplet(A a, B b, C c) {
+    return new Triplet<>(a, b, c);
+  }
 
-    private void writeObject(ObjectOutputStream stream) throws IOException {
-        stream.writeObject(first);
-        stream.writeObject(second);
-        stream.writeObject(third);
-    }
+  private void writeObject(ObjectOutputStream stream) throws IOException {
+    stream.writeObject(first);
+    stream.writeObject(second);
+    stream.writeObject(third);
+  }
 
-    @SuppressWarnings("unchecked")
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        first = (A) stream.readObject();
-        second = (B) stream.readObject();
-        third = (C) stream.readObject();
-    }
+  @SuppressWarnings("unchecked")
+  private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    first = (A) stream.readObject();
+    second = (B) stream.readObject();
+    third = (C) stream.readObject();
+  }
 }

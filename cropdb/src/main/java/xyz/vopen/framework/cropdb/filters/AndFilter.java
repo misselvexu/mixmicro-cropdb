@@ -31,43 +31,43 @@ import xyz.vopen.framework.cropdb.exceptions.FilterException;
 @Getter
 public class AndFilter extends LogicalFilter {
 
-    /**
-     * Instantiates a new And filter.
-     *
-     * @param filters the filters
-     */
-    AndFilter(Filter... filters) {
-        super(filters);
+  /**
+   * Instantiates a new And filter.
+   *
+   * @param filters the filters
+   */
+  AndFilter(Filter... filters) {
+    super(filters);
 
-        for (int i = 1; i < filters.length; i++) {
-            if (filters[i] instanceof TextFilter) {
-                throw new FilterException("text filter must be the first filter in AND operation");
-            }
-        }
+    for (int i = 1; i < filters.length; i++) {
+      if (filters[i] instanceof TextFilter) {
+        throw new FilterException("text filter must be the first filter in AND operation");
+      }
     }
+  }
 
-    @Override
-    public boolean apply(Pair<CropId, Document> element) {
-        boolean result = true;
-        for (Filter filter : getFilters()) {
-            result = result && filter.apply(element);
-        }
-        return result;
+  @Override
+  public boolean apply(Pair<CropId, Document> element) {
+    boolean result = true;
+    for (Filter filter : getFilters()) {
+      result = result && filter.apply(element);
     }
+    return result;
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("(");
-        for (int i = 0; i < getFilters().size(); i++) {
-            Filter filter = getFilters().get(i);
-            if (i == 0) {
-                stringBuilder.append(filter.toString());
-            } else {
-                stringBuilder.append(" && ").append(filter.toString());
-            }
-        }
-        stringBuilder.append(")");
-        return stringBuilder.toString();
+  @Override
+  public String toString() {
+    StringBuilder stringBuilder = new StringBuilder();
+    stringBuilder.append("(");
+    for (int i = 0; i < getFilters().size(); i++) {
+      Filter filter = getFilters().get(i);
+      if (i == 0) {
+        stringBuilder.append(filter.toString());
+      } else {
+        stringBuilder.append(" && ").append(filter.toString());
+      }
     }
+    stringBuilder.append(")");
+    return stringBuilder.toString();
+  }
 }

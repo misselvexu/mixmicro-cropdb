@@ -18,16 +18,14 @@ package xyz.vopen.framework.cropdb.sync.message;
 
 import lombok.Data;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 @Data
 public class MessageHeader {
-    private String id;
-    private String correlationId;
-    private String collection;
-    private String userName;
-    private Long timestamp;
-    private MessageType messageType;
-    private String origin;
+  private String id;
+  private String correlationId;
+  private String collection;
+  private String userName;
+  private Long timestamp;
+  private MessageType messageType;
+  private String origin;
 }

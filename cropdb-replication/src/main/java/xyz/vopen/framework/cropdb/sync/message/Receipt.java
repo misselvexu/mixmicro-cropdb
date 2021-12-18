@@ -23,13 +23,11 @@ import lombok.NoArgsConstructor;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Receipt {
-    private Set<String> added = new HashSet<>();
-    private Set<String> removed = new HashSet<>();
+  private Set<String> added = new HashSet<>();
+  private Set<String> removed = new HashSet<>();
 }

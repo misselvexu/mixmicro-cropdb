@@ -33,33 +33,27 @@ import xyz.vopen.framework.cropdb.repository.Cursor;
 @EqualsAndHashCode
 public class Lookup {
 
-    /**
-     * Specifies the field from the records input to the join.
-     *
-     * @param localField field of the input record.
-     * @return field of the input record.
-     */
-    @Getter
-    @Setter
-    private String localField;
+  /**
+   * Specifies the field from the records input to the join.
+   *
+   * @param localField field of the input record.
+   * @return field of the input record.
+   */
+  @Getter @Setter private String localField;
 
-    /**
-     * Specifies the field from the foreign records.
-     *
-     * @param foreignField field of the foreign record.
-     * @return field of the foreign record.
-     */
-    @Getter
-    @Setter
-    private String foreignField;
+  /**
+   * Specifies the field from the foreign records.
+   *
+   * @param foreignField field of the foreign record.
+   * @return field of the foreign record.
+   */
+  @Getter @Setter private String foreignField;
 
-    /**
-     * Specifies the new field of the joined records.
-     *
-     * @param targetField field of the joined record.
-     * @return field of the joined record.
-     */
-    @Getter
-    @Setter
-    private String targetField;
+  /**
+   * Specifies the new field of the joined records.
+   *
+   * @param targetField field of the joined record.
+   * @return field of the joined record.
+   */
+  @Getter @Setter private String targetField;
 }

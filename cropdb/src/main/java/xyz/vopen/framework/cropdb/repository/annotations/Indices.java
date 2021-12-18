@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 
 /**
  * Specifies multiple indexed fields for a class.
-
+ *
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @see Index
  * @since 1.0
@@ -31,10 +31,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Indices {
-    /**
-     * Returns an array of {@link Index}.
-     *
-     * @return the array of {@link Index}.
-     */
-    Index[] value();
+  /**
+   * Returns an array of {@link Index}.
+   *
+   * @return the array of {@link Index}.
+   */
+  Index[] value();
 }

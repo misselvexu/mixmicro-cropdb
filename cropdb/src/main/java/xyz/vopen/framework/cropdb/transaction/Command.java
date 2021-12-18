@@ -7,8 +7,6 @@ package xyz.vopen.framework.cropdb.transaction;
  * @since 4.0
  */
 interface Command {
-    /**
-     * Executes the command during transaction commit or rollback.
-     */
-    void execute();
+  /** Executes the command during transaction commit or rollback. */
+  void execute();
 }

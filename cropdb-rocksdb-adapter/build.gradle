@@ -28,13 +28,13 @@ dependencies {
     api project(":cropdb")
     api "org.slf4j:slf4j-api"
     api "org.rocksdb:rocksdbjni"
-    api ("com.esotericsoftware.kryo:kryo5") {
+    api("com.esotericsoftware.kryo:kryo5") {
         exclude group: "org.objenesis"
     }
 
     annotationProcessor "org.projectlombok:lombok:1.18.22"
 
-    testAnnotationProcessor "org.projectlombok:lombok:1.18.20"
+    testAnnotationProcessor "org.projectlombok:lombok:1.18.22"
     testImplementation "uk.co.jemos.podam:podam:7.2.7.RELEASE"
     testImplementation "com.github.javafaker:javafaker:1.0.2"
     testImplementation "junit:junit:4.13.2"

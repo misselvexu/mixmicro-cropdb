@@ -34,97 +34,98 @@ import static xyz.vopen.framework.cropdb.common.util.ValidationUtils.notEmpty;
 
 /**
  * A factory class to create {@link CropCollection}.
- * <p>NOTE: Internal API</p>
+ *
+ * <p>NOTE: Internal API
+ *
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class CollectionFactory {
-    private final Map<String, CropCollection> collectionMap;
-    private final LockService lockService;
+  private final Map<String, CropCollection> collectionMap;
+  private final LockService lockService;
 
-    /**
-     * Instantiates a new {@link CollectionFactory}.
-     *
-     * @param lockService the lock service
-     */
-    public CollectionFactory(LockService lockService) {
-        this.collectionMap = new HashMap<>();
-        this.lockService = lockService;
-    }
+  /**
+   * Instantiates a new {@link CollectionFactory}.
+   *
+   * @param lockService the lock service
+   */
+  public CollectionFactory(LockService lockService) {
+    this.collectionMap = new HashMap<>();
+    this.lockService = lockService;
+  }
 
-    /**
-     * Gets or creates a collection.
-     *
-     * @param name           the name
-     * @param cropConfig  the crop config
-     * @param writeCatalogue the write catalogue
-     * @return the collection
-     */
-    public CropCollection getCollection(String name, CropConfig cropConfig, boolean writeCatalogue) {
-        ValidationUtils.notNull(cropConfig, "configuration is null while creating collection");
-        ValidationUtils.notEmpty(name, "collection name is null or empty");
+  /**
+   * Gets or creates a collection.
+   *
+   * @param name the name
+   * @param cropConfig the crop config
+   * @param writeCatalogue the write catalogue
+   * @return the collection
+   */
+  public CropCollection getCollection(String name, CropConfig cropConfig, boolean writeCatalogue) {
+    ValidationUtils.notNull(cropConfig, "configuration is null while creating collection");
+    ValidationUtils.notEmpty(name, "collection name is null or empty");
 
-        Lock lock = lockService.getWriteLock(this.getClass().getName());
-        try {
-            lock.lock();
-            if (collectionMap.containsKey(name)) {
-                CropCollection collection = collectionMap.get(name);
-                if (collection.isDropped() || !collection.isOpen()) {
-                    collectionMap.remove(name);
-                    return createCollection(name, cropConfig, writeCatalogue);
-                }
-                return collectionMap.get(name);
-            } else {
-                return createCollection(name, cropConfig, writeCatalogue);
-            }
-        } finally {
-            lock.unlock();
+    Lock lock = lockService.getWriteLock(this.getClass().getName());
+    try {
+      lock.lock();
+      if (collectionMap.containsKey(name)) {
+        CropCollection collection = collectionMap.get(name);
+        if (collection.isDropped() || !collection.isOpen()) {
+          collectionMap.remove(name);
+          return createCollection(name, cropConfig, writeCatalogue);
         }
+        return collectionMap.get(name);
+      } else {
+        return createCollection(name, cropConfig, writeCatalogue);
+      }
+    } finally {
+      lock.unlock();
     }
+  }
 
-    private CropCollection createCollection(String name, CropConfig cropConfig, boolean writeCatalog) {
-        CropStore<?> store = cropConfig.getCropStore();
-        CropMap<CropId, Document> cropMap = store.openMap(name, CropId.class, Document.class);
-        CropCollection collection = new DefaultCropCollection(name, cropMap, cropConfig, lockService);
+  private CropCollection createCollection(
+      String name, CropConfig cropConfig, boolean writeCatalog) {
+    CropStore<?> store = cropConfig.getCropStore();
+    CropMap<CropId, Document> cropMap = store.openMap(name, CropId.class, Document.class);
+    CropCollection collection = new DefaultCropCollection(name, cropMap, cropConfig, lockService);
 
-        if (writeCatalog) {
-            // ignore repository request
-            if (store.getRepositoryRegistry().contains(name)) {
-                cropMap.close();
-                collection.close();
-                throw new ValidationException("a repository with same name already exists");
-            }
+    if (writeCatalog) {
+      // ignore repository request
+      if (store.getRepositoryRegistry().contains(name)) {
+        cropMap.close();
+        collection.close();
+        throw new ValidationException("a repository with same name already exists");
+      }
 
-            for (Set<String> set : store.getKeyedRepositoryRegistry().values()) {
-                if (set.contains(name)) {
-                    cropMap.close();
-                    collection.close();
-                    throw new ValidationException("a keyed repository with same name already exists");
-                }
-            }
-
-            collectionMap.put(name, collection);
-            StoreCatalog storeCatalog = store.getCatalog();
-            storeCatalog.writeCollectionEntry(name);
+      for (Set<String> set : store.getKeyedRepositoryRegistry().values()) {
+        if (set.contains(name)) {
+          cropMap.close();
+          collection.close();
+          throw new ValidationException("a keyed repository with same name already exists");
         }
+      }
 
-        return collection;
+      collectionMap.put(name, collection);
+      StoreCatalog storeCatalog = store.getCatalog();
+      storeCatalog.writeCollectionEntry(name);
     }
 
-    /**
-     * Clears the internal registry holding collection information.
-     */
-    public void clear() {
-        Lock lock = lockService.getWriteLock(this.getClass().getName());
-        try {
-            lock.lock();
-            for (CropCollection collection : collectionMap.values()) {
-                collection.close();
-            }
-            collectionMap.clear();
-        } catch (Exception e) {
-            throw new CropIOException("failed to close a collection", e);
-        } finally {
-            lock.unlock();
-        }
+    return collection;
+  }
+
+  /** Clears the internal registry holding collection information. */
+  public void clear() {
+    Lock lock = lockService.getWriteLock(this.getClass().getName());
+    try {
+      lock.lock();
+      for (CropCollection collection : collectionMap.values()) {
+        collection.close();
+      }
+      collectionMap.clear();
+    } catch (Exception e) {
+      throw new CropIOException("failed to close a collection", e);
+    } finally {
+      lock.unlock();
     }
+  }
 }

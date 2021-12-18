@@ -24,22 +24,22 @@ package xyz.vopen.framework.cropdb.exceptions;
  */
 public class ValidationException extends CropException {
 
-    /**
-     * Instantiates a new {@link ValidationException}.
-     *
-     * @param errorMessage the error message
-     */
-    public ValidationException(String errorMessage) {
-        super(errorMessage);
-    }
+  /**
+   * Instantiates a new {@link ValidationException}.
+   *
+   * @param errorMessage the error message
+   */
+  public ValidationException(String errorMessage) {
+    super(errorMessage);
+  }
 
-    /**
-     * Instantiates a new {@link ValidationException}.
-     *
-     * @param errorMessage the error message
-     * @param cause        the cause
-     */
-    public ValidationException(String errorMessage, Throwable cause) {
-        super(errorMessage, cause);
-    }
+  /**
+   * Instantiates a new {@link ValidationException}.
+   *
+   * @param errorMessage the error message
+   * @param cause the cause
+   */
+  public ValidationException(String errorMessage, Throwable cause) {
+    super(errorMessage, cause);
+  }
 }

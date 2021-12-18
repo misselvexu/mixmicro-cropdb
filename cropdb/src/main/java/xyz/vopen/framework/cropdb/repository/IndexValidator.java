@@ -30,61 +30,60 @@ import java.util.List;
 
 import static xyz.vopen.framework.cropdb.common.util.DocumentUtils.skeletonDocument;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 public class IndexValidator {
-    private final Reflector reflector;
+  private final Reflector reflector;
 
-    public IndexValidator(Reflector reflector) {
-        this.reflector = reflector;
+  public IndexValidator(Reflector reflector) {
+    this.reflector = reflector;
+  }
+
+  /**
+   * Validate an index field of an {@link Entity} object.
+   *
+   * @param fieldType the field type
+   * @param field the field
+   * @param cropMapper the crop mapper
+   */
+  public void validate(Class<?> fieldType, String field, CropMapper cropMapper) {
+    if (fieldType.isPrimitive()
+        || fieldType == CropId.class
+        || fieldType.isInterface()
+        || cropMapper.isValueType(fieldType)
+        || Modifier.isAbstract(fieldType.getModifiers())
+        || fieldType.isArray()
+        || Iterable.class.isAssignableFrom(fieldType)) {
+      // we will validate the solid class during insertion/update
+      return;
     }
 
-    /**
-     * Validate an index field of an {@link Entity} object.
-     *
-     * @param fieldType     the field type
-     * @param field         the field
-     * @param cropMapper the crop mapper
-     */
-    public void validate(Class<?> fieldType, String field, CropMapper cropMapper) {
-        if (fieldType.isPrimitive()
-            || fieldType == CropId.class
-            || fieldType.isInterface()
-            || cropMapper.isValueType(fieldType)
-            || Modifier.isAbstract(fieldType.getModifiers())
-            || fieldType.isArray()
-            || Iterable.class.isAssignableFrom(fieldType)) {
-            // we will validate the solid class during insertion/update
-            return;
+    Document document;
+    try {
+      document = skeletonDocument(cropMapper, fieldType);
+      if (document.size() > 0) {
+        // compound index
+        boolean embeddedFieldFound = false;
+        List<Field> fields = reflector.getAllFields(fieldType);
+        for (Field indexField : fields) {
+          if (indexField.isAnnotationPresent(Embedded.class)) {
+            embeddedFieldFound = true;
+            break;
+          }
         }
 
-        Document document;
-        try {
-            document = skeletonDocument(cropMapper, fieldType);
-            if (document.size() > 0) {
-                // compound index
-                boolean embeddedFieldFound = false;
-                List<Field> fields = reflector.getAllFields(fieldType);
-                for (Field indexField : fields) {
-                    if (indexField.isAnnotationPresent(Embedded.class)) {
-                        embeddedFieldFound = true;
-                        break;
-                    }
-                }
-
-                if (!embeddedFieldFound) {
-                    throw new IndexingException("no embedded field found for object id");
-                }
-            } else {
-                if (!Comparable.class.isAssignableFrom(fieldType)) {
-                    throw new IndexingException("cannot index on non comparable field " + field);
-                }
-            }
-        } catch (IndexingException ie) {
-            throw ie;
-        } catch (Throwable e) {
-            throw new IndexingException("invalid type specified " + fieldType.getName() + " for indexing", e);
+        if (!embeddedFieldFound) {
+          throw new IndexingException("no embedded field found for object id");
         }
+      } else {
+        if (!Comparable.class.isAssignableFrom(fieldType)) {
+          throw new IndexingException("cannot index on non comparable field " + field);
+        }
+      }
+    } catch (IndexingException ie) {
+      throw ie;
+    } catch (Throwable e) {
+      throw new IndexingException(
+          "invalid type specified " + fieldType.getName() + " for indexing", e);
     }
+  }
 }

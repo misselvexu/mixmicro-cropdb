@@ -36,79 +36,78 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 4.0
  */
 public class CropTextIndexer implements CropIndexer {
-    private final TextTokenizer textTokenizer;
-    private final Map<IndexDescriptor, TextIndex> indexRegistry;
+  private final TextTokenizer textTokenizer;
+  private final Map<IndexDescriptor, TextIndex> indexRegistry;
 
-    /**
-     * Instantiates a new {@link CropTextIndexer}.
-     */
-    public CropTextIndexer() {
-        this.textTokenizer = new EnglishTextTokenizer();
-        this.indexRegistry = new ConcurrentHashMap<>();
+  /** Instantiates a new {@link CropTextIndexer}. */
+  public CropTextIndexer() {
+    this.textTokenizer = new EnglishTextTokenizer();
+    this.indexRegistry = new ConcurrentHashMap<>();
+  }
+
+  /**
+   * Instantiates a new {@link CropTextIndexer}.
+   *
+   * @param textTokenizer the text tokenizer
+   */
+  public CropTextIndexer(TextTokenizer textTokenizer) {
+    this.textTokenizer = textTokenizer;
+    this.indexRegistry = new ConcurrentHashMap<>();
+  }
+
+  @Override
+  public void initialize(CropConfig cropConfig) {}
+
+  @Override
+  public String getIndexType() {
+    return IndexType.FULL_TEXT;
+  }
+
+  @Override
+  public void validateIndex(Fields fields) {
+    if (fields.getFieldNames().size() > 1) {
+      throw new IndexingException("text index can only be created on a single field");
+    }
+  }
+
+  @Override
+  public void dropIndex(IndexDescriptor indexDescriptor, CropConfig cropConfig) {
+    TextIndex textIndex = findTextIndex(indexDescriptor, cropConfig);
+    textIndex.drop();
+  }
+
+  @Override
+  public void writeIndexEntry(
+      FieldValues fieldValues, IndexDescriptor indexDescriptor, CropConfig cropConfig) {
+    TextIndex textIndex = findTextIndex(indexDescriptor, cropConfig);
+    textIndex.write(fieldValues);
+  }
+
+  @Override
+  public void removeIndexEntry(
+      FieldValues fieldValues, IndexDescriptor indexDescriptor, CropConfig cropConfig) {
+    TextIndex textIndex = findTextIndex(indexDescriptor, cropConfig);
+    textIndex.remove(fieldValues);
+  }
+
+  @Override
+  public LinkedHashSet<CropId> findByFilter(FindPlan findPlan, CropConfig cropConfig) {
+    TextIndex textIndex = findTextIndex(findPlan.getIndexDescriptor(), cropConfig);
+    return textIndex.findCropIds(findPlan);
+  }
+
+  @Override
+  public void close() {
+    indexRegistry.clear();
+  }
+
+  private TextIndex findTextIndex(IndexDescriptor indexDescriptor, CropConfig cropConfig) {
+    if (indexRegistry.containsKey(indexDescriptor)) {
+      return indexRegistry.get(indexDescriptor);
     }
 
-    /**
-     * Instantiates a new {@link CropTextIndexer}.
-     *
-     * @param textTokenizer the text tokenizer
-     */
-    public CropTextIndexer(TextTokenizer textTokenizer) {
-        this.textTokenizer = textTokenizer;
-        this.indexRegistry = new ConcurrentHashMap<>();
-    }
-
-    @Override
-    public void initialize(CropConfig cropConfig) {
-    }
-
-    @Override
-    public String getIndexType() {
-        return IndexType.FULL_TEXT;
-    }
-
-    @Override
-    public void validateIndex(Fields fields) {
-        if (fields.getFieldNames().size() > 1) {
-            throw new IndexingException("text index can only be created on a single field");
-        }
-    }
-
-    @Override
-    public void dropIndex(IndexDescriptor indexDescriptor, CropConfig cropConfig) {
-        TextIndex textIndex = findTextIndex(indexDescriptor, cropConfig);
-        textIndex.drop();
-    }
-
-    @Override
-    public void writeIndexEntry(FieldValues fieldValues, IndexDescriptor indexDescriptor, CropConfig cropConfig) {
-        TextIndex textIndex = findTextIndex(indexDescriptor, cropConfig);
-        textIndex.write(fieldValues);
-    }
-
-    @Override
-    public void removeIndexEntry(FieldValues fieldValues, IndexDescriptor indexDescriptor, CropConfig cropConfig) {
-        TextIndex textIndex = findTextIndex(indexDescriptor, cropConfig);
-        textIndex.remove(fieldValues);
-    }
-
-    @Override
-    public LinkedHashSet<CropId> findByFilter(FindPlan findPlan, CropConfig cropConfig) {
-        TextIndex textIndex = findTextIndex(findPlan.getIndexDescriptor(), cropConfig);
-        return textIndex.findCropIds(findPlan);
-    }
-
-    @Override
-    public void close() {
-        indexRegistry.clear();
-    }
-
-    private TextIndex findTextIndex(IndexDescriptor indexDescriptor, CropConfig cropConfig) {
-        if (indexRegistry.containsKey(indexDescriptor)) {
-            return indexRegistry.get(indexDescriptor);
-        }
-
-        TextIndex textIndex = new TextIndex(textTokenizer, indexDescriptor, cropConfig.getCropStore());
-        indexRegistry.put(indexDescriptor, textIndex);
-        return textIndex;
-    }
+    TextIndex textIndex = new TextIndex(textTokenizer, indexDescriptor, cropConfig.getCropStore());
+    indexRegistry.put(indexDescriptor, textIndex);
+    return textIndex;
+  }
 }

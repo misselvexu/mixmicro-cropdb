@@ -18,11 +18,9 @@ package xyz.vopen.framework.cropdb.sync.message;
 
 import lombok.Data;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 @Data
 public class ConnectAck implements DataGateMessage {
-    private MessageHeader header;
-    private Long tombstoneTtl;
+  private MessageHeader header;
+  private Long tombstoneTtl;
 }

@@ -36,193 +36,193 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @since 4.0
  */
 public class IndexManager implements AutoCloseable {
-    private final CropConfig cropConfig;
-    private final CropStore<?> cropStore;
-    private final String collectionName;
-    private final CropMap<Fields, IndexMeta> indexMetaMap;
-    private Collection<IndexDescriptor> indexDescriptorCache;
+  private final CropConfig cropConfig;
+  private final CropStore<?> cropStore;
+  private final String collectionName;
+  private final CropMap<Fields, IndexMeta> indexMetaMap;
+  private Collection<IndexDescriptor> indexDescriptorCache;
 
-    /**
-     * Instantiates a new {@link IndexManager}.
-     *
-     * @param collectionName the collection name
-     * @param cropConfig  the crop config
-     */
-    public IndexManager(String collectionName, CropConfig cropConfig) {
-        this.collectionName = collectionName;
-        this.cropConfig = cropConfig;
-        this.cropStore = cropConfig.getCropStore();
-        this.indexMetaMap = getIndexMetaMap();
-        initialize();
+  /**
+   * Instantiates a new {@link IndexManager}.
+   *
+   * @param collectionName the collection name
+   * @param cropConfig the crop config
+   */
+  public IndexManager(String collectionName, CropConfig cropConfig) {
+    this.collectionName = collectionName;
+    this.cropConfig = cropConfig;
+    this.cropStore = cropConfig.getCropStore();
+    this.indexMetaMap = getIndexMetaMap();
+    initialize();
+  }
+
+  /**
+   * Checks if an index descriptor already exists on the fields.
+   *
+   * @param fields the fields
+   * @return the boolean
+   */
+  public boolean hasIndexDescriptor(Fields fields) {
+    return !findMatchingIndexDescriptors(fields).isEmpty();
+  }
+
+  /**
+   * Gets all defined index descriptors for the collection.
+   *
+   * @return the index descriptors
+   */
+  public Collection<IndexDescriptor> getIndexDescriptors() {
+    if (indexDescriptorCache == null) {
+      indexDescriptorCache = listIndexDescriptors();
+    }
+    return indexDescriptorCache;
+  }
+
+  public Collection<IndexDescriptor> findMatchingIndexDescriptors(Fields fields) {
+    List<IndexDescriptor> indexDescriptors = new ArrayList<>();
+
+    for (IndexDescriptor indexDescriptor : getIndexDescriptors()) {
+      if (indexDescriptor.getIndexFields().startsWith(fields)) {
+        indexDescriptors.add(indexDescriptor);
+      }
     }
 
-    /**
-     * Checks if an index descriptor already exists on the fields.
-     *
-     * @param fields the fields
-     * @return the boolean
-     */
-    public boolean hasIndexDescriptor(Fields fields) {
-        return !findMatchingIndexDescriptors(fields).isEmpty();
+    return indexDescriptors;
+  }
+
+  public IndexDescriptor findExactIndexDescriptor(Fields fields) {
+    IndexMeta meta = indexMetaMap.get(fields);
+    if (meta != null) {
+      return meta.getIndexDescriptor();
+    }
+    return null;
+  }
+
+  @Override
+  public void close() {
+    // close all index maps
+    Iterable<IndexMeta> indexMetas = indexMetaMap.values();
+    for (IndexMeta indexMeta : indexMetas) {
+      if (indexMeta != null && indexMeta.getIndexDescriptor() != null) {
+        String indexMapName = indexMeta.getIndexMap();
+        CropMap<?, ?> indexMap = cropStore.openMap(indexMapName, Object.class, Object.class);
+        indexMap.close();
+      }
     }
 
-    /**
-     * Gets all defined index descriptors for the collection.
-     *
-     * @return the index descriptors
-     */
-    public Collection<IndexDescriptor> getIndexDescriptors() {
-        if (indexDescriptorCache == null) {
-            indexDescriptorCache = listIndexDescriptors();
-        }
-        return indexDescriptorCache;
+    // close index meta
+    indexMetaMap.close();
+  }
+
+  /**
+   * Is dirty index boolean.
+   *
+   * @param fields the fields
+   * @return the boolean
+   */
+  boolean isDirtyIndex(Fields fields) {
+    IndexMeta meta = indexMetaMap.get(fields);
+    return meta != null && meta.getIsDirty().get();
+  }
+
+  /**
+   * List index descriptors collection.
+   *
+   * @return the collection
+   */
+  Collection<IndexDescriptor> listIndexDescriptors() {
+    Set<IndexDescriptor> indexSet = new LinkedHashSet<>();
+    Iterable<IndexMeta> iterable = indexMetaMap.values();
+    for (IndexMeta indexMeta : iterable) {
+      indexSet.add(indexMeta.getIndexDescriptor());
+    }
+    return Collections.unmodifiableSet(indexSet);
+  }
+
+  /**
+   * Create index descriptor index descriptor.
+   *
+   * @param fields the fields
+   * @param indexType the index type
+   * @return the index descriptor
+   */
+  IndexDescriptor createIndexDescriptor(Fields fields, String indexType) {
+    validateIndexRequest(fields, indexType);
+    IndexDescriptor index = new IndexDescriptor(indexType, fields, collectionName);
+
+    IndexMeta indexMeta = new IndexMeta();
+    indexMeta.setIndexDescriptor(index);
+    indexMeta.setIsDirty(new AtomicBoolean(false));
+    indexMeta.setIndexMap(IndexUtils.deriveIndexMapName(index));
+
+    indexMetaMap.put(fields, indexMeta);
+
+    updateIndexDescriptorCache();
+    return index;
+  }
+
+  /**
+   * Drop index descriptor.
+   *
+   * @param fields the fields
+   */
+  void dropIndexDescriptor(Fields fields) {
+    IndexMeta meta = indexMetaMap.get(fields);
+    if (meta != null && meta.getIndexDescriptor() != null) {
+      String indexMapName = meta.getIndexMap();
+      CropMap<?, ?> indexMap = cropStore.openMap(indexMapName, Object.class, Object.class);
+      indexMap.drop();
     }
 
-    public Collection<IndexDescriptor> findMatchingIndexDescriptors(Fields fields) {
-        List<IndexDescriptor> indexDescriptors = new ArrayList<>();
+    indexMetaMap.remove(fields);
+    updateIndexDescriptorCache();
+  }
 
-        for (IndexDescriptor indexDescriptor : getIndexDescriptors()) {
-            if (indexDescriptor.getIndexFields().startsWith(fields)) {
-                indexDescriptors.add(indexDescriptor);
-            }
-        }
+  void dropIndexMeta() {
+    indexMetaMap.clear();
+    indexMetaMap.drop();
+  }
 
-        return indexDescriptors;
+  /**
+   * Begin indexing.
+   *
+   * @param fields the fields
+   */
+  void beginIndexing(Fields fields) {
+    markDirty(fields, true);
+  }
+
+  /**
+   * End indexing.
+   *
+   * @param fields the fields
+   */
+  void endIndexing(Fields fields) {
+    markDirty(fields, false);
+  }
+
+  private void initialize() {
+    updateIndexDescriptorCache();
+  }
+
+  private void markDirty(Fields fields, boolean dirty) {
+    IndexMeta meta = indexMetaMap.get(fields);
+    if (meta != null && meta.getIndexDescriptor() != null) {
+      meta.getIsDirty().set(dirty);
     }
+  }
 
-    public IndexDescriptor findExactIndexDescriptor(Fields fields) {
-        IndexMeta meta = indexMetaMap.get(fields);
-        if (meta != null) {
-            return meta.getIndexDescriptor();
-        }
-        return null;
-    }
+  private CropMap<Fields, IndexMeta> getIndexMetaMap() {
+    String mapName = IndexUtils.deriveIndexMetaMapName(this.collectionName);
+    return this.cropStore.openMap(mapName, Fields.class, IndexMeta.class);
+  }
 
-    @Override
-    public void close() {
-        // close all index maps
-        Iterable<IndexMeta> indexMetas = indexMetaMap.values();
-        for (IndexMeta indexMeta : indexMetas) {
-            if (indexMeta != null && indexMeta.getIndexDescriptor() != null) {
-                String indexMapName = indexMeta.getIndexMap();
-                CropMap<?, ?> indexMap = cropStore.openMap(indexMapName, Object.class, Object.class);
-                indexMap.close();
-            }
-        }
+  private void updateIndexDescriptorCache() {
+    indexDescriptorCache = listIndexDescriptors();
+  }
 
-        // close index meta
-        indexMetaMap.close();
-    }
-
-    /**
-     * Is dirty index boolean.
-     *
-     * @param fields the fields
-     * @return the boolean
-     */
-    boolean isDirtyIndex(Fields fields) {
-        IndexMeta meta = indexMetaMap.get(fields);
-        return meta != null && meta.getIsDirty().get();
-    }
-
-    /**
-     * List index descriptors collection.
-     *
-     * @return the collection
-     */
-    Collection<IndexDescriptor> listIndexDescriptors() {
-        Set<IndexDescriptor> indexSet = new LinkedHashSet<>();
-        Iterable<IndexMeta> iterable = indexMetaMap.values();
-        for (IndexMeta indexMeta : iterable) {
-            indexSet.add(indexMeta.getIndexDescriptor());
-        }
-        return Collections.unmodifiableSet(indexSet);
-    }
-
-    /**
-     * Create index descriptor index descriptor.
-     *
-     * @param fields    the fields
-     * @param indexType the index type
-     * @return the index descriptor
-     */
-    IndexDescriptor createIndexDescriptor(Fields fields, String indexType) {
-        validateIndexRequest(fields, indexType);
-        IndexDescriptor index = new IndexDescriptor(indexType, fields, collectionName);
-
-        IndexMeta indexMeta = new IndexMeta();
-        indexMeta.setIndexDescriptor(index);
-        indexMeta.setIsDirty(new AtomicBoolean(false));
-        indexMeta.setIndexMap(IndexUtils.deriveIndexMapName(index));
-
-        indexMetaMap.put(fields, indexMeta);
-
-        updateIndexDescriptorCache();
-        return index;
-    }
-
-    /**
-     * Drop index descriptor.
-     *
-     * @param fields the fields
-     */
-    void dropIndexDescriptor(Fields fields) {
-        IndexMeta meta = indexMetaMap.get(fields);
-        if (meta != null && meta.getIndexDescriptor() != null) {
-            String indexMapName = meta.getIndexMap();
-            CropMap<?, ?> indexMap = cropStore.openMap(indexMapName, Object.class, Object.class);
-            indexMap.drop();
-        }
-
-        indexMetaMap.remove(fields);
-        updateIndexDescriptorCache();
-    }
-
-    void dropIndexMeta() {
-        indexMetaMap.clear();
-        indexMetaMap.drop();
-    }
-
-    /**
-     * Begin indexing.
-     *
-     * @param fields the fields
-     */
-    void beginIndexing(Fields fields) {
-        markDirty(fields, true);
-    }
-
-    /**
-     * End indexing.
-     *
-     * @param fields the fields
-     */
-    void endIndexing(Fields fields) {
-        markDirty(fields, false);
-    }
-
-    private void initialize() {
-        updateIndexDescriptorCache();
-    }
-
-    private void markDirty(Fields fields, boolean dirty) {
-        IndexMeta meta = indexMetaMap.get(fields);
-        if (meta != null && meta.getIndexDescriptor() != null) {
-            meta.getIsDirty().set(dirty);
-        }
-    }
-
-    private CropMap<Fields, IndexMeta> getIndexMetaMap() {
-        String mapName = IndexUtils.deriveIndexMetaMapName(this.collectionName);
-        return this.cropStore.openMap(mapName, Fields.class, IndexMeta.class);
-    }
-
-    private void updateIndexDescriptorCache() {
-        indexDescriptorCache = listIndexDescriptors();
-    }
-
-    private void validateIndexRequest(Fields fields, String indexType) {
-        CropIndexer indexer = cropConfig.findIndexer(indexType);
-        indexer.validateIndex(fields);
-    }
+  private void validateIndexRequest(Fields fields, String indexType) {
+    CropIndexer indexer = cropConfig.findIndexer(indexType);
+    indexer.validateIndex(fields);
+  }
 }

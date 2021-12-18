@@ -12,14 +12,14 @@ import xyz.vopen.framework.cropdb.common.Fields;
  */
 @AllArgsConstructor
 public class CreateIndex extends BaseCommand implements Command {
-    private final String collectionName;
-    private final Fields fields;
-    private final String indexType;
+  private final String collectionName;
+  private final Fields fields;
+  private final String indexType;
 
-    @Override
-    public void execute(CropDB cropdb) {
-        initialize(cropdb, collectionName);
+  @Override
+  public void execute(CropDB cropdb) {
+    initialize(cropdb, collectionName);
 
-        operations.createIndex(fields, indexType);
-    }
+    operations.createIndex(fields, indexType);
+  }
 }

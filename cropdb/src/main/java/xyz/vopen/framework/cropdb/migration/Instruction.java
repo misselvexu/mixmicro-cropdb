@@ -7,10 +7,10 @@ package xyz.vopen.framework.cropdb.migration;
  * @since 4.0
  */
 interface Instruction {
-    /**
-     * Adds a migration step to the instruction set.
-     *
-     * @param step the step
-     */
-    void addStep(MigrationStep step);
+  /**
+   * Adds a migration step to the instruction set.
+   *
+   * @param step the step
+   */
+  void addStep(MigrationStep step);
 }

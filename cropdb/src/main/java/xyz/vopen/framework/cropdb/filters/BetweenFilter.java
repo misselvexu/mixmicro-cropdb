@@ -19,70 +19,68 @@ package xyz.vopen.framework.cropdb.filters;
 import lombok.Data;
 import xyz.vopen.framework.cropdb.exceptions.ValidationException;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 class BetweenFilter<T> extends AndFilter {
 
-    public BetweenFilter(String field, Bound<T> bound) {
-        super(getRhs(field, bound), getLhs(field, bound));
+  public BetweenFilter(String field, Bound<T> bound) {
+    super(getRhs(field, bound), getLhs(field, bound));
+  }
+
+  private static <T> Filter getRhs(String field, Bound<T> bound) {
+    validateBound(bound);
+    T value = bound.upperBound;
+    if (bound.upperInclusive) {
+      return new LesserEqualFilter(field, (Comparable<?>) value);
+    } else {
+      return new LesserThanFilter(field, (Comparable<?>) value);
+    }
+  }
+
+  private static <T> Filter getLhs(String field, Bound<T> bound) {
+    validateBound(bound);
+    T value = bound.lowerBound;
+    if (bound.lowerInclusive) {
+      return new GreaterEqualFilter(field, (Comparable<?>) value);
+    } else {
+      return new GreaterThanFilter(field, (Comparable<?>) value);
+    }
+  }
+
+  private static <T> void validateBound(Bound<T> bound) {
+    if (bound == null) {
+      throw new ValidationException("bound cannot be null");
     }
 
-    private static <T> Filter getRhs(String field, Bound<T> bound) {
-        validateBound(bound);
-        T value = bound.upperBound;
-        if (bound.upperInclusive) {
-            return new LesserEqualFilter(field, (Comparable<?>) value);
-        } else {
-            return new LesserThanFilter(field, (Comparable<?>) value);
-        }
+    if (!(bound.upperBound instanceof Comparable) || !(bound.lowerBound instanceof Comparable)) {
+      throw new ValidationException("upper bound or lower bound value must be comparable");
+    }
+  }
+
+  @Override
+  public String toString() {
+    return super.toString();
+  }
+
+  @Data
+  public static class Bound<T> {
+    private T upperBound;
+    private T lowerBound;
+    private boolean upperInclusive;
+    private boolean lowerInclusive;
+
+    public Bound(T lowerBound, T upperBound) {
+      this(lowerBound, upperBound, true);
     }
 
-    private static <T> Filter getLhs(String field, Bound<T> bound) {
-        validateBound(bound);
-        T value = bound.lowerBound;
-        if (bound.lowerInclusive) {
-            return new GreaterEqualFilter(field, (Comparable<?>) value);
-        } else {
-            return new GreaterThanFilter(field, (Comparable<?>) value);
-        }
+    public Bound(T lowerBound, T upperBound, boolean inclusive) {
+      this(lowerBound, upperBound, inclusive, inclusive);
     }
 
-    private static <T> void validateBound(Bound<T> bound) {
-        if (bound == null) {
-            throw new ValidationException("bound cannot be null");
-        }
-
-        if (!(bound.upperBound instanceof Comparable) || !(bound.lowerBound instanceof Comparable)) {
-            throw new ValidationException("upper bound or lower bound value must be comparable");
-        }
+    public Bound(T lowerBound, T upperBound, boolean lowerInclusive, boolean upperInclusive) {
+      this.upperBound = upperBound;
+      this.lowerBound = lowerBound;
+      this.upperInclusive = upperInclusive;
+      this.lowerInclusive = lowerInclusive;
     }
-
-    @Override
-    public String toString() {
-        return super.toString();
-    }
-
-    @Data
-    public static class Bound<T> {
-        private T upperBound;
-        private T lowerBound;
-        private boolean upperInclusive;
-        private boolean lowerInclusive;
-
-        public Bound(T lowerBound, T upperBound) {
-            this(lowerBound, upperBound, true);
-        }
-
-        public Bound(T lowerBound, T upperBound, boolean inclusive) {
-            this(lowerBound, upperBound, inclusive, inclusive);
-        }
-
-        public Bound(T lowerBound, T upperBound, boolean lowerInclusive, boolean upperInclusive) {
-            this.upperBound = upperBound;
-            this.lowerBound = lowerBound;
-            this.upperInclusive = upperInclusive;
-            this.lowerInclusive = lowerInclusive;
-        }
-    }
+  }
 }

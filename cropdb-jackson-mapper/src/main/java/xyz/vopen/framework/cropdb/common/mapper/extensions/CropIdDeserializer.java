@@ -23,17 +23,15 @@ import xyz.vopen.framework.cropdb.collection.CropId;
 
 import java.io.IOException;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 class CropIdDeserializer extends StdScalarDeserializer<CropId> {
 
-    CropIdDeserializer() {
-        super(CropId.class);
-    }
+  CropIdDeserializer() {
+    super(CropId.class);
+  }
 
-    @Override
-    public CropId deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-        return CropId.createId(p.getValueAsString());
-    }
+  @Override
+  public CropId deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+    return CropId.createId(p.getValueAsString());
+  }
 }

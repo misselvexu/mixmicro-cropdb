@@ -27,100 +27,107 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 @Slf4j(topic = "no2-rocksdb")
 class StoreFactory {
-    private StoreFactory() {
+  private StoreFactory() {}
+
+  public static RocksDBReference createDBReference(RocksDBConfig dbConfig) {
+    // create reference
+    RocksDBReference reference = new RocksDBReference();
+
+    // create options
+    createOptions(reference, dbConfig);
+
+    // create db options
+    createDbOptions(reference, dbConfig);
+
+    // create column family options
+    createColumnFamilyOptions(reference, dbConfig);
+
+    // create column family descriptors
+    createColumnFamilyDescriptors(reference, dbConfig);
+
+    // create db
+    createRocksDB(reference, dbConfig);
+
+    return reference;
+  }
+
+  private static void createOptions(RocksDBReference reference, RocksDBConfig dbConfig) {
+    Options options = dbConfig.options();
+    if (options == null) {
+      options = new Options();
     }
 
-    public static RocksDBReference createDBReference(RocksDBConfig dbConfig) {
-        // create reference
-        RocksDBReference reference = new RocksDBReference();
+    reference.setOptions(options);
+  }
 
-        // create options
-        createOptions(reference, dbConfig);
-
-        // create db options
-        createDbOptions(reference, dbConfig);
-
-        // create column family options
-        createColumnFamilyOptions(reference, dbConfig);
-
-        // create column family descriptors
-        createColumnFamilyDescriptors(reference, dbConfig);
-
-        // create db
-        createRocksDB(reference, dbConfig);
-
-        return reference;
+  private static void createDbOptions(RocksDBReference reference, RocksDBConfig dbConfig) {
+    DBOptions dbOptions = dbConfig.dbOptions();
+    if (dbOptions == null) {
+      dbOptions = new DBOptions();
+      dbOptions.setCreateIfMissing(true);
     }
 
-    private static void createOptions(RocksDBReference reference, RocksDBConfig dbConfig) {
-        Options options = dbConfig.options();
-        if (options == null) {
-            options = new Options();
+    reference.setDbOptions(dbOptions);
+  }
+
+  private static void createColumnFamilyOptions(
+      RocksDBReference reference, RocksDBConfig dbConfig) {
+    ColumnFamilyOptions columnFamilyOptions = dbConfig.columnFamilyOptions();
+    if (columnFamilyOptions == null) {
+      columnFamilyOptions = new ColumnFamilyOptions();
+      columnFamilyOptions.optimizeUniversalStyleCompaction();
+    }
+
+    reference.setColumnFamilyOptions(columnFamilyOptions);
+  }
+
+  private static void createColumnFamilyDescriptors(
+      RocksDBReference reference, RocksDBConfig dbConfig) {
+    List<ColumnFamilyDescriptor> cfDescriptors = new ArrayList<>();
+    cfDescriptors.add(
+        new ColumnFamilyDescriptor(
+            RocksDB.DEFAULT_COLUMN_FAMILY, reference.getColumnFamilyOptions()));
+
+    // extract existing column family descriptors
+    try {
+      List<byte[]> columnFamilies =
+          RocksDB.listColumnFamilies(reference.getOptions(), dbConfig.filePath());
+      for (byte[] columnFamily : columnFamilies) {
+        if (!Arrays.equals(RocksDB.DEFAULT_COLUMN_FAMILY, columnFamily)) {
+          cfDescriptors.add(
+              new ColumnFamilyDescriptor(columnFamily, reference.getColumnFamilyOptions()));
         }
-
-        reference.setOptions(options);
+      }
+    } catch (RocksDBException e) {
+      log.error("Error while listing column families", e);
+      throw new CropIOException("failed to open database", e);
     }
+    reference.setColumnFamilyDescriptors(cfDescriptors);
+  }
 
-    private static void createDbOptions(RocksDBReference reference, RocksDBConfig dbConfig) {
-        DBOptions dbOptions = dbConfig.dbOptions();
-        if (dbOptions == null) {
-            dbOptions = new DBOptions();
-            dbOptions.setCreateIfMissing(true);
-        }
+  private static void createRocksDB(RocksDBReference reference, RocksDBConfig dbConfig) {
+    try {
+      List<ColumnFamilyHandle> columnFamilyHandleList = new ArrayList<>();
+      RocksDB db =
+          RocksDB.open(
+              reference.getDbOptions(),
+              dbConfig.filePath(),
+              reference.getColumnFamilyDescriptors(),
+              columnFamilyHandleList);
+      reference.setRocksDB(db);
 
-        reference.setDbOptions(dbOptions);
+      Map<String, ColumnFamilyHandle> handleMap = new ConcurrentHashMap<>();
+      for (ColumnFamilyHandle columnFamilyHandle : columnFamilyHandleList) {
+        String name = new String(columnFamilyHandle.getName(), StandardCharsets.UTF_8);
+        handleMap.put(name, columnFamilyHandle);
+      }
+      reference.setColumnFamilyHandleRegistry(handleMap);
+    } catch (RocksDBException e) {
+      log.error("Error while opening rocks database", e);
+      throw new CropIOException("failed to open database", e);
     }
-
-    private static void createColumnFamilyOptions(RocksDBReference reference, RocksDBConfig dbConfig) {
-        ColumnFamilyOptions columnFamilyOptions = dbConfig.columnFamilyOptions();
-        if (columnFamilyOptions == null) {
-            columnFamilyOptions = new ColumnFamilyOptions();
-            columnFamilyOptions.optimizeUniversalStyleCompaction();
-        }
-
-        reference.setColumnFamilyOptions(columnFamilyOptions);
-    }
-
-    private static void createColumnFamilyDescriptors(RocksDBReference reference, RocksDBConfig dbConfig) {
-        List<ColumnFamilyDescriptor> cfDescriptors = new ArrayList<>();
-        cfDescriptors.add(new ColumnFamilyDescriptor(RocksDB.DEFAULT_COLUMN_FAMILY, reference.getColumnFamilyOptions()));
-
-        // extract existing column family descriptors
-        try {
-            List<byte[]> columnFamilies = RocksDB.listColumnFamilies(reference.getOptions(), dbConfig.filePath());
-            for (byte[] columnFamily : columnFamilies) {
-                if (!Arrays.equals(RocksDB.DEFAULT_COLUMN_FAMILY, columnFamily)) {
-                    cfDescriptors.add(new ColumnFamilyDescriptor(columnFamily, reference.getColumnFamilyOptions()));
-                }
-            }
-        } catch (RocksDBException e) {
-            log.error("Error while listing column families", e);
-            throw new CropIOException("failed to open database", e);
-        }
-        reference.setColumnFamilyDescriptors(cfDescriptors);
-    }
-
-    private static void createRocksDB(RocksDBReference reference, RocksDBConfig dbConfig) {
-        try {
-            List<ColumnFamilyHandle> columnFamilyHandleList = new ArrayList<>();
-            RocksDB db = RocksDB.open(reference.getDbOptions(), dbConfig.filePath(),
-                reference.getColumnFamilyDescriptors(), columnFamilyHandleList);
-            reference.setRocksDB(db);
-
-            Map<String, ColumnFamilyHandle> handleMap = new ConcurrentHashMap<>();
-            for (ColumnFamilyHandle columnFamilyHandle : columnFamilyHandleList) {
-                String name = new String(columnFamilyHandle.getName(), StandardCharsets.UTF_8);
-                handleMap.put(name, columnFamilyHandle);
-            }
-            reference.setColumnFamilyHandleRegistry(handleMap);
-        } catch (RocksDBException e) {
-            log.error("Error while opening rocks database", e);
-            throw new CropIOException("failed to open database", e);
-        }
-    }
+  }
 }

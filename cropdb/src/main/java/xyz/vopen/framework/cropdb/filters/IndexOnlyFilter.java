@@ -18,30 +18,29 @@
 package xyz.vopen.framework.cropdb.filters;
 
 /**
- * Represents an index-only filter. This filter does not support
- * collection scan.
+ * Represents an index-only filter. This filter does not support collection scan.
  *
  * @since 4.0
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public abstract class IndexOnlyFilter extends ComparableFilter {
-    /**
-     * Instantiates a new {@link IndexOnlyFilter}.
-     *
-     * @param field the field
-     * @param value the value
-     */
-    public IndexOnlyFilter(String field, Object value) {
-        super(field, value);
-    }
+  /**
+   * Instantiates a new {@link IndexOnlyFilter}.
+   *
+   * @param field the field
+   * @param value the value
+   */
+  public IndexOnlyFilter(String field, Object value) {
+    super(field, value);
+  }
 
-    public abstract String supportedIndexType();
+  public abstract String supportedIndexType();
 
-    /**
-     * Checks if <code>other</code> filter can be grouped together with this filter.
-     *
-     * @param other the comparable filter
-     * @return the boolean
-     */
-    public abstract boolean canBeGrouped(IndexOnlyFilter other);
+  /**
+   * Checks if <code>other</code> filter can be grouped together with this filter.
+   *
+   * @param other the comparable filter
+   * @return the boolean
+   */
+  public abstract boolean canBeGrouped(IndexOnlyFilter other);
 }

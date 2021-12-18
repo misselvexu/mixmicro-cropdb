@@ -19,35 +19,19 @@ package xyz.vopen.framework.cropdb.sync.net;
 import okhttp3.Response;
 import okio.ByteString;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 public interface DataGateSocketListener {
-    default void onOpen(Response response) {
+  default void onOpen(Response response) {}
 
-    }
+  default void onMessage(String text) {}
 
-    default void onMessage(String text) {
+  default void onMessage(ByteString bytes) {}
 
-    }
+  default void onReconnect() {}
 
-    default void onMessage(ByteString bytes) {
+  default void onClosing(int code, String reason) {}
 
-    }
+  default void onClosed(int code, String reason) {}
 
-    default void onReconnect() {
-
-    }
-
-    default void onClosing(int code, String reason) {
-
-    }
-
-    default void onClosed(int code, String reason) {
-
-    }
-
-    default void onFailure(Throwable error, Response response) {
-
-    }
+  default void onFailure(Throwable error, Response response) {}
 }

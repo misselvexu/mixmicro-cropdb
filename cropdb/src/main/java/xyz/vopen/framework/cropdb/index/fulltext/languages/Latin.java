@@ -29,58 +29,14 @@ import java.util.Set;
  * @since 2.1.0
  */
 public class Latin implements Language {
-    @Override
-    public Set<String> stopWords() {
-        return new HashSet<>(Arrays.asList(
-            "a",
-            "ab",
-            "ac",
-            "ad",
-            "at",
-            "atque",
-            "aut",
-            "autem",
-            "cum",
-            "de",
-            "dum",
-            "e",
-            "erant",
-            "erat",
-            "est",
-            "et",
-            "etiam",
-            "ex",
-            "haec",
-            "hic",
-            "hoc",
-            "in",
-            "ita",
-            "me",
-            "nec",
-            "neque",
-            "non",
-            "per",
-            "qua",
-            "quae",
-            "quam",
-            "qui",
-            "quibus",
-            "quidem",
-            "quo",
-            "quod",
-            "re",
-            "rebus",
-            "rem",
-            "res",
-            "sed",
-            "si",
-            "sic",
-            "sunt",
-            "tamen",
-            "tandem",
-            "te",
-            "ut",
-            "vel"
-        ));
-    }
+  @Override
+  public Set<String> stopWords() {
+    return new HashSet<>(
+        Arrays.asList(
+            "a", "ab", "ac", "ad", "at", "atque", "aut", "autem", "cum", "de", "dum", "e", "erant",
+            "erat", "est", "et", "etiam", "ex", "haec", "hic", "hoc", "in", "ita", "me", "nec",
+            "neque", "non", "per", "qua", "quae", "quam", "qui", "quibus", "quidem", "quo", "quod",
+            "re", "rebus", "rem", "res", "sed", "si", "sic", "sunt", "tamen", "tandem", "te", "ut",
+            "vel"));
+  }
 }

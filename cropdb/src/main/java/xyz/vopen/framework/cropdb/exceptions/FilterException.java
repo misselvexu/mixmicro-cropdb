@@ -17,29 +17,28 @@
 package xyz.vopen.framework.cropdb.exceptions;
 
 /**
- * Exception thrown during find operations due to
- * invalid filter configuration.
+ * Exception thrown during find operations due to invalid filter configuration.
  *
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 1.0
  */
 public class FilterException extends CropException {
-    /**
-     * Instantiates a new Filter exception.
-     *
-     * @param message the message
-     */
-    public FilterException(String message) {
-        super(message);
-    }
+  /**
+   * Instantiates a new Filter exception.
+   *
+   * @param message the message
+   */
+  public FilterException(String message) {
+    super(message);
+  }
 
-    /**
-     * Instantiates a new Filter exception.
-     *
-     * @param message the message
-     * @param cause   the cause
-     */
-    public FilterException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  /**
+   * Instantiates a new Filter exception.
+   *
+   * @param message the message
+   * @param cause the cause
+   */
+  public FilterException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

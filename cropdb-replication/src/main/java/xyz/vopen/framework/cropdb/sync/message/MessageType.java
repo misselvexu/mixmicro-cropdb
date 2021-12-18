@@ -18,35 +18,33 @@ package xyz.vopen.framework.cropdb.sync.message;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>. */
 public enum MessageType {
-    Error("no2.sync.error"),
-    Connect("no2.sync.connect"),
-    ConnectAck("no2.sync.connect.ack"),
-    Disconnect("no2.sync.disconnect"),
-    BatchChangeStart("no2.sync.batch.start"),
-    BatchChangeContinue("no2.sync.batch.continue"),
-    BatchChangeEnd("no2.sync.batch.end"),
-    BatchAck("no2.sync.batch.ack"),
-    BatchEndAck("no2.sync.batch.end.ack"),
-    DataGateFeed("no2.sync.feed"),
-    DataGateFeedAck("no2.sync.feed.ack");
+  Error("no2.sync.error"),
+  Connect("no2.sync.connect"),
+  ConnectAck("no2.sync.connect.ack"),
+  Disconnect("no2.sync.disconnect"),
+  BatchChangeStart("no2.sync.batch.start"),
+  BatchChangeContinue("no2.sync.batch.continue"),
+  BatchChangeEnd("no2.sync.batch.end"),
+  BatchAck("no2.sync.batch.ack"),
+  BatchEndAck("no2.sync.batch.end.ack"),
+  DataGateFeed("no2.sync.feed"),
+  DataGateFeedAck("no2.sync.feed.ack");
 
-    private String code;
+  private String code;
 
-    MessageType(String code) {
-        this.code = code;
-    }
+  MessageType(String code) {
+    this.code = code;
+  }
 
-    @JsonValue
-    public String code() {
-        return code;
-    }
+  @JsonValue
+  public String code() {
+    return code;
+  }
 
-    @Override
-    public String toString() {
-        return code;
-    }
+  @Override
+  public String toString() {
+    return code;
+  }
 }

@@ -32,128 +32,133 @@ import java.nio.charset.StandardCharsets;
 /**
  * A password based AES string encryption utility.
  *
- * <p>
- * NOTE: This is a derivative work of https://mkyong.com/java/java-symmetric-key-cryptography-example/
- * </p>
+ * <p>NOTE: This is a derivative work of
+ * https://mkyong.com/java/java-symmetric-key-cryptography-example/
  *
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public class AESEncryptor implements Encryptor {
-    private final String encryptAlgo;
-    private final int tagLengthBit;
-    private final int ivLengthByte;
-    private final int saltLengthByte;
-    private final Charset UTF_8 = StandardCharsets.UTF_8;
+  private final String encryptAlgo;
+  private final int tagLengthBit;
+  private final int ivLengthByte;
+  private final int saltLengthByte;
+  private final Charset UTF_8 = StandardCharsets.UTF_8;
 
-    private final SecureString password;
+  private final SecureString password;
 
-    /**
-     * Instantiates a new {@link AESEncryptor} with these default values
-     *     <ul>
-     *         <li>Encryption Algo - AES/GCM/NoPadding</li>
-     *         <li>Tag Length (bit) - 128</li>
-     *         <li>IV Length (byte) - 12</li>
-     *         <li>Salt Length (byte) - 16</li>
-     *     </ul>
-     *
-     * @param password the password
-     */
-    public AESEncryptor(String password) {
-        this(password, "AES/GCM/NoPadding", 128, 12, 16);
+  /**
+   * Instantiates a new {@link AESEncryptor} with these default values
+   *
+   * <ul>
+   *   <li>Encryption Algo - AES/GCM/NoPadding
+   *   <li>Tag Length (bit) - 128
+   *   <li>IV Length (byte) - 12
+   *   <li>Salt Length (byte) - 16
+   * </ul>
+   *
+   * @param password the password
+   */
+  public AESEncryptor(String password) {
+    this(password, "AES/GCM/NoPadding", 128, 12, 16);
+  }
+
+  /**
+   * Instantiates a new {@link AESEncryptor}.
+   *
+   * @param password the password
+   * @param encryptionAlgo the encryption algo
+   * @param tagLengthBit the tag length bit
+   * @param ivLengthByte the iv length byte
+   * @param saltLengthByte the salt length byte
+   */
+  public AESEncryptor(
+      String password,
+      String encryptionAlgo,
+      Integer tagLengthBit,
+      Integer ivLengthByte,
+      Integer saltLengthByte) {
+    this.password = new SecureString(password);
+    this.encryptAlgo = encryptionAlgo;
+    this.tagLengthBit = tagLengthBit;
+    this.ivLengthByte = ivLengthByte;
+    this.saltLengthByte = saltLengthByte;
+  }
+
+  /**
+   * Returns a base64 encoded AES encrypted string.
+   *
+   * @param plainText the text as byte array
+   * @return the encrypted string
+   */
+  @Override
+  public String encrypt(byte[] plainText) {
+    try {
+      // 16 bytes salt
+      byte[] salt = CryptoUtils.getRandomNonce(saltLengthByte);
+
+      // GCM recommended 12 bytes iv?
+      byte[] iv = CryptoUtils.getRandomNonce(ivLengthByte);
+
+      // secret key from password
+      SecretKey aesKeyFromPassword =
+          CryptoUtils.getAESKeyFromPassword(password.asString().toCharArray(), salt);
+
+      Cipher cipher = Cipher.getInstance(encryptAlgo);
+
+      // ASE-GCM needs GCMParameterSpec
+      cipher.init(Cipher.ENCRYPT_MODE, aesKeyFromPassword, new GCMParameterSpec(tagLengthBit, iv));
+
+      byte[] cipherText = cipher.doFinal(plainText);
+
+      // prefix IV and Salt to cipher text
+      byte[] cipherTextWithIvSalt =
+          ByteBuffer.allocate(iv.length + salt.length + cipherText.length)
+              .put(iv)
+              .put(salt)
+              .put(cipherText)
+              .array();
+
+      // string representation, base64, send this string to other for decryption.
+      return Base64.encodeToString(cipherTextWithIvSalt, Base64.URL_SAFE);
+    } catch (Exception e) {
+      throw new CropSecurityException("failed to encrypt data", e);
     }
+  }
 
-    /**
-     * Instantiates a new {@link AESEncryptor}.
-     *
-     * @param password       the password
-     * @param encryptionAlgo the encryption algo
-     * @param tagLengthBit   the tag length bit
-     * @param ivLengthByte   the iv length byte
-     * @param saltLengthByte the salt length byte
-     */
-    public AESEncryptor(String password, String encryptionAlgo,
-                        Integer tagLengthBit, Integer ivLengthByte,
-                        Integer saltLengthByte) {
-        this.password = new SecureString(password);
-        this.encryptAlgo = encryptionAlgo;
-        this.tagLengthBit = tagLengthBit;
-        this.ivLengthByte = ivLengthByte;
-        this.saltLengthByte = saltLengthByte;
+  /**
+   * Returns the decrypted string encoded by AES.
+   *
+   * <p>NOTE: The same password, salt and iv are needed to decrypt it.
+   *
+   * @param encryptedText the encrypted text
+   * @return the plain text decrypted string
+   */
+  @Override
+  public String decrypt(String encryptedText) {
+    try {
+      byte[] decode = Base64.decode(encryptedText.getBytes(UTF_8), Base64.URL_SAFE);
+
+      // get back the iv and salt from the cipher text
+      ByteBuffer bb = ByteBuffer.wrap(decode);
+      byte[] iv = new byte[ivLengthByte];
+      bb.get(iv);
+
+      byte[] salt = new byte[saltLengthByte];
+      bb.get(salt);
+
+      byte[] cipherText = new byte[bb.remaining()];
+      bb.get(cipherText);
+
+      // get back the aes key from the same password and salt
+      SecretKey aesKeyFromPassword =
+          CryptoUtils.getAESKeyFromPassword(password.asString().toCharArray(), salt);
+      Cipher cipher = Cipher.getInstance(encryptAlgo);
+      cipher.init(Cipher.DECRYPT_MODE, aesKeyFromPassword, new GCMParameterSpec(tagLengthBit, iv));
+      byte[] plainText = cipher.doFinal(cipherText);
+      return new String(plainText, UTF_8);
+    } catch (Exception e) {
+      throw new CropSecurityException("failed to decrypt data", e);
     }
-
-    /**
-     * Returns a base64 encoded AES encrypted string.
-     *
-     * @param plainText the text as byte array
-     * @return the encrypted string
-     */
-    @Override
-    public String encrypt(byte[] plainText) {
-        try {
-            // 16 bytes salt
-            byte[] salt = CryptoUtils.getRandomNonce(saltLengthByte);
-
-            // GCM recommended 12 bytes iv?
-            byte[] iv = CryptoUtils.getRandomNonce(ivLengthByte);
-
-            // secret key from password
-            SecretKey aesKeyFromPassword = CryptoUtils.getAESKeyFromPassword(password.asString().toCharArray(), salt);
-
-            Cipher cipher = Cipher.getInstance(encryptAlgo);
-
-            // ASE-GCM needs GCMParameterSpec
-            cipher.init(Cipher.ENCRYPT_MODE, aesKeyFromPassword, new GCMParameterSpec(tagLengthBit, iv));
-
-            byte[] cipherText = cipher.doFinal(plainText);
-
-            // prefix IV and Salt to cipher text
-            byte[] cipherTextWithIvSalt = ByteBuffer.allocate(iv.length + salt.length + cipherText.length)
-                .put(iv)
-                .put(salt)
-                .put(cipherText)
-                .array();
-
-            // string representation, base64, send this string to other for decryption.
-            return Base64.encodeToString(cipherTextWithIvSalt, Base64.URL_SAFE);
-        } catch (Exception e) {
-            throw new CropSecurityException("failed to encrypt data", e);
-        }
-    }
-
-    /**
-     * Returns the decrypted string encoded by AES.
-     *
-     * <p>
-     *     NOTE: The same password, salt and iv are needed to decrypt it.
-     * </p>
-     * @param encryptedText the encrypted text
-     * @return the plain text decrypted string
-     */
-    @Override
-    public String decrypt(String encryptedText) {
-        try {
-            byte[] decode = Base64.decode(encryptedText.getBytes(UTF_8), Base64.URL_SAFE);
-
-            // get back the iv and salt from the cipher text
-            ByteBuffer bb = ByteBuffer.wrap(decode);
-            byte[] iv = new byte[ivLengthByte];
-            bb.get(iv);
-
-            byte[] salt = new byte[saltLengthByte];
-            bb.get(salt);
-
-            byte[] cipherText = new byte[bb.remaining()];
-            bb.get(cipherText);
-
-            // get back the aes key from the same password and salt
-            SecretKey aesKeyFromPassword = CryptoUtils.getAESKeyFromPassword(password.asString().toCharArray(), salt);
-            Cipher cipher = Cipher.getInstance(encryptAlgo);
-            cipher.init(Cipher.DECRYPT_MODE, aesKeyFromPassword, new GCMParameterSpec(tagLengthBit, iv));
-            byte[] plainText = cipher.doFinal(cipherText);
-            return new String(plainText, UTF_8);
-        } catch (Exception e) {
-            throw new CropSecurityException("failed to decrypt data", e);
-        }
-    }
+  }
 }

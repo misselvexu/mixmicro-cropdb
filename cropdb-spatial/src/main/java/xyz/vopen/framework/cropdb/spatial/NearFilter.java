@@ -26,24 +26,24 @@ import org.locationtech.jts.util.GeometricShapeFactory;
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 class NearFilter extends WithinFilter {
-    NearFilter(String field, Coordinate point, Double distance) {
-        super(field, createCircle(point, distance));
-    }
+  NearFilter(String field, Coordinate point, Double distance) {
+    super(field, createCircle(point, distance));
+  }
 
-    NearFilter(String field, Point point, Double distance) {
-        super(field, createCircle(point.getCoordinate(), distance));
-    }
+  NearFilter(String field, Point point, Double distance) {
+    super(field, createCircle(point.getCoordinate(), distance));
+  }
 
-    private static Geometry createCircle(Coordinate center, double radius) {
-        GeometricShapeFactory shapeFactory = new GeometricShapeFactory();
-        shapeFactory.setNumPoints(64);
-        shapeFactory.setCentre(center);
-        shapeFactory.setSize(radius * 2);
-        return shapeFactory.createCircle();
-    }
+  private static Geometry createCircle(Coordinate center, double radius) {
+    GeometricShapeFactory shapeFactory = new GeometricShapeFactory();
+    shapeFactory.setNumPoints(64);
+    shapeFactory.setCentre(center);
+    shapeFactory.setSize(radius * 2);
+    return shapeFactory.createCircle();
+  }
 
-    @Override
-    public String toString() {
-        return "(" + getField() + " nears " + getValue() + ")";
-    }
+  @Override
+  public String toString() {
+    return "(" + getField() + " nears " + getValue() + ")";
+  }
 }

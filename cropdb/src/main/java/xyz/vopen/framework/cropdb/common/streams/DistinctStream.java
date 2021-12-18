@@ -31,65 +31,65 @@ import java.util.*;
  * @since 4.0
  */
 public class DistinctStream implements RecordStream<Pair<CropId, Document>> {
-    private final RecordStream<Pair<CropId, Document>> rawStream;
+  private final RecordStream<Pair<CropId, Document>> rawStream;
+
+  /**
+   * Instantiates a new DistinctStream.
+   *
+   * @param rawStream the raw stream
+   */
+  public DistinctStream(RecordStream<Pair<CropId, Document>> rawStream) {
+    this.rawStream = rawStream;
+  }
+
+  @Override
+  public Iterator<Pair<CropId, Document>> iterator() {
+    Iterator<Pair<CropId, Document>> iterator =
+        rawStream == null ? Collections.emptyIterator() : rawStream.iterator();
+    return new DistinctStreamIterator(iterator);
+  }
+
+  private static class DistinctStreamIterator implements Iterator<Pair<CropId, Document>> {
+    private final Iterator<Pair<CropId, Document>> iterator;
+    private final Set<CropId> scannedIds;
+    private Pair<CropId, Document> nextPair;
+    private boolean nextPairSet = false;
 
     /**
-     * Instantiates a new DistinctStream.
+     * Instantiates a new DistinctStreamIterator.
      *
-     * @param rawStream the raw stream
+     * @param iterator the iterator
      */
-    public DistinctStream(RecordStream<Pair<CropId, Document>> rawStream) {
-        this.rawStream = rawStream;
+    public DistinctStreamIterator(Iterator<Pair<CropId, Document>> iterator) {
+      this.iterator = iterator;
+      this.scannedIds = new HashSet<>(); // fastest lookup for ids - O(1)
     }
 
     @Override
-    public Iterator<Pair<CropId, Document>> iterator() {
-        Iterator<Pair<CropId, Document>> iterator = rawStream == null ? Collections.emptyIterator()
-            : rawStream.iterator();
-        return new DistinctStreamIterator(iterator);
+    public boolean hasNext() {
+      return nextPairSet || setNextId();
     }
 
-    private static class DistinctStreamIterator implements Iterator<Pair<CropId, Document>> {
-        private final Iterator<Pair<CropId, Document>> iterator;
-        private final Set<CropId> scannedIds;
-        private Pair<CropId, Document> nextPair;
-        private boolean nextPairSet = false;
-
-        /**
-         * Instantiates a new DistinctStreamIterator.
-         *
-         * @param iterator the iterator
-         */
-        public DistinctStreamIterator(Iterator<Pair<CropId, Document>> iterator) {
-            this.iterator = iterator;
-            this.scannedIds = new HashSet<>(); // fastest lookup for ids - O(1)
-        }
-
-        @Override
-        public boolean hasNext() {
-            return nextPairSet || setNextId();
-        }
-
-        @Override
-        public Pair<CropId, Document> next() {
-            if (!nextPairSet && !setNextId()) {
-                throw new NoSuchElementException();
-            }
-            nextPairSet = false;
-            return nextPair;
-        }
-
-        private boolean setNextId() {
-            while (iterator.hasNext()) {
-                final Pair<CropId, Document> pair = iterator.next();
-                if (!scannedIds.contains(pair.getFirst())) {
-                    scannedIds.add(pair.getFirst());
-                    nextPair = pair;
-                    nextPairSet = true;
-                    return true;
-                }
-            }
-            return false;
-        }
+    @Override
+    public Pair<CropId, Document> next() {
+      if (!nextPairSet && !setNextId()) {
+        throw new NoSuchElementException();
+      }
+      nextPairSet = false;
+      return nextPair;
     }
+
+    private boolean setNextId() {
+      while (iterator.hasNext()) {
+        final Pair<CropId, Document> pair = iterator.next();
+        if (!scannedIds.contains(pair.getFirst())) {
+          scannedIds.add(pair.getFirst());
+          nextPair = pair;
+          nextPairSet = true;
+          return true;
+        }
+      }
+      return false;
+    }
+  }
 }

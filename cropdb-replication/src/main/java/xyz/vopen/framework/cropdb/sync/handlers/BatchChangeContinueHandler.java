@@ -23,26 +23,28 @@ import xyz.vopen.framework.cropdb.sync.message.BatchAck;
 import xyz.vopen.framework.cropdb.sync.message.BatchChangeContinue;
 import xyz.vopen.framework.cropdb.sync.message.Receipt;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 @Data
-public class BatchChangeContinueHandler implements MessageHandler<BatchChangeContinue>, ReceiptAckSender<BatchAck> {
-    private ReplicationTemplate replicationTemplate;
+public class BatchChangeContinueHandler
+    implements MessageHandler<BatchChangeContinue>, ReceiptAckSender<BatchAck> {
+  private ReplicationTemplate replicationTemplate;
 
-    public BatchChangeContinueHandler(ReplicationTemplate replicationTemplate) {
-        this.replicationTemplate = replicationTemplate;
-    }
+  public BatchChangeContinueHandler(ReplicationTemplate replicationTemplate) {
+    this.replicationTemplate = replicationTemplate;
+  }
 
-    @Override
-    public void handleMessage(BatchChangeContinue message) {
-        sendAck(message);
-    }
+  @Override
+  public void handleMessage(BatchChangeContinue message) {
+    sendAck(message);
+  }
 
-    @Override
-    public BatchAck createAck(String correlationId, Receipt receipt) {
-        MessageFactory factory = replicationTemplate.getMessageFactory();
-        return factory.createBatchAck(replicationTemplate.getConfig(),
-            correlationId, replicationTemplate.getReplicaId(), receipt);
-    }
+  @Override
+  public BatchAck createAck(String correlationId, Receipt receipt) {
+    MessageFactory factory = replicationTemplate.getMessageFactory();
+    return factory.createBatchAck(
+        replicationTemplate.getConfig(),
+        correlationId,
+        replicationTemplate.getReplicaId(),
+        receipt);
+  }
 }

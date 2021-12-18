@@ -44,166 +44,152 @@ import java.util.TreeMap;
 @Slf4j
 @ToString
 public class CropConfig implements AutoCloseable {
-    /**
-     * Indicates if this {@link CropConfig} is already configured.
-     */
-    protected boolean configured = false;
+  /** Indicates if this {@link CropConfig} is already configured. */
+  protected boolean configured = false;
 
-    /**
-     * Returns the {@link PluginManager} instance.
-     */
-    @Getter(AccessLevel.PACKAGE)
-    protected final PluginManager pluginManager;
+  /** Returns the {@link PluginManager} instance. */
+  @Getter(AccessLevel.PACKAGE)
+  protected final PluginManager pluginManager;
 
-    @Getter
-    private static String fieldSeparator = ".";
+  @Getter private static String fieldSeparator = ".";
 
-    @Getter
-    private final Map<Integer, TreeMap<Integer, Migration>> migrations;
+  @Getter private final Map<Integer, TreeMap<Integer, Migration>> migrations;
 
-    @Getter
-    private Integer schemaVersion = Constants.INITIAL_SCHEMA_VERSION;
+  @Getter private Integer schemaVersion = Constants.INITIAL_SCHEMA_VERSION;
 
-    /**
-     * Instantiates a new {@link CropConfig}.
-     */
-    public CropConfig() {
-        this.pluginManager = new PluginManager(this);
-        this.migrations = new HashMap<>();
+  /** Instantiates a new {@link CropConfig}. */
+  public CropConfig() {
+    this.pluginManager = new PluginManager(this);
+    this.migrations = new HashMap<>();
+  }
+
+  /**
+   * Sets the embedded field separator character. Default value is `.`
+   *
+   * @param separator the separator
+   */
+  public void fieldSeparator(String separator) {
+    if (configured) {
+      throw new InvalidOperationException(
+          "cannot change the separator after database" + " initialization");
+    }
+    CropConfig.fieldSeparator = separator;
+  }
+
+  /**
+   * Loads {@link CropPlugin} instances defined in the {@link CropModule}.
+   *
+   * @param module the {@link CropModule} instances.
+   * @return the {@link CropConfig} instance.
+   */
+  public CropConfig loadModule(CropModule module) {
+    if (configured) {
+      throw new InvalidOperationException("cannot load module after database" + " initialization");
+    }
+    pluginManager.loadModule(module);
+    return this;
+  }
+
+  /**
+   * Adds schema migration instructions.
+   *
+   * @param migration the migration
+   * @return the crop config
+   */
+  @SuppressWarnings("Java8MapApi")
+  public CropConfig addMigration(Migration migration) {
+    if (configured) {
+      throw new InvalidOperationException(
+          "cannot add migration steps after database" + " initialization");
     }
 
-    /**
-     * Sets the embedded field separator character. Default value
-     * is `.`
-     *
-     * @param separator the separator
-     */
-    public void fieldSeparator(String separator) {
-        if (configured) {
-            throw new InvalidOperationException("cannot change the separator after database" +
-                " initialization");
-        }
-        CropConfig.fieldSeparator = separator;
+    if (migration != null) {
+      final int start = migration.getStartVersion();
+      final int end = migration.getEndVersion();
+      TreeMap<Integer, Migration> targetMap = migrations.get(start);
+      if (targetMap == null) {
+        targetMap = new TreeMap<>();
+        migrations.put(start, targetMap);
+      }
+      Migration existing = targetMap.get(end);
+      if (existing != null) {
+        log.warn("Overriding migration " + existing + " with " + migration);
+      }
+      targetMap.put(end, migration);
     }
+    return this;
+  }
 
-    /**
-     * Loads {@link CropPlugin} instances defined in the {@link CropModule}.
-     *
-     * @param module the {@link CropModule} instances.
-     * @return the {@link CropConfig} instance.
-     */
-    public CropConfig loadModule(CropModule module) {
-        if (configured) {
-            throw new InvalidOperationException("cannot load module after database" +
-                " initialization");
-        }
-        pluginManager.loadModule(module);
-        return this;
+  /**
+   * Sets the current schema version.
+   *
+   * @param version the version
+   * @return the crop config
+   */
+  public CropConfig schemaVersion(Integer version) {
+    if (configured) {
+      throw new InvalidOperationException(
+          "cannot add schema version info after database" + " initialization");
     }
+    this.schemaVersion = version;
+    return this;
+  }
 
-    /**
-     * Adds schema migration instructions.
-     *
-     * @param migration the migration
-     * @return the crop config
-     */
-    @SuppressWarnings("Java8MapApi")
-    public CropConfig addMigration(Migration migration) {
-        if (configured) {
-            throw new InvalidOperationException("cannot add migration steps after database" +
-                " initialization");
-        }
-
-        if (migration != null) {
-            final int start = migration.getStartVersion();
-            final int end = migration.getEndVersion();
-            TreeMap<Integer, Migration> targetMap = migrations.get(start);
-            if (targetMap == null) {
-                targetMap = new TreeMap<>();
-                migrations.put(start, targetMap);
-            }
-            Migration existing = targetMap.get(end);
-            if (existing != null) {
-                log.warn("Overriding migration " + existing + " with " + migration);
-            }
-            targetMap.put(end, migration);
-        }
-        return this;
+  /**
+   * Auto configures crop database with default configuration values and default built-in plugins.
+   */
+  public void autoConfigure() {
+    if (configured) {
+      throw new InvalidOperationException(
+          "cannot execute autoconfigure after database" + " initialization");
     }
+    pluginManager.findAndLoadPlugins();
+  }
 
-    /**
-     * Sets the current schema version.
-     *
-     * @param version the version
-     * @return the crop config
-     */
-    public CropConfig schemaVersion(Integer version) {
-        if (configured) {
-            throw new InvalidOperationException("cannot add schema version info after database" +
-                " initialization");
-        }
-        this.schemaVersion = version;
-        return this;
+  /**
+   * Finds an {@link CropIndexer} by indexType.
+   *
+   * @param indexType the type of {@link CropIndexer} to find.
+   * @return the {@link CropIndexer}
+   */
+  public CropIndexer findIndexer(String indexType) {
+    CropIndexer cropIndexer = pluginManager.getIndexerMap().get(indexType);
+    if (cropIndexer != null) {
+      cropIndexer.initialize(this);
+      return cropIndexer;
+    } else {
+      throw new IndexingException("no indexer found for index type " + indexType);
     }
+  }
 
-    /**
-     * Auto configures crop database with default configuration values and
-     * default built-in plugins.
-     */
-    public void autoConfigure() {
-        if (configured) {
-            throw new InvalidOperationException("cannot execute autoconfigure after database" +
-                " initialization");
-        }
-        pluginManager.findAndLoadPlugins();
-    }
+  /**
+   * Gets the {@link CropMapper} instance.
+   *
+   * @return the {@link CropMapper}
+   */
+  public CropMapper cropMapper() {
+    return pluginManager.getCropMapper();
+  }
 
-    /**
-     * Finds an {@link CropIndexer} by indexType.
-     *
-     * @param indexType the type of {@link CropIndexer} to find.
-     * @return the {@link CropIndexer}
-     */
-    public CropIndexer findIndexer(String indexType) {
-        CropIndexer cropIndexer = pluginManager.getIndexerMap().get(indexType);
-        if (cropIndexer != null) {
-            cropIndexer.initialize(this);
-            return cropIndexer;
-        } else {
-            throw new IndexingException("no indexer found for index type " + indexType);
-        }
-    }
+  /**
+   * Gets {@link CropStore} instance.
+   *
+   * @return the {@link CropStore}
+   */
+  public CropStore<?> getCropStore() {
+    return pluginManager.getCropStore();
+  }
 
-    /**
-     * Gets the {@link CropMapper} instance.
-     *
-     * @return the {@link CropMapper}
-     */
-    public CropMapper cropMapper() {
-        return pluginManager.getCropMapper();
+  @Override
+  public void close() {
+    if (pluginManager != null) {
+      pluginManager.close();
     }
+  }
 
-    /**
-     * Gets {@link CropStore} instance.
-     *
-     * @return the {@link CropStore}
-     */
-    public CropStore<?> getCropStore() {
-        return pluginManager.getCropStore();
-    }
-
-    @Override
-    public void close() {
-        if (pluginManager != null) {
-            pluginManager.close();
-        }
-    }
-
-    /**
-     * Initializes this {@link CropConfig} instance.
-     */
-    protected void initialize() {
-        this.configured = true;
-        this.pluginManager.initializePlugins();
-    }
+  /** Initializes this {@link CropConfig} instance. */
+  protected void initialize() {
+    this.configured = true;
+    this.pluginManager.initializePlugins();
+  }
 }

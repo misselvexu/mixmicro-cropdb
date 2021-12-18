@@ -37,259 +37,277 @@ import java.util.List;
 
 import static xyz.vopen.framework.cropdb.common.Constants.*;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 @Slf4j
 class WriteOperations {
-    private final DocumentIndexWriter documentIndexWriter;
-    private final ReadOperations readOperations;
-    private final EventBus<CollectionEventInfo<?>, CollectionEventListener> eventBus;
-    private final CropMap<CropId, Document> cropMap;
-    private final ProcessorChain processorChain;
+  private final DocumentIndexWriter documentIndexWriter;
+  private final ReadOperations readOperations;
+  private final EventBus<CollectionEventInfo<?>, CollectionEventListener> eventBus;
+  private final CropMap<CropId, Document> cropMap;
+  private final ProcessorChain processorChain;
 
-    WriteOperations(DocumentIndexWriter documentIndexWriter,
-                    ReadOperations readOperations,
-                    CropMap<CropId, Document> cropMap,
-                    EventBus<CollectionEventInfo<?>, CollectionEventListener> eventBus,
-                    ProcessorChain processorChain) {
-        this.documentIndexWriter = documentIndexWriter;
-        this.readOperations = readOperations;
-        this.eventBus = eventBus;
-        this.cropMap = cropMap;
-        this.processorChain = processorChain;
+  WriteOperations(
+      DocumentIndexWriter documentIndexWriter,
+      ReadOperations readOperations,
+      CropMap<CropId, Document> cropMap,
+      EventBus<CollectionEventInfo<?>, CollectionEventListener> eventBus,
+      ProcessorChain processorChain) {
+    this.documentIndexWriter = documentIndexWriter;
+    this.readOperations = readOperations;
+    this.eventBus = eventBus;
+    this.cropMap = cropMap;
+    this.processorChain = processorChain;
+  }
+
+  WriteResult insert(Document... documents) {
+    List<CropId> cropIds = new ArrayList<>(documents.length);
+    log.debug("Total {} document(s) to be inserted in {}", documents.length, cropMap.getName());
+
+    for (Document document : documents) {
+      Document newDoc = document.clone();
+      CropId cropId = newDoc.getId();
+      String source = newDoc.getSource();
+      long time = System.currentTimeMillis();
+
+      if (!REPLICATOR.contentEquals(newDoc.getSource())) {
+        // if replicator is not inserting the document that means
+        // it is being inserted by user, so update metadata
+        newDoc.remove(DOC_SOURCE);
+        newDoc.put(DOC_REVISION, 1);
+        newDoc.put(DOC_MODIFIED, time);
+      } else {
+        // if replicator is inserting the document, remove the source
+        // but keep the revision intact
+        newDoc.remove(DOC_SOURCE);
+      }
+
+      // run processors
+      Document unprocessed = newDoc.clone();
+      Document processed = processorChain.processBeforeWrite(unprocessed);
+      log.debug("Document processed from {} to {} before insert", newDoc, processed);
+
+      log.debug("Inserting processed document {} in {}", processed, cropMap.getName());
+      Document already = cropMap.putIfAbsent(cropId, processed);
+
+      if (already != null) {
+        log.warn("Another document {} already exists with same id {}", already, cropId);
+
+        throw new UniqueConstraintException(
+            "id constraint violation, "
+                + "entry with same id already exists in "
+                + cropMap.getName());
+      } else {
+        try {
+          documentIndexWriter.writeIndexEntry(processed);
+        } catch (UniqueConstraintException | IndexingException e) {
+          log.error(
+              "Index operation has failed during insertion for the document "
+                  + document
+                  + " in "
+                  + cropMap.getName(),
+              e);
+          cropMap.remove(cropId);
+          throw e;
+        }
+      }
+
+      cropIds.add(cropId);
+
+      CollectionEventInfo<Document> eventInfo = new CollectionEventInfo<>();
+      eventInfo.setItem(newDoc);
+      eventInfo.setTimestamp(time);
+      eventInfo.setEventType(EventType.Insert);
+      eventInfo.setOriginator(source);
+      alert(EventType.Insert, eventInfo);
     }
 
-    WriteResult insert(Document... documents) {
-        List<CropId> cropIds = new ArrayList<>(documents.length);
-        log.debug("Total {} document(s) to be inserted in {}", documents.length, cropMap.getName());
+    WriteResultImpl result = new WriteResultImpl();
+    result.setCropIds(cropIds);
 
-        for (Document document : documents) {
-            Document newDoc = document.clone();
-            CropId cropId = newDoc.getId();
-            String source = newDoc.getSource();
-            long time = System.currentTimeMillis();
+    log.debug("Returning write result {} for collection {}", result, cropMap.getName());
+    return result;
+  }
 
-            if (!REPLICATOR.contentEquals(newDoc.getSource())) {
-                // if replicator is not inserting the document that means
-                // it is being inserted by user, so update metadata
-                newDoc.remove(DOC_SOURCE);
-                newDoc.put(DOC_REVISION, 1);
-                newDoc.put(DOC_MODIFIED, time);
-            } else {
-                // if replicator is inserting the document, remove the source
-                // but keep the revision intact
-                newDoc.remove(DOC_SOURCE);
-            }
+  WriteResult update(Filter filter, Document update, UpdateOptions updateOptions) {
+    DocumentCursor cursor = readOperations.find(filter, null);
 
-            // run processors
-            Document unprocessed = newDoc.clone();
-            Document processed = processorChain.processBeforeWrite(unprocessed);
-            log.debug("Document processed from {} to {} before insert", newDoc, processed);
+    WriteResultImpl writeResult = new WriteResultImpl();
+    Document document = update.clone();
+    document.remove(DOC_ID);
 
-            log.debug("Inserting processed document {} in {}", processed, cropMap.getName());
-            Document already = cropMap.putIfAbsent(cropId, processed);
+    if (!REPLICATOR.contentEquals(document.getSource())) {
+      document.remove(DOC_REVISION);
+    }
 
-            if (already != null) {
-                log.warn("Another document {} already exists with same id {}", already, cropId);
+    if (document.size() == 0) {
+      alert(EventType.Update, new CollectionEventInfo<>());
+      return writeResult;
+    }
 
-                throw new UniqueConstraintException("id constraint violation, " +
-                    "entry with same id already exists in " + cropMap.getName());
-            } else {
-                try {
-                    documentIndexWriter.writeIndexEntry(processed);
-                } catch (UniqueConstraintException | IndexingException e) {
-                    log.error("Index operation has failed during insertion for the document "
-                        + document + " in " + cropMap.getName(), e);
-                    cropMap.remove(cropId);
-                    throw e;
-                }
-            }
+    long count = 0;
+    for (Document doc : cursor) {
+      if (doc != null) {
+        count++;
 
-            cropIds.add(cropId);
-
-            CollectionEventInfo<Document> eventInfo = new CollectionEventInfo<>();
-            eventInfo.setItem(newDoc);
-            eventInfo.setTimestamp(time);
-            eventInfo.setEventType(EventType.Insert);
-            eventInfo.setOriginator(source);
-            alert(EventType.Insert, eventInfo);
+        if (count > 1 && updateOptions.isJustOnce()) {
+          break;
         }
 
-        WriteResultImpl result = new WriteResultImpl();
-        result.setCropIds(cropIds);
+        Document newDoc = doc.clone();
+        Document oldDocument = doc.clone();
+        String source = document.getSource();
+        long time = System.currentTimeMillis();
 
-        log.debug("Returning write result {} for collection {}", result, cropMap.getName());
-        return result;
-    }
-
-    WriteResult update(Filter filter, Document update, UpdateOptions updateOptions) {
-        DocumentCursor cursor = readOperations.find(filter, null);
-
-        WriteResultImpl writeResult = new WriteResultImpl();
-        Document document = update.clone();
-        document.remove(DOC_ID);
+        CropId cropId = newDoc.getId();
+        log.debug("Document to update {} in {}", newDoc, cropMap.getName());
 
         if (!REPLICATOR.contentEquals(document.getSource())) {
-            document.remove(DOC_REVISION);
+          document.remove(DOC_SOURCE);
+          newDoc.merge(document);
+          int rev = newDoc.getRevision();
+          newDoc.put(DOC_REVISION, rev + 1);
+          newDoc.put(DOC_MODIFIED, time);
+        } else {
+          document.remove(DOC_SOURCE);
+          newDoc.merge(document);
         }
 
-        if (document.size() == 0) {
-            alert(EventType.Update, new CollectionEventInfo<>());
-            return writeResult;
+        // run processor
+        Document unprocessed = newDoc.clone();
+        Document processed = processorChain.processBeforeWrite(unprocessed);
+        log.debug("Document processed from {} to {} before update", newDoc, processed);
+
+        cropMap.put(cropId, processed);
+        log.debug("Document {} updated in {}", processed, cropMap.getName());
+
+        // if 'update' only contains id value, affected count = 0
+        if (document.size() > 0) {
+          writeResult.addToList(cropId);
         }
 
-        long count = 0;
-        for (Document doc : cursor) {
-            if (doc != null) {
-                count++;
-
-                if (count > 1 && updateOptions.isJustOnce()) {
-                    break;
-                }
-
-                Document newDoc = doc.clone();
-                Document oldDocument = doc.clone();
-                String source = document.getSource();
-                long time = System.currentTimeMillis();
-
-                CropId cropId = newDoc.getId();
-                log.debug("Document to update {} in {}", newDoc, cropMap.getName());
-
-                if (!REPLICATOR.contentEquals(document.getSource())) {
-                    document.remove(DOC_SOURCE);
-                    newDoc.merge(document);
-                    int rev = newDoc.getRevision();
-                    newDoc.put(DOC_REVISION, rev + 1);
-                    newDoc.put(DOC_MODIFIED, time);
-                } else {
-                    document.remove(DOC_SOURCE);
-                    newDoc.merge(document);
-                }
-
-                // run processor
-                Document unprocessed = newDoc.clone();
-                Document processed = processorChain.processBeforeWrite(unprocessed);
-                log.debug("Document processed from {} to {} before update", newDoc, processed);
-
-                cropMap.put(cropId, processed);
-                log.debug("Document {} updated in {}", processed, cropMap.getName());
-
-                // if 'update' only contains id value, affected count = 0
-                if (document.size() > 0) {
-                    writeResult.addToList(cropId);
-                }
-
-                try {
-                    documentIndexWriter.updateIndexEntry(oldDocument, processed);
-                } catch (UniqueConstraintException | IndexingException e) {
-                    log.error("Index operation failed during update, reverting changes for the document "
-                        + oldDocument + " in " + cropMap.getName(), e);
-                    cropMap.put(cropId, oldDocument);
-                    documentIndexWriter.updateIndexEntry(processed, oldDocument);
-                    throw e;
-                }
-
-                CollectionEventInfo<Document> eventInfo = new CollectionEventInfo<>();
-                eventInfo.setItem(newDoc);
-                eventInfo.setEventType(EventType.Update);
-                eventInfo.setTimestamp(time);
-                eventInfo.setOriginator(source);
-                alert(EventType.Update, eventInfo);
-            }
+        try {
+          documentIndexWriter.updateIndexEntry(oldDocument, processed);
+        } catch (UniqueConstraintException | IndexingException e) {
+          log.error(
+              "Index operation failed during update, reverting changes for the document "
+                  + oldDocument
+                  + " in "
+                  + cropMap.getName(),
+              e);
+          cropMap.put(cropId, oldDocument);
+          documentIndexWriter.updateIndexEntry(processed, oldDocument);
+          throw e;
         }
 
-        if (count == 0) {
-            log.debug("No document found to update by the filter {} in {}", filter, cropMap.getName());
-            if (updateOptions.isInsertIfAbsent()) {
-                return insert(update);
-            } else {
-                return writeResult;
-            }
-        }
+        CollectionEventInfo<Document> eventInfo = new CollectionEventInfo<>();
+        eventInfo.setItem(newDoc);
+        eventInfo.setEventType(EventType.Update);
+        eventInfo.setTimestamp(time);
+        eventInfo.setOriginator(source);
+        alert(EventType.Update, eventInfo);
+      }
+    }
 
-        log.debug("Filter {} updated total {} document(s) with options {} in {}",
-            filter, count, updateOptions, cropMap.getName());
-
-        log.debug("Returning write result {} for collection {}", writeResult, cropMap.getName());
+    if (count == 0) {
+      log.debug("No document found to update by the filter {} in {}", filter, cropMap.getName());
+      if (updateOptions.isInsertIfAbsent()) {
+        return insert(update);
+      } else {
         return writeResult;
+      }
     }
 
-    WriteResult remove(Filter filter, boolean justOnce) {
-        DocumentCursor cursor = readOperations.find(filter, null);
-        WriteResultImpl result = new WriteResultImpl();
+    log.debug(
+        "Filter {} updated total {} document(s) with options {} in {}",
+        filter,
+        count,
+        updateOptions,
+        cropMap.getName());
 
-        long count = 0;
-        for (Document document : cursor) {
-            if (document != null) {
-                count++;
+    log.debug("Returning write result {} for collection {}", writeResult, cropMap.getName());
+    return writeResult;
+  }
 
-                // run processor
-                Document unprocessed = document.clone();
-                Document processed = processorChain.processAfterRead(unprocessed);
-                log.debug("Document processed from {} to {} after remove", document, processed);
+  WriteResult remove(Filter filter, boolean justOnce) {
+    DocumentCursor cursor = readOperations.find(filter, null);
+    WriteResultImpl result = new WriteResultImpl();
 
-                CollectionEventInfo<Document> eventInfo = removeAndCreateEvent(processed, result);
-                if (eventInfo != null) {
-                    alert(EventType.Remove, eventInfo);
-                }
+    long count = 0;
+    for (Document document : cursor) {
+      if (document != null) {
+        count++;
 
-                if (justOnce) {
-                    break;
-                }
-            }
-        }
+        // run processor
+        Document unprocessed = document.clone();
+        Document processed = processorChain.processAfterRead(unprocessed);
+        log.debug("Document processed from {} to {} after remove", document, processed);
 
-        if (count == 0) {
-            log.debug("No document found to remove by the filter {} in {}", filter, cropMap.getName());
-            return result;
-        }
-
-        log.debug("Filter {} removed total {} document(s) with options {} from {}",
-            filter, count, justOnce, cropMap.getName());
-
-        log.debug("Returning write result {} for collection {}", result, cropMap.getName());
-        return result;
-    }
-
-    WriteResult remove(Document document) {
-        WriteResultImpl result = new WriteResultImpl();
-        CollectionEventInfo<Document> eventInfo = removeAndCreateEvent(document, result);
+        CollectionEventInfo<Document> eventInfo = removeAndCreateEvent(processed, result);
         if (eventInfo != null) {
-            eventInfo.setOriginator(document.getSource());
-            alert(EventType.Remove, eventInfo);
+          alert(EventType.Remove, eventInfo);
         }
-        return result;
+
+        if (justOnce) {
+          break;
+        }
+      }
     }
 
-    private CollectionEventInfo<Document> removeAndCreateEvent(Document document, WriteResultImpl writeResult) {
-        CropId cropId = document.getId();
-        document = cropMap.remove(cropId);
-        if (document != null) {
-            long time = System.currentTimeMillis();
-            documentIndexWriter.removeIndexEntry(document);
-            writeResult.addToList(cropId);
-
-            int rev = document.getRevision();
-            document.put(DOC_REVISION, rev + 1);
-            document.put(DOC_MODIFIED, time);
-
-            log.debug("Document removed {} from {}", document, cropMap.getName());
-
-            CollectionEventInfo<Document> eventInfo = new CollectionEventInfo<>();
-            Document eventDoc = document.clone();
-            eventInfo.setItem(eventDoc);
-            eventInfo.setEventType(EventType.Remove);
-            eventInfo.setTimestamp(time);
-            return eventInfo;
-        }
-        return null;
+    if (count == 0) {
+      log.debug("No document found to remove by the filter {} in {}", filter, cropMap.getName());
+      return result;
     }
 
-    private void alert(EventType action, CollectionEventInfo<?> changedItem) {
-        log.debug("Notifying {} event for item {} from {}", action, changedItem, cropMap.getName());
-        if (eventBus != null) {
-            eventBus.post(changedItem);
-        }
+    log.debug(
+        "Filter {} removed total {} document(s) with options {} from {}",
+        filter,
+        count,
+        justOnce,
+        cropMap.getName());
+
+    log.debug("Returning write result {} for collection {}", result, cropMap.getName());
+    return result;
+  }
+
+  WriteResult remove(Document document) {
+    WriteResultImpl result = new WriteResultImpl();
+    CollectionEventInfo<Document> eventInfo = removeAndCreateEvent(document, result);
+    if (eventInfo != null) {
+      eventInfo.setOriginator(document.getSource());
+      alert(EventType.Remove, eventInfo);
     }
+    return result;
+  }
+
+  private CollectionEventInfo<Document> removeAndCreateEvent(
+      Document document, WriteResultImpl writeResult) {
+    CropId cropId = document.getId();
+    document = cropMap.remove(cropId);
+    if (document != null) {
+      long time = System.currentTimeMillis();
+      documentIndexWriter.removeIndexEntry(document);
+      writeResult.addToList(cropId);
+
+      int rev = document.getRevision();
+      document.put(DOC_REVISION, rev + 1);
+      document.put(DOC_MODIFIED, time);
+
+      log.debug("Document removed {} from {}", document, cropMap.getName());
+
+      CollectionEventInfo<Document> eventInfo = new CollectionEventInfo<>();
+      Document eventDoc = document.clone();
+      eventInfo.setItem(eventDoc);
+      eventInfo.setEventType(EventType.Remove);
+      eventInfo.setTimestamp(time);
+      return eventInfo;
+    }
+    return null;
+  }
+
+  private void alert(EventType action, CollectionEventInfo<?> changedItem) {
+    log.debug("Notifying {} event for item {} from {}", action, changedItem, cropMap.getName());
+    if (eventBus != null) {
+      eventBus.post(changedItem);
+    }
+  }
 }

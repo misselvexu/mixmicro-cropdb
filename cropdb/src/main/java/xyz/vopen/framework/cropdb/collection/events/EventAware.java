@@ -17,26 +17,24 @@
 package xyz.vopen.framework.cropdb.collection.events;
 
 /**
- * Interface to be implemented by collections that wish to be aware
- * of any event.
+ * Interface to be implemented by collections that wish to be aware of any event.
  *
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @see EventType
  * @since 4.0
  */
 public interface EventAware {
-    /**
-     * Subscribes an {@link CollectionEventListener} instance to listen to any
-     * collection events.
-     *
-     * @param listener the listener
-     */
-    void subscribe(CollectionEventListener listener);
+  /**
+   * Subscribes an {@link CollectionEventListener} instance to listen to any collection events.
+   *
+   * @param listener the listener
+   */
+  void subscribe(CollectionEventListener listener);
 
-    /**
-     * Unsubscribes an {@link CollectionEventListener} instance.
-     *
-     * @param listener the listener.
-     */
-    void unsubscribe(CollectionEventListener listener);
+  /**
+   * Unsubscribes an {@link CollectionEventListener} instance.
+   *
+   * @param listener the listener.
+   */
+  void unsubscribe(CollectionEventListener listener);
 }

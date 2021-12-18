@@ -12,17 +12,17 @@ import xyz.vopen.framework.cropdb.common.Fields;
  */
 @AllArgsConstructor
 public class DropIndex extends BaseCommand implements Command {
-    private final String collectionName;
-    private final Fields fields;
+  private final String collectionName;
+  private final Fields fields;
 
-    @Override
-    public void execute(CropDB cropdb) {
-        initialize(cropdb, collectionName);
+  @Override
+  public void execute(CropDB cropdb) {
+    initialize(cropdb, collectionName);
 
-        if (fields == null) {
-            operations.dropAllIndices();
-        } else {
-            operations.dropIndex(fields);
-        }
+    if (fields == null) {
+      operations.dropAllIndices();
+    } else {
+      operations.dropIndex(fields);
     }
+  }
 }

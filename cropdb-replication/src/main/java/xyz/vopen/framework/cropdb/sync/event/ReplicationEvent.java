@@ -19,16 +19,14 @@ package xyz.vopen.framework.cropdb.sync.event;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 @Data
 @AllArgsConstructor
 public class ReplicationEvent {
-    private ReplicationEventType eventType;
-    private Throwable error;
+  private ReplicationEventType eventType;
+  private Throwable error;
 
-    public ReplicationEvent(ReplicationEventType eventType) {
-        this(eventType, null);
-    }
+  public ReplicationEvent(ReplicationEventType eventType) {
+    this(eventType, null);
+  }
 }

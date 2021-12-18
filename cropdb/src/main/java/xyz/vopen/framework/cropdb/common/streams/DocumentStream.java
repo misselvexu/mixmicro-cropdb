@@ -40,94 +40,93 @@ import java.util.Iterator;
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  */
 public class DocumentStream implements DocumentCursor {
-    private final RecordStream<Pair<CropId, Document>> recordStream;
+  private final RecordStream<Pair<CropId, Document>> recordStream;
+  private final ProcessorChain processorChain;
+
+  @Getter @Setter private FindPlan findPlan;
+
+  /**
+   * Instantiates a new Document stream.
+   *
+   * @param recordStream the record stream
+   * @param processorChain the processor chain
+   */
+  public DocumentStream(
+      RecordStream<Pair<CropId, Document>> recordStream, ProcessorChain processorChain) {
+    this.recordStream = recordStream;
+    this.processorChain = processorChain;
+  }
+
+  @Override
+  public RecordStream<Document> project(Document projection) {
+    validateProjection(projection);
+    return new ProjectedDocumentStream(recordStream, projection, processorChain);
+  }
+
+  @Override
+  public RecordStream<Document> join(DocumentCursor foreignCursor, Lookup lookup) {
+    return new JoinedDocumentStream(recordStream, foreignCursor, lookup, processorChain);
+  }
+
+  @Override
+  public Iterator<Document> iterator() {
+    Iterator<Pair<CropId, Document>> iterator =
+        recordStream == null ? Collections.emptyIterator() : recordStream.iterator();
+    return new DocumentCursorIterator(iterator, processorChain);
+  }
+
+  private void validateProjection(Document projection) {
+    for (Pair<String, Object> kvp : projection) {
+      validateKeyValuePair(kvp);
+    }
+  }
+
+  private void validateKeyValuePair(Pair<String, Object> kvp) {
+    if (kvp.getSecond() != null) {
+      if (!(kvp.getSecond() instanceof Document)) {
+        throw new ValidationException("projection contains non-null values");
+      } else {
+        validateProjection((Document) kvp.getSecond());
+      }
+    }
+  }
+
+  private static class DocumentCursorIterator implements Iterator<Document> {
+    private final Iterator<Pair<CropId, Document>> iterator;
     private final ProcessorChain processorChain;
 
-    @Getter @Setter
-    private FindPlan findPlan;
-
     /**
-     * Instantiates a new Document stream.
+     * Instantiates a new Document cursor iterator.
      *
-     * @param recordStream   the record stream
+     * @param iterator the iterator
      * @param processorChain the processor chain
      */
-    public DocumentStream(RecordStream<Pair<CropId, Document>> recordStream,
-                          ProcessorChain processorChain) {
-        this.recordStream = recordStream;
-        this.processorChain = processorChain;
+    DocumentCursorIterator(
+        Iterator<Pair<CropId, Document>> iterator, ProcessorChain processorChain) {
+      this.iterator = iterator;
+      this.processorChain = processorChain;
     }
 
     @Override
-    public RecordStream<Document> project(Document projection) {
-        validateProjection(projection);
-        return new ProjectedDocumentStream(recordStream, projection, processorChain);
+    public boolean hasNext() {
+      return iterator.hasNext();
     }
 
     @Override
-    public RecordStream<Document> join(DocumentCursor foreignCursor, Lookup lookup) {
-        return new JoinedDocumentStream(recordStream, foreignCursor, lookup, processorChain);
+    public Document next() {
+      Pair<CropId, Document> next = iterator.next();
+      Document document = next.getSecond();
+      if (document != null) {
+        Document copy = document.clone();
+        copy = processorChain.processAfterRead(copy);
+        return copy;
+      }
+      return null;
     }
 
     @Override
-    public Iterator<Document> iterator() {
-        Iterator<Pair<CropId, Document>> iterator = recordStream == null ? Collections.emptyIterator()
-            : recordStream.iterator();
-        return new DocumentCursorIterator(iterator, processorChain);
+    public void remove() {
+      throw new InvalidOperationException("remove on cursor is not supported");
     }
-
-    private void validateProjection(Document projection) {
-        for (Pair<String, Object> kvp : projection) {
-            validateKeyValuePair(kvp);
-        }
-    }
-
-    private void validateKeyValuePair(Pair<String, Object> kvp) {
-        if (kvp.getSecond() != null) {
-            if (!(kvp.getSecond() instanceof Document)) {
-                throw new ValidationException("projection contains non-null values");
-            } else {
-                validateProjection((Document) kvp.getSecond());
-            }
-        }
-    }
-
-    private static class DocumentCursorIterator implements Iterator<Document> {
-        private final Iterator<Pair<CropId, Document>> iterator;
-        private final ProcessorChain processorChain;
-
-        /**
-         * Instantiates a new Document cursor iterator.
-         *
-         * @param iterator       the iterator
-         * @param processorChain the processor chain
-         */
-        DocumentCursorIterator(Iterator<Pair<CropId, Document>> iterator,
-                               ProcessorChain processorChain) {
-            this.iterator = iterator;
-            this.processorChain = processorChain;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return iterator.hasNext();
-        }
-
-        @Override
-        public Document next() {
-            Pair<CropId, Document> next = iterator.next();
-            Document document = next.getSecond();
-            if (document != null) {
-                Document copy = document.clone();
-                copy = processorChain.processAfterRead(copy);
-                return copy;
-            }
-            return null;
-        }
-
-        @Override
-        public void remove() {
-            throw new InvalidOperationException("remove on cursor is not supported");
-        }
-    }
+  }
 }

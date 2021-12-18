@@ -28,30 +28,28 @@ import java.io.IOException;
 
 import static xyz.vopen.framework.cropdb.spatial.mapper.GeometryExtension.GEOMETRY_ID;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 @Slf4j
 class GeometryDeserializer extends StdScalarDeserializer<Geometry> {
 
-    protected GeometryDeserializer() {
-        super(Geometry.class);
-    }
+  protected GeometryDeserializer() {
+    super(Geometry.class);
+  }
 
-    @Override
-    public Geometry deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-        String value = p.getValueAsString();
-        WKTReader reader = new WKTReader();
-        try {
-            if (value.contains(GEOMETRY_ID)) {
-                String geometry = value.replace(GEOMETRY_ID, "");
-                return reader.read(geometry);
-            } else {
-                throw new ParseException("Not a valid geometry value " + value);
-            }
-        } catch (ParseException e) {
-            log.error("Error while parsing WKT geometry string", e);
-            throw new IOException(e);
-        }
+  @Override
+  public Geometry deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+    String value = p.getValueAsString();
+    WKTReader reader = new WKTReader();
+    try {
+      if (value.contains(GEOMETRY_ID)) {
+        String geometry = value.replace(GEOMETRY_ID, "");
+        return reader.read(geometry);
+      } else {
+        throw new ParseException("Not a valid geometry value " + value);
+      }
+    } catch (ParseException e) {
+      log.error("Error while parsing WKT geometry string", e);
+      throw new IOException(e);
     }
+  }
 }

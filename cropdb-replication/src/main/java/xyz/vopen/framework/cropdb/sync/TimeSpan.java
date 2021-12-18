@@ -21,12 +21,10 @@ import lombok.Data;
 
 import java.util.concurrent.TimeUnit;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 @Data
 @AllArgsConstructor
 public class TimeSpan {
-    private long time;
-    private TimeUnit timeUnit;
+  private long time;
+  private TimeUnit timeUnit;
 }

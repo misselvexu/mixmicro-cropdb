@@ -80,8 +80,10 @@ class Builder internal constructor() {
  * @param [password] the password
  * @return the crop database instance.
  */
-fun crop(userId: String? = null, password: String? = null,
-            op: (Builder.() -> Unit)? = null): CropDB {
+fun crop(
+    userId: String? = null, password: String? = null,
+    op: (Builder.() -> Unit)? = null
+): CropDB {
     val builder = Builder()
     op?.invoke(builder)
     val cropBuilder = builder.createCropBuilder()

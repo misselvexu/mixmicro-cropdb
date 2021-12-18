@@ -25,7 +25,7 @@ import java.util.concurrent.ExecutorService;
 /**
  * An abstract implementation of {@link EventBus}.
  *
- * @param <EventInfo>     the event information type parameter
+ * @param <EventInfo> the event information type parameter
  * @param <EventListener> the event listener type parameter
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 1.0
@@ -33,58 +33,54 @@ import java.util.concurrent.ExecutorService;
 public abstract class CropEventBus<EventInfo, EventListener>
     implements EventBus<EventInfo, EventListener>, AutoCloseable {
 
-    private final Set<EventListener> listeners;
-    private ExecutorService eventExecutor;
+  private final Set<EventListener> listeners;
+  private ExecutorService eventExecutor;
 
-    /**
-     * Instantiates a new Crop event bus.
-     */
-    public CropEventBus() {
-        this.listeners = new CopyOnWriteArraySet<>();
-    }
+  /** Instantiates a new Crop event bus. */
+  public CropEventBus() {
+    this.listeners = new CopyOnWriteArraySet<>();
+  }
 
-    @Override
-    public void register(EventListener eventListener) {
-        if (eventListener != null) {
-            listeners.add(eventListener);
-        }
+  @Override
+  public void register(EventListener eventListener) {
+    if (eventListener != null) {
+      listeners.add(eventListener);
     }
+  }
 
-    @Override
-    public void deregister(EventListener eventListener) {
-        if (eventListener != null) {
-            listeners.remove(eventListener);
-        }
+  @Override
+  public void deregister(EventListener eventListener) {
+    if (eventListener != null) {
+      listeners.remove(eventListener);
     }
+  }
 
-    @Override
-    public void close() {
-        listeners.clear();
-        if (eventExecutor != null) {
-            eventExecutor.shutdown();
-        }
+  @Override
+  public void close() {
+    listeners.clear();
+    if (eventExecutor != null) {
+      eventExecutor.shutdown();
     }
+  }
 
-    /**
-     * Gets the {@link ExecutorService} that executes listeners' code.
-     *
-     * @return the {@link ExecutorService}.
-     */
-    protected ExecutorService getEventExecutor() {
-        if (eventExecutor == null
-            || eventExecutor.isShutdown()
-            || eventExecutor.isTerminated()) {
-            eventExecutor = ThreadPoolManager.workerPool();
-        }
-        return eventExecutor;
+  /**
+   * Gets the {@link ExecutorService} that executes listeners' code.
+   *
+   * @return the {@link ExecutorService}.
+   */
+  protected ExecutorService getEventExecutor() {
+    if (eventExecutor == null || eventExecutor.isShutdown() || eventExecutor.isTerminated()) {
+      eventExecutor = ThreadPoolManager.workerPool();
     }
+    return eventExecutor;
+  }
 
-    /**
-     * Gets a set of all event listeners.
-     *
-     * @return the event listeners
-     */
-    protected Set<EventListener> getListeners() {
-        return listeners;
-    }
+  /**
+   * Gets a set of all event listeners.
+   *
+   * @return the event listeners
+   */
+  protected Set<EventListener> getListeners() {
+    return listeners;
+  }
 }

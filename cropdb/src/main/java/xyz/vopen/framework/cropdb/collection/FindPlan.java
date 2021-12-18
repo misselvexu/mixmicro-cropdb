@@ -38,26 +38,24 @@ import java.util.Map;
  */
 @Data
 public class FindPlan {
-    private EqualsFilter byIdFilter;
-    private IndexScanFilter indexScanFilter;
-    private Filter collectionScanFilter;
+  private EqualsFilter byIdFilter;
+  private IndexScanFilter indexScanFilter;
+  private Filter collectionScanFilter;
 
-    private IndexDescriptor indexDescriptor;
-    private Map<String, Boolean> indexScanOrder;
-    private List<Pair<String, SortOrder>> blockingSortOrder;
+  private IndexDescriptor indexDescriptor;
+  private Map<String, Boolean> indexScanOrder;
+  private List<Pair<String, SortOrder>> blockingSortOrder;
 
-    private Long skip;
-    private Long limit;
+  private Long skip;
+  private Long limit;
 
-    private Collator collator;
+  private Collator collator;
 
-    private List<FindPlan> subPlans;
+  private List<FindPlan> subPlans;
 
-    /**
-     * Instantiates a new {@link FindPlan}.
-     */
-    public FindPlan() {
-        this.subPlans = new ArrayList<>();
-        this.blockingSortOrder = new ArrayList<>();
-    }
+  /** Instantiates a new {@link FindPlan}. */
+  public FindPlan() {
+    this.subPlans = new ArrayList<>();
+    this.blockingSortOrder = new ArrayList<>();
+  }
 }

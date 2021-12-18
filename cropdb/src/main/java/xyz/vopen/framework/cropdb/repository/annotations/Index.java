@@ -30,17 +30,17 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Repeatable(Indices.class)
 public @interface Index {
-    /**
-     * The field name to be indexed.
-     *
-     * @return the field name
-     */
-    String[] value();
+  /**
+   * The field name to be indexed.
+   *
+   * @return the field name
+   */
+  String[] value();
 
-    /**
-     * Type of the index.
-     *
-     * @return the index type
-     */
-    String type() default IndexType.UNIQUE;
+  /**
+   * Type of the index.
+   *
+   * @return the index type
+   */
+  String type() default IndexType.UNIQUE;
 }

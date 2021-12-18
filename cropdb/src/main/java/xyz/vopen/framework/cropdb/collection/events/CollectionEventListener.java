@@ -20,19 +20,18 @@ import xyz.vopen.framework.cropdb.collection.CropCollection;
 import xyz.vopen.framework.cropdb.repository.ObjectRepository;
 
 /**
- * An interface when implemented makes an object be
- * able to listen to any changes in a {@link CropCollection}
- * or {@link ObjectRepository}.
+ * An interface when implemented makes an object be able to listen to any changes in a {@link
+ * CropCollection} or {@link ObjectRepository}.
  *
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 4.0
  */
 public interface CollectionEventListener {
 
-    /**
-     * A subscriber to listen to collection events.
-     *
-     * @param eventInfo the event information
-     */
-    void onEvent(CollectionEventInfo<?> eventInfo);
+  /**
+   * A subscriber to listen to collection events.
+   *
+   * @param eventInfo the event information
+   */
+  void onEvent(CollectionEventInfo<?> eventInfo);
 }

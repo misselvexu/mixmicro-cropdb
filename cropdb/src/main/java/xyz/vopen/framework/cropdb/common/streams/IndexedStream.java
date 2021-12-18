@@ -33,55 +33,51 @@ import java.util.Set;
  * @since 4.0
  */
 public class IndexedStream implements RecordStream<Pair<CropId, Document>> {
+  private final CropMap<CropId, Document> cropMap;
+  private final Set<CropId> cropIds;
+
+  /**
+   * Instantiates a new Indexed stream.
+   *
+   * @param cropIds the crop ids
+   * @param cropMap the crop map
+   */
+  public IndexedStream(Set<CropId> cropIds, CropMap<CropId, Document> cropMap) {
+    this.cropIds = cropIds;
+    this.cropMap = cropMap;
+  }
+
+  @Override
+  public Iterator<Pair<CropId, Document>> iterator() {
+    return new IndexedStreamIterator(cropIds.iterator(), cropMap);
+  }
+
+  /** The type Indexed stream iterator. */
+  private static class IndexedStreamIterator implements Iterator<Pair<CropId, Document>> {
+    private final Iterator<CropId> iterator;
     private final CropMap<CropId, Document> cropMap;
-    private final Set<CropId> cropIds;
 
     /**
-     * Instantiates a new Indexed stream.
+     * Instantiates a new Indexed stream iterator.
      *
-     * @param cropIds the crop ids
+     * @param iterator the iterator
      * @param cropMap the crop map
      */
-    public IndexedStream(Set<CropId> cropIds,
-                  CropMap<CropId, Document> cropMap) {
-        this.cropIds = cropIds;
-        this.cropMap = cropMap;
+    IndexedStreamIterator(Iterator<CropId> iterator, CropMap<CropId, Document> cropMap) {
+      this.iterator = iterator;
+      this.cropMap = cropMap;
     }
 
     @Override
-    public Iterator<Pair<CropId, Document>> iterator() {
-        return new IndexedStreamIterator(cropIds.iterator(), cropMap);
+    public boolean hasNext() {
+      return iterator.hasNext();
     }
 
-    /**
-     * The type Indexed stream iterator.
-     */
-    private static class IndexedStreamIterator implements Iterator<Pair<CropId, Document>> {
-        private final Iterator<CropId> iterator;
-        private final CropMap<CropId, Document> cropMap;
-
-        /**
-         * Instantiates a new Indexed stream iterator.
-         *
-         * @param iterator   the iterator
-         * @param cropMap the crop map
-         */
-        IndexedStreamIterator(Iterator<CropId> iterator,
-                              CropMap<CropId, Document> cropMap) {
-            this.iterator = iterator;
-            this.cropMap = cropMap;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return iterator.hasNext();
-        }
-
-        @Override
-        public Pair<CropId, Document> next() {
-            CropId id = iterator.next();
-            Document document = cropMap.get(id);
-            return new Pair<>(id, document);
-        }
+    @Override
+    public Pair<CropId, Document> next() {
+      CropId id = iterator.next();
+      Document document = cropMap.get(id);
+      return new Pair<>(id, document);
     }
+  }
 }

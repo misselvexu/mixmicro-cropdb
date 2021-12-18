@@ -21,22 +21,20 @@ import xyz.vopen.framework.cropdb.collection.CropCollection;
 import xyz.vopen.framework.cropdb.common.util.Iterables;
 
 /**
- * An interface to represent the result of a modification operation
- * on {@link CropCollection}. It provides a means to iterate over
- * all affected ids in the collection.
+ * An interface to represent the result of a modification operation on {@link CropCollection}. It
+ * provides a means to iterate over all affected ids in the collection.
  *
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 1.0
  */
 public interface WriteResult extends Iterable<CropId> {
 
-    /**
-     * Gets the count of affected document in the collection.
-     *
-     * @return the affected document count.
-     */
-    default int getAffectedCount() {
-        return (int) Iterables.size(this);
-    }
+  /**
+   * Gets the count of affected document in the collection.
+   *
+   * @return the affected document count.
+   */
+  default int getAffectedCount() {
+    return (int) Iterables.size(this);
+  }
 }
-

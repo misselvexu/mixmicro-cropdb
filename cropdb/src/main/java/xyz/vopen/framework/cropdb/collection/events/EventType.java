@@ -23,28 +23,18 @@ package xyz.vopen.framework.cropdb.collection.events;
  * @since 4.0
  */
 public enum EventType {
-    /**
-     * Insert event.
-     */
-    Insert,
+  /** Insert event. */
+  Insert,
 
-    /**
-     * Update event.
-     */
-    Update,
+  /** Update event. */
+  Update,
 
-    /**
-     * Remove event.
-     */
-    Remove,
+  /** Remove event. */
+  Remove,
 
-    /**
-     * Indexing start event.
-     */
-    IndexStart,
+  /** Indexing start event. */
+  IndexStart,
 
-    /**
-     * Indexing end event.
-     */
-    IndexEnd
+  /** Indexing end event. */
+  IndexEnd
 }

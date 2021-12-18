@@ -24,10 +24,10 @@ package xyz.vopen.framework.cropdb.store.events;
  * @since 4.0
  */
 public interface StoreEventListener {
-    /**
-     * Executes when an event is fired.
-     *
-     * @param eventInfo the event info
-     */
-    void onEvent(EventInfo eventInfo);
+  /**
+   * Executes when an event is fired.
+   *
+   * @param eventInfo the event info
+   */
+  void onEvent(EventInfo eventInfo);
 }

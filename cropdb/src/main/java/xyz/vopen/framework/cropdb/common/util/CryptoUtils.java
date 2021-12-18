@@ -34,34 +34,34 @@ import java.security.spec.KeySpec;
  */
 public class CryptoUtils {
 
-    /**
-     * Gets random nonce.
-     *
-     * @param numBytes the number of bytes
-     * @return the byte [ ]
-     */
-    public static byte[] getRandomNonce(int numBytes) {
-        byte[] nonce = new byte[numBytes];
-        new SecureRandom().nextBytes(nonce);
-        return nonce;
-    }
+  /**
+   * Gets random nonce.
+   *
+   * @param numBytes the number of bytes
+   * @return the byte [ ]
+   */
+  public static byte[] getRandomNonce(int numBytes) {
+    byte[] nonce = new byte[numBytes];
+    new SecureRandom().nextBytes(nonce);
+    return nonce;
+  }
 
-    /**
-     * Gets password derived AES 256 bits secret key
-     *
-     * @param password the password
-     * @param salt     the salt
-     * @return the aes key from password
-     * @throws NoSuchAlgorithmException the no such algorithm exception
-     * @throws InvalidKeySpecException  the invalid key spec exception
-     */
-    public static SecretKey getAESKeyFromPassword(char[] password, byte[] salt)
-        throws NoSuchAlgorithmException, InvalidKeySpecException {
+  /**
+   * Gets password derived AES 256 bits secret key
+   *
+   * @param password the password
+   * @param salt the salt
+   * @return the aes key from password
+   * @throws NoSuchAlgorithmException the no such algorithm exception
+   * @throws InvalidKeySpecException the invalid key spec exception
+   */
+  public static SecretKey getAESKeyFromPassword(char[] password, byte[] salt)
+      throws NoSuchAlgorithmException, InvalidKeySpecException {
 
-        SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-        // iterationCount = 65536
-        // keyLength = 256
-        KeySpec spec = new PBEKeySpec(password, salt, 65536, 256);
-        return new SecretKeySpec(factory.generateSecret(spec).getEncoded(), "AES");
-    }
+    SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+    // iterationCount = 65536
+    // keyLength = 256
+    KeySpec spec = new PBEKeySpec(password, salt, 65536, 256);
+    return new SecretKeySpec(factory.generateSecret(spec).getEncoded(), "AES");
+  }
 }

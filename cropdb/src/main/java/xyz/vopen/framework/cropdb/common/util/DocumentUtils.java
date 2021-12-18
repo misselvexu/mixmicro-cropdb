@@ -33,84 +33,84 @@ import java.util.Objects;
  * @since 1.0
  */
 public class DocumentUtils {
-    private DocumentUtils(){}
+  private DocumentUtils() {}
 
-    /**
-     * Determines whether a document has recently been updated/created than the other.
-     *
-     * @param recent the recent document
-     * @param older  the older document
-     * @return the boolean value
-     */
-    public static boolean isRecent(Document recent, Document older) {
-        if (Objects.deepEquals(recent.getRevision(), older.getRevision())) {
-            return recent.getLastModifiedSinceEpoch() >= older.getLastModifiedSinceEpoch();
-        }
-        return recent.getRevision() > older.getRevision();
+  /**
+   * Determines whether a document has recently been updated/created than the other.
+   *
+   * @param recent the recent document
+   * @param older the older document
+   * @return the boolean value
+   */
+  public static boolean isRecent(Document recent, Document older) {
+    if (Objects.deepEquals(recent.getRevision(), older.getRevision())) {
+      return recent.getLastModifiedSinceEpoch() >= older.getLastModifiedSinceEpoch();
+    }
+    return recent.getRevision() > older.getRevision();
+  }
+
+  /**
+   * Create unique filter to identify the `document`.
+   *
+   * @param document the document
+   * @return the unique filter
+   */
+  public static Filter createUniqueFilter(Document document) {
+    return Filter.byId(document.getId());
+  }
+
+  /**
+   * Creates an empty document having all fields of a `type` set to `null`.
+   *
+   * @param <T> the type parameter
+   * @param cropMapper the crop mapper
+   * @param type the type
+   * @return the document
+   */
+  public static <T> Document skeletonDocument(CropMapper cropMapper, Class<T> type) {
+    if (cropMapper.isValueType(type)) {
+      return Document.createDocument();
+    }
+    T dummy = ObjectUtils.newInstance(type, true);
+    Document document = cropMapper.convert(dummy, Document.class);
+    return removeValues(document);
+  }
+
+  public static boolean isSimilar(Document document, Document other, String... fields) {
+    boolean result = true;
+    if (document == null && other != null) return false;
+    if (document != null && other == null) return false;
+    if (document == null) return true;
+
+    for (String field : fields) {
+      result = result && Objects.deepEquals(document.get(field), other.get(field));
+    }
+    return result;
+  }
+
+  public static FieldValues getValues(Document document, Fields fields) {
+    FieldValues fieldValues = new FieldValues();
+    fieldValues.setCropId(document.getId());
+    fieldValues.setFields(fields);
+    fieldValues.setValues(new ArrayList<>());
+
+    for (String field : fields.getFieldNames()) {
+      Object value = document.get(field);
+      fieldValues.getValues().add(new Pair<>(field, value));
     }
 
-    /**
-     * Create unique filter to identify the `document`.
-     *
-     * @param document the document
-     * @return the unique filter
-     */
-    public static Filter createUniqueFilter(Document document) {
-        return Filter.byId(document.getId());
+    return fieldValues;
+  }
+
+  private static Document removeValues(Document document) {
+    if (document == null) return null;
+    for (Pair<String, Object> entry : document) {
+      if (entry.getSecond() instanceof Document) {
+        document.put(entry.getFirst(), removeValues((Document) entry.getSecond()));
+      } else {
+        document.put(entry.getFirst(), null);
+      }
     }
-
-    /**
-     * Creates an empty document having all fields of a `type` set to `null`.
-     *
-     * @param <T>           the type parameter
-     * @param cropMapper the crop mapper
-     * @param type          the type
-     * @return the document
-     */
-    public static <T> Document skeletonDocument(CropMapper cropMapper, Class<T> type) {
-        if (cropMapper.isValueType(type)) {
-            return Document.createDocument();
-        }
-        T dummy = ObjectUtils.newInstance(type, true);
-        Document document = cropMapper.convert(dummy, Document.class);
-        return removeValues(document);
-    }
-
-    public static boolean isSimilar(Document document, Document other, String... fields) {
-        boolean result = true;
-        if (document == null && other != null) return false;
-        if (document != null && other == null) return false;
-        if (document == null) return true;
-
-        for (String field : fields) {
-            result = result && Objects.deepEquals(document.get(field), other.get(field));
-        }
-        return result;
-    }
-
-    public static FieldValues getValues(Document document, Fields fields) {
-        FieldValues fieldValues = new FieldValues();
-        fieldValues.setCropId(document.getId());
-        fieldValues.setFields(fields);
-        fieldValues.setValues(new ArrayList<>());
-
-        for (String field : fields.getFieldNames()) {
-            Object value = document.get(field);
-            fieldValues.getValues().add(new Pair<>(field, value));
-        }
-
-        return fieldValues;
-    }
-
-    private static Document removeValues(Document document) {
-        if (document == null) return null;
-        for (Pair<String, Object> entry : document) {
-            if (entry.getSecond() instanceof Document) {
-                document.put(entry.getFirst(), removeValues((Document) entry.getSecond()));
-            } else {
-                document.put(entry.getFirst(), null);
-            }
-        }
-        return document;
-    }
+    return document;
+  }
 }

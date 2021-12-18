@@ -30,56 +30,55 @@ import java.util.NavigableMap;
  * @since 4.0
  */
 public abstract class ComparableFilter extends FieldBasedFilter {
-    /**
-     * Instantiates a new Comparable filter.
-     *
-     * @param field the field
-     * @param value the value
-     */
-    public ComparableFilter(String field, Object value) {
-        super(field, value);
+  /**
+   * Instantiates a new Comparable filter.
+   *
+   * @param field the field
+   * @param value the value
+   */
+  public ComparableFilter(String field, Object value) {
+    super(field, value);
+  }
+
+  /**
+   * Gets the {@link Comparable} value to filter.
+   *
+   * @return the comparable
+   */
+  @SuppressWarnings("rawtypes")
+  public Comparable getComparable() {
+    if (getValue() == null) {
+      throw new FilterException("value parameter must not be null");
+    }
+    return (Comparable) getValue();
+  }
+
+  /**
+   * Apply this filter on an crop index.
+   *
+   * @param indexMap the index scanner
+   * @return the object
+   */
+  public abstract List<?> applyOnIndex(IndexMap indexMap);
+
+  /**
+   * Process values after index scanning.
+   *
+   * @param value the value
+   * @param subMap the sub map
+   * @param cropIds the crop ids
+   */
+  @SuppressWarnings("unchecked")
+  protected void processIndexValue(
+      Object value, List<NavigableMap<Comparable<?>, Object>> subMap, List<CropId> cropIds) {
+    if (value instanceof List) {
+      // if its is list then add it directly to crop ids
+      List<CropId> result = (List<CropId>) value;
+      cropIds.addAll(result);
     }
 
-    /**
-     * Gets the {@link Comparable} value to filter.
-     *
-     * @return the comparable
-     */
-    @SuppressWarnings("rawtypes")
-    public Comparable getComparable() {
-        if (getValue() == null) {
-            throw new FilterException("value parameter must not be null");
-        }
-        return (Comparable) getValue();
+    if (value instanceof NavigableMap) {
+      subMap.add((NavigableMap<Comparable<?>, Object>) value);
     }
-
-    /**
-     * Apply this filter on an crop index.
-     *
-     * @param indexMap the index scanner
-     * @return the object
-     */
-    public abstract List<?> applyOnIndex(IndexMap indexMap);
-
-    /**
-     * Process values after index scanning.
-     *
-     * @param value      the value
-     * @param subMap     the sub map
-     * @param cropIds the crop ids
-     */
-    @SuppressWarnings("unchecked")
-    protected void processIndexValue(Object value,
-                                     List<NavigableMap<Comparable<?>, Object>> subMap,
-                                     List<CropId> cropIds) {
-        if (value instanceof List) {
-            // if its is list then add it directly to crop ids
-            List<CropId> result = (List<CropId>) value;
-            cropIds.addAll(result);
-        }
-
-        if (value instanceof NavigableMap) {
-            subMap.add((NavigableMap<Comparable<?>, Object>) value);
-        }
-    }
+  }
 }

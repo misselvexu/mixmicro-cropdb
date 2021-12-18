@@ -19,26 +19,25 @@ package xyz.vopen.framework.cropdb.common.mapper;
 import xyz.vopen.framework.cropdb.collection.Document;
 
 /**
- * An object that serializes itself to a {@link Document}
- * and vice versa.
+ * An object that serializes itself to a {@link Document} and vice versa.
  *
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 2.0
  */
 public interface Mappable {
-    /**
-     * Writes the instance data to a {@link Document} and returns it.
-     *
-     * @param mapper the {@link CropMapper} instance used.
-     * @return the document generated.
-     */
-    Document write(CropMapper mapper);
+  /**
+   * Writes the instance data to a {@link Document} and returns it.
+   *
+   * @param mapper the {@link CropMapper} instance used.
+   * @return the document generated.
+   */
+  Document write(CropMapper mapper);
 
-    /**
-     * Reads the `document` and populate all fields of this instance.
-     *
-     * @param mapper   the {@link CropMapper} instance used.
-     * @param document the document.
-     */
-    void read(CropMapper mapper, Document document);
+  /**
+   * Reads the `document` and populate all fields of this instance.
+   *
+   * @param mapper the {@link CropMapper} instance used.
+   * @param document the document.
+   */
+  void read(CropMapper mapper, Document document);
 }

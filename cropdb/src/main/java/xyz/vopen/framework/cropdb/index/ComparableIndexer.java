@@ -33,69 +33,66 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 4.0
  */
 public abstract class ComparableIndexer implements CropIndexer {
-    private final Map<IndexDescriptor, CropIndex> indexRegistry;
+  private final Map<IndexDescriptor, CropIndex> indexRegistry;
 
-    /**
-     * Instantiates a new Comparable indexer.
-     */
-    public ComparableIndexer() {
-        this.indexRegistry = new ConcurrentHashMap<>();
+  /** Instantiates a new Comparable indexer. */
+  public ComparableIndexer() {
+    this.indexRegistry = new ConcurrentHashMap<>();
+  }
+
+  /**
+   * Indicates if it is an unique index.
+   *
+   * @return the boolean
+   */
+  abstract boolean isUnique();
+
+  @Override
+  public void initialize(CropConfig cropConfig) {}
+
+  @Override
+  public void validateIndex(Fields fields) {
+    // nothing to validate
+  }
+
+  @Override
+  public LinkedHashSet<CropId> findByFilter(FindPlan findPlan, CropConfig cropConfig) {
+    CropIndex cropIndex = findCropIndex(findPlan.getIndexDescriptor(), cropConfig);
+    return cropIndex.findCropIds(findPlan);
+  }
+
+  @Override
+  public void writeIndexEntry(
+      FieldValues fieldValues, IndexDescriptor indexDescriptor, CropConfig cropConfig) {
+    CropIndex cropIndex = findCropIndex(indexDescriptor, cropConfig);
+    cropIndex.write(fieldValues);
+  }
+
+  @Override
+  public void removeIndexEntry(
+      FieldValues fieldValues, IndexDescriptor indexDescriptor, CropConfig cropConfig) {
+    CropIndex cropIndex = findCropIndex(indexDescriptor, cropConfig);
+    cropIndex.remove(fieldValues);
+  }
+
+  @Override
+  public void dropIndex(IndexDescriptor indexDescriptor, CropConfig cropConfig) {
+    CropIndex cropIndex = findCropIndex(indexDescriptor, cropConfig);
+    cropIndex.drop();
+  }
+
+  private CropIndex findCropIndex(IndexDescriptor indexDescriptor, CropConfig cropConfig) {
+    if (indexRegistry.containsKey(indexDescriptor)) {
+      return indexRegistry.get(indexDescriptor);
     }
 
-    /**
-     * Indicates if it is an unique index.
-     *
-     * @return the boolean
-     */
-    abstract boolean isUnique();
-
-    @Override
-    public void initialize(CropConfig cropConfig) {
+    CropIndex cropIndex;
+    if (indexDescriptor.isCompoundIndex()) {
+      cropIndex = new CompoundIndex(indexDescriptor, cropConfig.getCropStore());
+    } else {
+      cropIndex = new SingleFieldIndex(indexDescriptor, cropConfig.getCropStore());
     }
-
-    @Override
-    public void validateIndex(Fields fields) {
-        // nothing to validate
-    }
-
-    @Override
-    public LinkedHashSet<CropId> findByFilter(FindPlan findPlan, CropConfig cropConfig) {
-        CropIndex cropIndex = findCropIndex(findPlan.getIndexDescriptor(), cropConfig);
-        return cropIndex.findCropIds(findPlan);
-    }
-
-    @Override
-    public void writeIndexEntry(FieldValues fieldValues, IndexDescriptor indexDescriptor,
-                                CropConfig cropConfig) {
-        CropIndex cropIndex = findCropIndex(indexDescriptor, cropConfig);
-        cropIndex.write(fieldValues);
-    }
-
-    @Override
-    public void removeIndexEntry(FieldValues fieldValues, IndexDescriptor indexDescriptor,
-                                 CropConfig cropConfig) {
-        CropIndex cropIndex = findCropIndex(indexDescriptor, cropConfig);
-        cropIndex.remove(fieldValues);
-    }
-
-    @Override
-    public void dropIndex(IndexDescriptor indexDescriptor, CropConfig cropConfig) {
-        CropIndex cropIndex = findCropIndex(indexDescriptor, cropConfig);
-        cropIndex.drop();
-    }
-
-    private CropIndex findCropIndex(IndexDescriptor indexDescriptor, CropConfig cropConfig) {
-        if (indexRegistry.containsKey(indexDescriptor)) {
-            return indexRegistry.get(indexDescriptor);
-        }
-
-        CropIndex cropIndex;
-        if (indexDescriptor.isCompoundIndex()) {
-            cropIndex = new CompoundIndex(indexDescriptor, cropConfig.getCropStore());
-        } else {
-            cropIndex = new SingleFieldIndex(indexDescriptor, cropConfig.getCropStore());
-        }
-        indexRegistry.put(indexDescriptor, cropIndex);
-        return cropIndex;
-    }
+    indexRegistry.put(indexDescriptor, cropIndex);
+    return cropIndex;
+  }
 }

@@ -1,4 +1,4 @@
-##TODO:
+## TODO:
 
 1. fix codacy issues
 2. cropdb explorer
@@ -7,7 +7,6 @@
 6. cropdb cluster via jgroups
 7. spring data rest / graphql api over cropdb cluster
 8. data views (like rdbms view)
-
 
 ## Other Articles
 
@@ -23,10 +22,7 @@ IPFS:
 
 https://www.freecodecamp.org/news/how-to-build-mongodb-like-datastore-using-interplanetary-linked-data-in-5-minutes/
 
-
-Queue message and run a timer task to pick message and
-send over websocket
-
+Queue message and run a timer task to pick message and send over websocket
 
 ## title DataGate Message Communication
 
@@ -144,9 +140,6 @@ send over websocket
     Server->Server: Removes replica id
     Replica (R1)->Replica (R1): Closes connection
 
-
-
-
 https://blog.yugabyte.com/how-we-built-a-high-performance-document-store-on-rocksdb/
 
 https://docs.yugabyte.com/latest/architecture/docdb/persistence/
@@ -154,10 +147,11 @@ https://docs.yugabyte.com/latest/architecture/docdb/persistence/
 https://blog.yugabyte.com/enhancing-rocksdb-for-speed-scale/
 
 ## Query Optimization
- - https://www.javatpoint.com/dbms-transforming-relational-expressions
- - http://www.cbcb.umd.edu/confcour/Spring2014/CMSC424/query_optimization.pdf
- - https://www.tutorialcup.com/dbms/query-optimization.htm
- - https://www.geeksforgeeks.org/query-optimization-in-relational-algebra/
+
+- https://www.javatpoint.com/dbms-transforming-relational-expressions
+- http://www.cbcb.umd.edu/confcour/Spring2014/CMSC424/query_optimization.pdf
+- https://www.tutorialcup.com/dbms/query-optimization.htm
+- https://www.geeksforgeeks.org/query-optimization-in-relational-algebra/
  
  
 

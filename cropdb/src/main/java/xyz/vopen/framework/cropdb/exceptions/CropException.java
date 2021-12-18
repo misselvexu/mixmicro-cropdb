@@ -27,22 +27,22 @@ import lombok.Getter;
 @Getter
 public class CropException extends RuntimeException {
 
-    /**
-     * Instantiates a new Crop exception.
-     *
-     * @param errorMessage the error message
-     */
-    public CropException(String errorMessage) {
-        super(errorMessage);
-    }
+  /**
+   * Instantiates a new Crop exception.
+   *
+   * @param errorMessage the error message
+   */
+  public CropException(String errorMessage) {
+    super(errorMessage);
+  }
 
-    /**
-     * Instantiates a new Crop exception.
-     *
-     * @param errorMessage the error message
-     * @param cause        the cause
-     */
-    public CropException(String errorMessage, Throwable cause) {
-        super(errorMessage, cause);
-    }
+  /**
+   * Instantiates a new Crop exception.
+   *
+   * @param errorMessage the error message
+   * @param cause the cause
+   */
+  public CropException(String errorMessage, Throwable cause) {
+    super(errorMessage, cause);
+  }
 }

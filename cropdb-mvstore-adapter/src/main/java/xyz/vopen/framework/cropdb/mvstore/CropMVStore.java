@@ -16,7 +16,6 @@
 
 package xyz.vopen.framework.cropdb.mvstore;
 
-
 import lombok.extern.slf4j.Slf4j;
 import xyz.vopen.framework.cropdb.common.util.StringUtils;
 import xyz.vopen.framework.cropdb.index.BoundingBox;
@@ -38,134 +37,136 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Slf4j
 public class CropMVStore extends AbstractCropStore<MVStoreConfig> {
-    private MVStore mvStore;
-    private final Map<String, CropMap<?, ?>> cropMapRegistry;
-    private final Map<String, CropRTree<?, ?>> cropRTreeMapRegistry;
+  private MVStore mvStore;
+  private final Map<String, CropMap<?, ?>> cropMapRegistry;
+  private final Map<String, CropRTree<?, ?>> cropRTreeMapRegistry;
 
-    public CropMVStore() {
-        super();
-        this.cropMapRegistry = new ConcurrentHashMap<>();
-        this.cropRTreeMapRegistry = new ConcurrentHashMap<>();
+  public CropMVStore() {
+    super();
+    this.cropMapRegistry = new ConcurrentHashMap<>();
+    this.cropRTreeMapRegistry = new ConcurrentHashMap<>();
+  }
+
+  @Override
+  public void openOrCreate() {
+    this.mvStore = MVStoreUtils.openOrCreate(getStoreConfig());
+    initEventBus();
+    alert(StoreEvents.Opened);
+  }
+
+  @Override
+  public boolean isClosed() {
+    return mvStore == null || mvStore.isClosed();
+  }
+
+  @Override
+  public boolean hasUnsavedChanges() {
+    return mvStore != null && mvStore.hasUnsavedChanges();
+  }
+
+  @Override
+  public boolean isReadOnly() {
+    return mvStore.isReadOnly();
+  }
+
+  @Override
+  public void commit() {
+    mvStore.commit();
+    alert(StoreEvents.Commit);
+  }
+
+  @Override
+  public void close() {
+    if (getStoreConfig().autoCompact()) {
+      compact();
     }
 
-    @Override
-    public void openOrCreate() {
-        this.mvStore = MVStoreUtils.openOrCreate(getStoreConfig());
-        initEventBus();
-        alert(StoreEvents.Opened);
+    // close crop maps
+    for (CropMap<?, ?> cropMap : cropMapRegistry.values()) {
+      cropMap.close();
     }
 
-    @Override
-    public boolean isClosed() {
-        return mvStore == null || mvStore.isClosed();
+    for (CropRTree<?, ?> rTree : cropRTreeMapRegistry.values()) {
+      rTree.close();
     }
 
-    @Override
-    public boolean hasUnsavedChanges() {
-        return mvStore != null && mvStore.hasUnsavedChanges();
+    cropMapRegistry.clear();
+    cropRTreeMapRegistry.clear();
+
+    mvStore.close();
+    alert(StoreEvents.Closed);
+    eventBus.close();
+  }
+
+  @Override
+  public boolean hasMap(String mapName) {
+    return mvStore.hasMap(mapName);
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public <Key, Value> CropMap<Key, Value> openMap(
+      String mapName, Class<?> keyType, Class<?> valueType) {
+    if (cropMapRegistry.containsKey(mapName)) {
+      return (CropMVMap<Key, Value>) cropMapRegistry.get(mapName);
     }
 
-    @Override
-    public boolean isReadOnly() {
-        return mvStore.isReadOnly();
+    MVMap<Key, Value> mvMap = mvStore.openMap(mapName);
+    CropMVMap<Key, Value> cropMVMap = new CropMVMap<>(mvMap, this);
+    cropMapRegistry.put(mapName, cropMVMap);
+    return cropMVMap;
+  }
+
+  @Override
+  public void closeMap(String mapName) {
+    if (!StringUtils.isNullOrEmpty(mapName)) {
+      cropMapRegistry.remove(mapName);
+    }
+  }
+
+  @Override
+  public void closeRTree(String rTreeName) {
+    if (!StringUtils.isNullOrEmpty(rTreeName)) {
+      cropRTreeMapRegistry.remove(rTreeName);
+    }
+  }
+
+  @Override
+  public void removeMap(String name) {
+    MVMap<?, ?> mvMap = mvStore.openMap(name);
+    mvStore.removeMap(mvMap);
+    getCatalog().remove(name);
+    cropMapRegistry.remove(name);
+  }
+
+  @Override
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  public <Key extends BoundingBox, Value> CropRTree<Key, Value> openRTree(
+      String mapName, Class<?> keyType, Class<?> valueType) {
+    if (cropRTreeMapRegistry.containsKey(mapName)) {
+      return (CropMVRTreeMap) cropRTreeMapRegistry.get(mapName);
     }
 
-    @Override
-    public void commit() {
-        mvStore.commit();
-        alert(StoreEvents.Commit);
+    MVRTreeMap<Value> map = mvStore.openMap(mapName, new MVRTreeMap.Builder<>());
+    CropMVRTreeMap<Key, Value> cropMVRTreeMap = new CropMVRTreeMap(map, this);
+    cropRTreeMapRegistry.put(mapName, cropMVRTreeMap);
+    return cropMVRTreeMap;
+  }
+
+  @Override
+  public String getStoreVersion() {
+    return "MVStore/" + org.h2.engine.Constants.VERSION;
+  }
+
+  public void compact() {
+    mvStore.compactMoveChunks();
+  }
+
+  private void initEventBus() {
+    if (getStoreConfig().eventListeners() != null) {
+      for (StoreEventListener eventListener : getStoreConfig().eventListeners()) {
+        eventBus.register(eventListener);
+      }
     }
-
-    @Override
-    public void close() {
-        if (getStoreConfig().autoCompact()) {
-            compact();
-        }
-
-        // close crop maps
-        for (CropMap<?, ?> cropMap : cropMapRegistry.values()) {
-            cropMap.close();
-        }
-
-        for (CropRTree<?, ?> rTree : cropRTreeMapRegistry.values()) {
-            rTree.close();
-        }
-
-        cropMapRegistry.clear();
-        cropRTreeMapRegistry.clear();
-
-        mvStore.close();
-        alert(StoreEvents.Closed);
-        eventBus.close();
-    }
-
-    @Override
-    public boolean hasMap(String mapName) {
-        return mvStore.hasMap(mapName);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public <Key, Value> CropMap<Key, Value> openMap(String mapName, Class<?> keyType, Class<?> valueType) {
-        if (cropMapRegistry.containsKey(mapName)) {
-            return (CropMVMap<Key, Value>) cropMapRegistry.get(mapName);
-        }
-
-        MVMap<Key, Value> mvMap = mvStore.openMap(mapName);
-        CropMVMap<Key, Value> cropMVMap = new CropMVMap<>(mvMap, this);
-        cropMapRegistry.put(mapName, cropMVMap);
-        return cropMVMap;
-    }
-
-    @Override
-    public void closeMap(String mapName) {
-        if (!StringUtils.isNullOrEmpty(mapName)) {
-            cropMapRegistry.remove(mapName);
-        }
-    }
-
-    @Override
-    public void closeRTree(String rTreeName) {
-        if (!StringUtils.isNullOrEmpty(rTreeName)) {
-            cropRTreeMapRegistry.remove(rTreeName);
-        }
-    }
-
-    @Override
-    public void removeMap(String name) {
-        MVMap<?, ?> mvMap = mvStore.openMap(name);
-        mvStore.removeMap(mvMap);
-        getCatalog().remove(name);
-        cropMapRegistry.remove(name);
-    }
-
-    @Override
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public <Key extends BoundingBox, Value> CropRTree<Key, Value> openRTree(String mapName, Class<?> keyType, Class<?> valueType) {
-        if (cropRTreeMapRegistry.containsKey(mapName)) {
-            return (CropMVRTreeMap) cropRTreeMapRegistry.get(mapName);
-        }
-
-        MVRTreeMap<Value> map = mvStore.openMap(mapName, new MVRTreeMap.Builder<>());
-        CropMVRTreeMap<Key, Value> cropMVRTreeMap = new CropMVRTreeMap(map, this);
-        cropRTreeMapRegistry.put(mapName, cropMVRTreeMap);
-        return cropMVRTreeMap;
-    }
-
-    @Override
-    public String getStoreVersion() {
-        return "MVStore/" + org.h2.engine.Constants.VERSION;
-    }
-
-    public void compact() {
-        mvStore.compactMoveChunks();
-    }
-
-    private void initEventBus() {
-        if (getStoreConfig().eventListeners() != null) {
-            for (StoreEventListener eventListener : getStoreConfig().eventListeners()) {
-                eventBus.register(eventListener);
-            }
-        }
-    }
+  }
 }

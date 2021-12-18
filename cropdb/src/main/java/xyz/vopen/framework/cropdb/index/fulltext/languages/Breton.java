@@ -29,9 +29,10 @@ import java.util.Set;
  * @since 2.1.0
  */
 public class Breton implements Language {
-    @Override
-    public Set<String> stopWords() {
-        return new HashSet<>(Arrays.asList(
+  @Override
+  public Set<String> stopWords() {
+    return new HashSet<>(
+        Arrays.asList(
             "'blam",
             "'d",
             "'m",
@@ -1234,7 +1235,6 @@ public class Breton implements Language {
             "zouesk",
             "zouez",
             "zro",
-            "zu"
-        ));
-    }
+            "zu"));
+  }
 }

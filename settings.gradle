@@ -24,4 +24,5 @@ include 'cropdb-support'
 include 'potassium-cropdb'
 include 'cropdb-rocksdb-adapter'
 include 'cropdb-bom'
+include 'cropdb-samples'
 

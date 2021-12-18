@@ -31,18 +31,18 @@ import java.io.Serializable;
  */
 @Data
 public class UserCredential implements Serializable {
-    private static final long serialVersionUID = 1576690755L;
+  private static final long serialVersionUID = 1576690755L;
 
-    private byte[] passwordHash;
-    private byte[] passwordSalt;
+  private byte[] passwordHash;
+  private byte[] passwordSalt;
 
-    private void writeObject(ObjectOutputStream stream) throws IOException {
-        stream.writeObject(passwordHash);
-        stream.writeObject(passwordSalt);
-    }
+  private void writeObject(ObjectOutputStream stream) throws IOException {
+    stream.writeObject(passwordHash);
+    stream.writeObject(passwordSalt);
+  }
 
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        passwordHash = (byte[]) stream.readObject();
-        passwordSalt = (byte[]) stream.readObject();
-    }
+  private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    passwordHash = (byte[]) stream.readObject();
+    passwordSalt = (byte[]) stream.readObject();
+  }
 }

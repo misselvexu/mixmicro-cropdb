@@ -40,137 +40,135 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @since 4.0
  */
 public class SingleFieldIndex implements CropIndex {
-    @Getter
-    private final IndexDescriptor indexDescriptor;
-    private final CropStore<?> cropStore;
+  @Getter private final IndexDescriptor indexDescriptor;
+  private final CropStore<?> cropStore;
 
-    /**
-     * Instantiates a new {@link SingleFieldIndex}.
-     *
-     * @param indexDescriptor the index descriptor
-     * @param cropStore    the crop store
-     */
-    public SingleFieldIndex(IndexDescriptor indexDescriptor, CropStore<?> cropStore) {
-        this.indexDescriptor = indexDescriptor;
-        this.cropStore = cropStore;
+  /**
+   * Instantiates a new {@link SingleFieldIndex}.
+   *
+   * @param indexDescriptor the index descriptor
+   * @param cropStore the crop store
+   */
+  public SingleFieldIndex(IndexDescriptor indexDescriptor, CropStore<?> cropStore) {
+    this.indexDescriptor = indexDescriptor;
+    this.cropStore = cropStore;
+  }
+
+  @Override
+  public void write(FieldValues fieldValues) {
+    Fields fields = fieldValues.getFields();
+    List<String> fieldNames = fields.getFieldNames();
+
+    String firstField = fieldNames.get(0);
+    Object element = fieldValues.get(firstField);
+
+    CropMap<DBValue, List<?>> indexMap = findIndexMap();
+
+    if (element == null) {
+      addIndexElement(indexMap, fieldValues, DBNull.getInstance());
+    } else if (element instanceof Comparable) {
+      // wrap around db value
+      DBValue dbValue = new DBValue((Comparable<?>) element);
+      addIndexElement(indexMap, fieldValues, dbValue);
+    } else if (element.getClass().isArray()) {
+      Object[] array = ObjectUtils.convertToObjectArray(element);
+
+      for (Object item : array) {
+        // wrap around db value
+        DBValue dbValue = item == null ? DBNull.getInstance() : new DBValue((Comparable<?>) item);
+        addIndexElement(indexMap, fieldValues, dbValue);
+      }
+    } else if (element instanceof Iterable) {
+      Iterable<?> iterable = (Iterable<?>) element;
+
+      for (Object item : iterable) {
+        // wrap around db value
+        DBValue dbValue = item == null ? DBNull.getInstance() : new DBValue((Comparable<?>) item);
+        addIndexElement(indexMap, fieldValues, dbValue);
+      }
     }
+  }
 
-    @Override
-    public void write(FieldValues fieldValues) {
-        Fields fields = fieldValues.getFields();
-        List<String> fieldNames = fields.getFieldNames();
+  @Override
+  public void remove(FieldValues fieldValues) {
+    Fields fields = fieldValues.getFields();
+    List<String> fieldNames = fields.getFieldNames();
 
-        String firstField = fieldNames.get(0);
-        Object element = fieldValues.get(firstField);
+    String firstField = fieldNames.get(0);
+    Object element = fieldValues.get(firstField);
 
-        CropMap<DBValue, List<?>> indexMap = findIndexMap();
+    CropMap<DBValue, List<?>> indexMap = findIndexMap();
+    if (element == null) {
+      removeIndexElement(indexMap, fieldValues, DBNull.getInstance());
+    } else if (element instanceof Comparable) {
+      // wrap around db value
+      DBValue dbValue = new DBValue((Comparable<?>) element);
+      removeIndexElement(indexMap, fieldValues, dbValue);
+    } else if (element.getClass().isArray()) {
+      Object[] array = ObjectUtils.convertToObjectArray(element);
 
-        if (element == null) {
-            addIndexElement(indexMap, fieldValues, DBNull.getInstance());
-        } else if (element instanceof Comparable) {
-            // wrap around db value
-            DBValue dbValue = new DBValue((Comparable<?>) element);
-            addIndexElement(indexMap, fieldValues, dbValue);
-        } else if (element.getClass().isArray()) {
-            Object[] array = ObjectUtils.convertToObjectArray(element);
+      for (Object item : array) {
+        // wrap around db value
+        DBValue dbValue = item == null ? DBNull.getInstance() : new DBValue((Comparable<?>) item);
+        removeIndexElement(indexMap, fieldValues, dbValue);
+      }
+    } else if (element instanceof Iterable) {
+      Iterable<?> iterable = (Iterable<?>) element;
 
-            for (Object item : array) {
-                // wrap around db value
-                DBValue dbValue = item == null ? DBNull.getInstance() : new DBValue((Comparable<?>) item);
-                addIndexElement(indexMap, fieldValues, dbValue);
-            }
-        } else if (element instanceof Iterable) {
-            Iterable<?> iterable = (Iterable<?>) element;
-
-            for (Object item : iterable) {
-                // wrap around db value
-                DBValue dbValue = item == null ? DBNull.getInstance() : new DBValue((Comparable<?>) item);
-                addIndexElement(indexMap, fieldValues, dbValue);
-            }
-        }
+      for (Object item : iterable) {
+        // wrap around db value
+        DBValue dbValue = item == null ? DBNull.getInstance() : new DBValue((Comparable<?>) item);
+        removeIndexElement(indexMap, fieldValues, dbValue);
+      }
     }
+  }
 
-    @Override
-    public void remove(FieldValues fieldValues) {
-        Fields fields = fieldValues.getFields();
-        List<String> fieldNames = fields.getFieldNames();
+  @Override
+  public void drop() {
+    CropMap<DBValue, List<?>> indexMap = findIndexMap();
+    indexMap.clear();
+    indexMap.drop();
+  }
 
-        String firstField = fieldNames.get(0);
-        Object element = fieldValues.get(firstField);
+  @Override
+  public LinkedHashSet<CropId> findCropIds(FindPlan findPlan) {
+    if (findPlan.getIndexScanFilter() == null) return new LinkedHashSet<>();
 
-        CropMap<DBValue, List<?>> indexMap = findIndexMap();
-        if (element == null) {
-            removeIndexElement(indexMap, fieldValues, DBNull.getInstance());
-        } else if (element instanceof Comparable) {
-            // wrap around db value
-            DBValue dbValue = new DBValue((Comparable<?>) element);
-            removeIndexElement(indexMap, fieldValues, dbValue);
-        } else if (element.getClass().isArray()) {
-            Object[] array = ObjectUtils.convertToObjectArray(element);
+    CropMap<DBValue, List<?>> indexMap = findIndexMap();
+    return scanIndex(findPlan, indexMap);
+  }
 
-            for (Object item : array) {
-                // wrap around db value
-                DBValue dbValue = item == null ? DBNull.getInstance() : new DBValue((Comparable<?>) item);
-                removeIndexElement(indexMap, fieldValues, dbValue);
-            }
-        } else if (element instanceof Iterable) {
-            Iterable<?> iterable = (Iterable<?>) element;
+  @SuppressWarnings("unchecked")
+  private void addIndexElement(
+      CropMap<DBValue, List<?>> indexMap, FieldValues fieldValues, DBValue element) {
+    List<CropId> cropIds = (List<CropId>) indexMap.get(element);
+    cropIds = addCropIds(cropIds, fieldValues);
+    indexMap.put(element, cropIds);
+  }
 
-            for (Object item : iterable) {
-                // wrap around db value
-                DBValue dbValue = item == null ? DBNull.getInstance() : new DBValue((Comparable<?>) item);
-                removeIndexElement(indexMap, fieldValues, dbValue);
-            }
-        }
-    }
-
-    @Override
-    public void drop() {
-        CropMap<DBValue, List<?>> indexMap = findIndexMap();
-        indexMap.clear();
-        indexMap.drop();
-    }
-
-    @Override
-    public LinkedHashSet<CropId> findCropIds(FindPlan findPlan) {
-        if (findPlan.getIndexScanFilter() == null) return new LinkedHashSet<>();
-
-        CropMap<DBValue, List<?>> indexMap = findIndexMap();
-        return scanIndex(findPlan, indexMap);
-    }
-
-    @SuppressWarnings("unchecked")
-    private void addIndexElement(CropMap<DBValue, List<?>> indexMap,
-                                 FieldValues fieldValues, DBValue element) {
-        List<CropId> cropIds = (List<CropId>) indexMap.get(element);
-        cropIds = addCropIds(cropIds, fieldValues);
+  @SuppressWarnings("unchecked")
+  private void removeIndexElement(
+      CropMap<DBValue, List<?>> indexMap, FieldValues fieldValues, DBValue element) {
+    List<CropId> cropIds = (List<CropId>) indexMap.get(element);
+    if (cropIds != null && !cropIds.isEmpty()) {
+      cropIds.remove(fieldValues.getCropId());
+      if (cropIds.size() == 0) {
+        indexMap.remove(element);
+      } else {
         indexMap.put(element, cropIds);
+      }
     }
+  }
 
-    @SuppressWarnings("unchecked")
-    private void removeIndexElement(CropMap<DBValue, List<?>> indexMap,
-                                    FieldValues fieldValues, DBValue element) {
-        List<CropId> cropIds = (List<CropId>) indexMap.get(element);
-        if (cropIds != null && !cropIds.isEmpty()) {
-            cropIds.remove(fieldValues.getCropId());
-            if (cropIds.size() == 0) {
-                indexMap.remove(element);
-            } else {
-                indexMap.put(element, cropIds);
-            }
-        }
-    }
+  private CropMap<DBValue, List<?>> findIndexMap() {
+    String mapName = IndexUtils.deriveIndexMapName(indexDescriptor);
+    return cropStore.openMap(mapName, DBValue.class, CopyOnWriteArrayList.class);
+  }
 
-    private CropMap<DBValue, List<?>> findIndexMap() {
-        String mapName = IndexUtils.deriveIndexMapName(indexDescriptor);
-        return cropStore.openMap(mapName, DBValue.class, CopyOnWriteArrayList.class);
-    }
-
-    private LinkedHashSet<CropId> scanIndex(FindPlan findPlan,
-                                            CropMap<DBValue, List<?>> indexMap) {
-        List<ComparableFilter> filters = findPlan.getIndexScanFilter().getFilters();
-        IndexMap iMap = new IndexMap(indexMap);
-        IndexScanner indexScanner = new IndexScanner(iMap);
-        return indexScanner.doScan(filters, findPlan.getIndexScanOrder());
-    }
+  private LinkedHashSet<CropId> scanIndex(FindPlan findPlan, CropMap<DBValue, List<?>> indexMap) {
+    List<ComparableFilter> filters = findPlan.getIndexScanFilter().getFilters();
+    IndexMap iMap = new IndexMap(indexMap);
+    IndexScanner indexScanner = new IndexScanner(iMap);
+    return indexScanner.doScan(filters, findPlan.getIndexScanOrder());
+  }
 }

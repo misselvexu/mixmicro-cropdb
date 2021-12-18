@@ -31,17 +31,17 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Embedded {
-    /**
-     * Order of the field in compound index.
-     *
-     * @return the int
-     */
-    int order();
+  /**
+   * Order of the field in compound index.
+   *
+   * @return the int
+   */
+  int order();
 
-    /**
-     * The custom field name in compound index.
-     *
-     * @return the string
-     */
-    String fieldName() default "";
+  /**
+   * The custom field name in compound index.
+   *
+   * @return the string
+   */
+  String fieldName() default "";
 }

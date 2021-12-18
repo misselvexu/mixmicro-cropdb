@@ -19,9 +19,8 @@ package xyz.vopen.framework.cropdb.repository.annotations;
 import java.lang.annotation.*;
 
 /**
- * Indicates that a class should consider all index related
- * annotations - <code>@Id</code>, <code>@Index</code>,
- * <code>@Indices</code> from its superclass.
+ * Indicates that a class should consider all index related annotations - <code>@Id</code>, <code>
+ * @Index</code>, <code>@Indices</code> from its superclass.
  *
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 2.1.0
@@ -29,5 +28,4 @@ import java.lang.annotation.*;
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface InheritIndices {
-}
+public @interface InheritIndices {}

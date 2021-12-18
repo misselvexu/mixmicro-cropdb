@@ -26,36 +26,35 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 /**
- *
  * @since 4.0
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 @Data
 class CropBoundingBox implements BoundingBox {
-    private float minX;
-    private float maxX;
-    private float minY;
-    private float maxY;
+  private float minX;
+  private float maxX;
+  private float minY;
+  private float maxY;
 
-    public CropBoundingBox(Geometry geometry) {
-        Envelope env = geometry.getEnvelopeInternal();
-        this.minX = (float) env.getMinX();
-        this.maxX = (float) env.getMaxX();
-        this.minY = (float) env.getMinY();
-        this.maxY = (float) env.getMaxY();
-    }
+  public CropBoundingBox(Geometry geometry) {
+    Envelope env = geometry.getEnvelopeInternal();
+    this.minX = (float) env.getMinX();
+    this.maxX = (float) env.getMaxX();
+    this.minY = (float) env.getMinY();
+    this.maxY = (float) env.getMaxY();
+  }
 
-    private void writeObject(ObjectOutputStream stream) throws IOException {
-        stream.writeFloat(minX);
-        stream.writeFloat(maxX);
-        stream.writeFloat(minY);
-        stream.writeFloat(maxY);
-    }
+  private void writeObject(ObjectOutputStream stream) throws IOException {
+    stream.writeFloat(minX);
+    stream.writeFloat(maxX);
+    stream.writeFloat(minY);
+    stream.writeFloat(maxY);
+  }
 
-    private void readObject(ObjectInputStream stream) throws IOException {
-        this.minX = stream.readFloat();
-        this.maxX = stream.readFloat();
-        this.minY = stream.readFloat();
-        this.maxY = stream.readFloat();
-    }
+  private void readObject(ObjectInputStream stream) throws IOException {
+    this.minX = stream.readFloat();
+    this.maxX = stream.readFloat();
+    this.minY = stream.readFloat();
+    this.maxY = stream.readFloat();
+  }
 }

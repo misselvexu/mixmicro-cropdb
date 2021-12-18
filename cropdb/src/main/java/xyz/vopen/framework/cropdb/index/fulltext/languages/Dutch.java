@@ -29,9 +29,10 @@ import java.util.Set;
  * @since 2.1.0
  */
 public class Dutch implements Language {
-    @Override
-    public Set<String> stopWords() {
-        return new HashSet<>(Arrays.asList(
+  @Override
+  public Set<String> stopWords() {
+    return new HashSet<>(
+        Arrays.asList(
             "aan",
             "aangaande",
             "aangezien",
@@ -444,7 +445,6 @@ public class Dutch implements Language {
             "zulk",
             "zulke",
             "zullen",
-            "zult"
-        ));
-    }
+            "zult"));
+  }
 }

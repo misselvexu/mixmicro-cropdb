@@ -29,9 +29,10 @@ import java.util.Set;
  * @since 2.1.0
  */
 public class Galician implements Language {
-    @Override
-    public Set<String> stopWords() {
-        return new HashSet<>(Arrays.asList(
+  @Override
+  public Set<String> stopWords() {
+    return new HashSet<>(
+        Arrays.asList(
             "a",
             "alí",
             "ao",
@@ -191,7 +192,6 @@ public class Galician implements Language {
             "á",
             "é",
             "ó",
-            "ós"
-        ));
-    }
+            "ós"));
+  }
 }

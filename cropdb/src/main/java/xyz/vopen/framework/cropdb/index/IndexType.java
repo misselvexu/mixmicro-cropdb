@@ -23,18 +23,12 @@ package xyz.vopen.framework.cropdb.index;
  * @since 4.0
  */
 public interface IndexType {
-    /**
-     * A unique index.
-     */
-    String UNIQUE = "Unique";
+  /** A unique index. */
+  String UNIQUE = "Unique";
 
-    /**
-     * A non-unique index.
-     */
-    String NON_UNIQUE = "NonUnique";
+  /** A non-unique index. */
+  String NON_UNIQUE = "NonUnique";
 
-    /**
-     * A crop full-text index.
-     */
-    String FULL_TEXT = "Fulltext";
+  /** A crop full-text index. */
+  String FULL_TEXT = "Fulltext";
 }

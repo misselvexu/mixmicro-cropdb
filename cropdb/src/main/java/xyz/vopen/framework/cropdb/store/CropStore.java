@@ -34,162 +34,155 @@ import java.util.Set;
  */
 public interface CropStore<Config extends StoreConfig> extends CropPlugin {
 
-    /**
-     * Opens or creates this crop store.
-     */
-    void openOrCreate();
+  /** Opens or creates this crop store. */
+  void openOrCreate();
 
-    /**
-     * Checks whether this store is closed for further modification.
-     *
-     * @return <code>true</code> if closed; <code>false</code> otherwise.
-     */
-    boolean isClosed();
+  /**
+   * Checks whether this store is closed for further modification.
+   *
+   * @return <code>true</code> if closed; <code>false</code> otherwise.
+   */
+  boolean isClosed();
 
-    /**
-     * Gets the set of all {@link CropCollection} names in store.
-     *
-     * @return the set of names.
-     */
-    Set<String> getCollectionNames();
+  /**
+   * Gets the set of all {@link CropCollection} names in store.
+   *
+   * @return the set of names.
+   */
+  Set<String> getCollectionNames();
 
-    /**
-     * Gets the set of all {@link ObjectRepository} details in store.
-     *
-     * @return the details of all {@link ObjectRepository}.
-     */
-    Set<String> getRepositoryRegistry();
+  /**
+   * Gets the set of all {@link ObjectRepository} details in store.
+   *
+   * @return the details of all {@link ObjectRepository}.
+   */
+  Set<String> getRepositoryRegistry();
 
-    /**
-     * Gets the set of all keyed-{@link ObjectRepository} details in store.
-     *
-     * @return the details of all {@link ObjectRepository}.
-     */
-    Map<String, Set<String>> getKeyedRepositoryRegistry();
+  /**
+   * Gets the set of all keyed-{@link ObjectRepository} details in store.
+   *
+   * @return the details of all {@link ObjectRepository}.
+   */
+  Map<String, Set<String>> getKeyedRepositoryRegistry();
 
-    /**
-     * Checks whether there are any unsaved changes.
-     *
-     * @return <code>true</code> if here are any changes; <code>false</code> otherwise.
-     */
-    boolean hasUnsavedChanges();
+  /**
+   * Checks whether there are any unsaved changes.
+   *
+   * @return <code>true</code> if here are any changes; <code>false</code> otherwise.
+   */
+  boolean hasUnsavedChanges();
 
-    /**
-     * Checks whether the store is opened in readonly mode.
-     *
-     * @return <code>true</code> if he store is opened in readonly mode; <code>false</code> otherwise.
-     */
-    boolean isReadOnly();
+  /**
+   * Checks whether the store is opened in readonly mode.
+   *
+   * @return <code>true</code> if he store is opened in readonly mode; <code>false</code> otherwise.
+   */
+  boolean isReadOnly();
 
-    /**
-     * Commits the changes. For persistent stores, it also writes
-     * changes to disk. It does nothing if there are no unsaved changes.
-     */
-    void commit();
+  /**
+   * Commits the changes. For persistent stores, it also writes changes to disk. It does nothing if
+   * there are no unsaved changes.
+   */
+  void commit();
 
-    /**
-     * This method runs before store {@link #close()}, to run cleanup routines.
-     */
-    void beforeClose();
+  /** This method runs before store {@link #close()}, to run cleanup routines. */
+  void beforeClose();
 
-    /**
-     * Checks whether a map with the name already exists in the store or not.
-     *
-     * @param mapName the map name
-     * @return true if the map exists; false otherwise
-     */
-    boolean hasMap(String mapName);
+  /**
+   * Checks whether a map with the name already exists in the store or not.
+   *
+   * @param mapName the map name
+   * @return true if the map exists; false otherwise
+   */
+  boolean hasMap(String mapName);
 
-    /**
-     * Opens a {@link CropMap} with the default settings. The map is
-     * automatically created if it does not yet exist. If a map with this
-     * name is already opened, this map is returned.
-     *
-     * @param <Key>     the key type
-     * @param <Value>   the value type
-     * @param mapName   the map name
-     * @param keyType   the key type
-     * @param valueType the value type
-     * @return the map.
-     */
-    <Key, Value> CropMap<Key, Value> openMap(String mapName, Class<?> keyType, Class<?> valueType);
+  /**
+   * Opens a {@link CropMap} with the default settings. The map is automatically created if it does
+   * not yet exist. If a map with this name is already opened, this map is returned.
+   *
+   * @param <Key> the key type
+   * @param <Value> the value type
+   * @param mapName the map name
+   * @param keyType the key type
+   * @param valueType the value type
+   * @return the map.
+   */
+  <Key, Value> CropMap<Key, Value> openMap(String mapName, Class<?> keyType, Class<?> valueType);
 
-    /**
-     * Closes a {@link CropMap} in the store.
-     *
-     * @param mapName the map name
-     */
-    void closeMap(String mapName);
+  /**
+   * Closes a {@link CropMap} in the store.
+   *
+   * @param mapName the map name
+   */
+  void closeMap(String mapName);
 
-    /**
-     * Removes a {@link CropMap} from the store.
-     *
-     * @param mapName the map name to remove.
-     */
-    void removeMap(String mapName);
+  /**
+   * Removes a {@link CropMap} from the store.
+   *
+   * @param mapName the map name to remove.
+   */
+  void removeMap(String mapName);
 
-    /**
-     * Opens a {@link CropRTree} with the default settings. The RTree is
-     * automatically created if it does not yet exist. If a RTree with this
-     * name is already open, this RTree is returned.
-     *
-     * @param <Key>     the key type
-     * @param <Value>   the value type
-     * @param rTreeName the RTree name
-     * @param keyType   the key type
-     * @param valueType the value type
-     * @return the map.
-     */
-    <Key extends BoundingBox, Value> CropRTree<Key, Value> openRTree(String rTreeName, Class<?> keyType, Class<?> valueType);
+  /**
+   * Opens a {@link CropRTree} with the default settings. The RTree is automatically created if it
+   * does not yet exist. If a RTree with this name is already open, this RTree is returned.
+   *
+   * @param <Key> the key type
+   * @param <Value> the value type
+   * @param rTreeName the RTree name
+   * @param keyType the key type
+   * @param valueType the value type
+   * @return the map.
+   */
+  <Key extends BoundingBox, Value> CropRTree<Key, Value> openRTree(
+      String rTreeName, Class<?> keyType, Class<?> valueType);
 
+  /**
+   * Closes a RTree in the store.
+   *
+   * @param rTreeName the RTree name
+   */
+  void closeRTree(String rTreeName);
 
-    /**
-     * Closes a RTree in the store.
-     *
-     * @param rTreeName the RTree name
-     */
-    void closeRTree(String rTreeName);
+  /**
+   * Removes a RTree from the store.
+   *
+   * @param rTreeName the RTree name to remove.
+   */
+  void removeRTree(String rTreeName);
 
-    /**
-     * Removes a RTree from the store.
-     *
-     * @param rTreeName the RTree name to remove.
-     */
-    void removeRTree(String rTreeName);
+  /**
+   * Adds a {@link StoreEventListener} to listen to all store events.
+   *
+   * @param listener the listener instances.
+   */
+  void subscribe(StoreEventListener listener);
 
-    /**
-     * Adds a {@link StoreEventListener} to listen to all store events.
-     *
-     * @param listener the listener instances.
-     */
-    void subscribe(StoreEventListener listener);
+  /**
+   * Removes a {@link StoreEventListener} to unsubscribe from all store events.
+   *
+   * @param listener the listener instances.
+   */
+  void unsubscribe(StoreEventListener listener);
 
-    /**
-     * Removes a {@link StoreEventListener} to unsubscribe from all store events.
-     *
-     * @param listener the listener instances.
-     */
-    void unsubscribe(StoreEventListener listener);
+  /**
+   * Gets the underlying store engine version.
+   *
+   * @return the store version
+   */
+  String getStoreVersion();
 
-    /**
-     * Gets the underlying store engine version.
-     *
-     * @return the store version
-     */
-    String getStoreVersion();
+  /**
+   * Gets the store configuration.
+   *
+   * @return the store config
+   */
+  Config getStoreConfig();
 
-    /**
-     * Gets the store configuration.
-     *
-     * @return the store config
-     */
-    Config getStoreConfig();
-
-
-    /**
-     * Gets the store catalog.
-     *
-     * @return the catalog
-     */
-    StoreCatalog getCatalog();
+  /**
+   * Gets the store catalog.
+   *
+   * @return the catalog
+   */
+  StoreCatalog getCatalog();
 }

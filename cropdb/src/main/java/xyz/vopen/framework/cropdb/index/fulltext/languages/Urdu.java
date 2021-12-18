@@ -29,9 +29,10 @@ import java.util.Set;
  * @since 2.1.0
  */
 public class Urdu implements Language {
-    @Override
-    public Set<String> stopWords() {
-        return new HashSet<>(Arrays.asList(
+  @Override
+  public Set<String> stopWords() {
+    return new HashSet<>(
+        Arrays.asList(
             "آئی",
             "آئے",
             "آج",
@@ -548,7 +549,6 @@ public class Urdu implements Language {
             "ی",
             "یقیٌی",
             "یہ",
-            "یہبں"
-        ));
-    }
+            "یہبں"));
+  }
 }

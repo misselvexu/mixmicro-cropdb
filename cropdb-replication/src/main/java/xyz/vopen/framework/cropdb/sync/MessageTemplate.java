@@ -20,60 +20,58 @@ import lombok.extern.slf4j.Slf4j;
 import xyz.vopen.framework.cropdb.sync.message.DataGateMessage;
 import xyz.vopen.framework.cropdb.sync.net.DataGateSocket;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 @Slf4j
 public class MessageTemplate implements AutoCloseable {
-    private final Config config;
-    private final ReplicationTemplate replica;
-    private DataGateSocket dataGateSocket;
-    private MessageDispatcher dispatcher;
+  private final Config config;
+  private final ReplicationTemplate replica;
+  private DataGateSocket dataGateSocket;
+  private MessageDispatcher dispatcher;
 
-    public MessageTemplate(Config config, ReplicationTemplate replica) {
-        this.config = config;
-        this.replica = replica;
+  public MessageTemplate(Config config, ReplicationTemplate replica) {
+    this.config = config;
+    this.replica = replica;
+  }
+
+  public void sendMessage(DataGateMessage message) {
+    if (dataGateSocket != null && dataGateSocket.isConnected()) {
+      if (!dataGateSocket.sendMessage(message)) {
+        throw new ReplicationException("failed to deliver message " + message, true);
+      }
+    }
+  }
+
+  public void openConnection() {
+    try {
+      dataGateSocket = new DataGateSocket(config);
+      dispatcher = new MessageDispatcher(config, replica);
+
+      dataGateSocket.setListener(dispatcher);
+      dataGateSocket.startConnect();
+    } catch (Exception e) {
+      log.error("Error while establishing connection from {}", getReplicaId(), e);
+      throw new ReplicationException("failed to open connection to server", e, true);
+    }
+  }
+
+  public void closeConnection(String reason) {
+    if (dataGateSocket != null) {
+      dataGateSocket.stopConnect(reason);
+    }
+  }
+
+  @Override
+  public void close() {
+    if (dataGateSocket != null) {
+      dataGateSocket.stopConnect("normal close");
     }
 
-    public void sendMessage(DataGateMessage message) {
-        if (dataGateSocket != null && dataGateSocket.isConnected()) {
-            if (!dataGateSocket.sendMessage(message)) {
-                throw new ReplicationException("failed to deliver message " + message, true);
-            }
-        }
+    if (dispatcher != null) {
+      dispatcher.close();
     }
+  }
 
-    public void openConnection() {
-        try {
-            dataGateSocket = new DataGateSocket(config);
-            dispatcher = new MessageDispatcher(config, replica);
-
-            dataGateSocket.setListener(dispatcher);
-            dataGateSocket.startConnect();
-        } catch (Exception e) {
-            log.error("Error while establishing connection from {}", getReplicaId(), e);
-            throw new ReplicationException("failed to open connection to server", e, true);
-        }
-    }
-
-    public void closeConnection(String reason) {
-        if (dataGateSocket != null) {
-            dataGateSocket.stopConnect(reason);
-        }
-    }
-
-    @Override
-    public void close() {
-        if (dataGateSocket != null) {
-            dataGateSocket.stopConnect("normal close");
-        }
-
-        if (dispatcher != null) {
-            dispatcher.close();
-        }
-    }
-
-    private String getReplicaId() {
-        return replica.getReplicaId();
-    }
+  private String getReplicaId() {
+    return replica.getReplicaId();
+  }
 }

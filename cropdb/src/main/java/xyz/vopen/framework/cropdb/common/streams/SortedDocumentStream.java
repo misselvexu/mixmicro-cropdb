@@ -35,25 +35,25 @@ import java.util.List;
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  */
 public class SortedDocumentStream implements RecordStream<Pair<CropId, Document>> {
-    private final FindPlan findPlan;
-    private final RecordStream<Pair<CropId, Document>> recordStream;
+  private final FindPlan findPlan;
+  private final RecordStream<Pair<CropId, Document>> recordStream;
 
-    public SortedDocumentStream(FindPlan findPlan,
-                                RecordStream<Pair<CropId, Document>> recordStream) {
-        this.findPlan = findPlan;
-        this.recordStream = recordStream;
-    }
+  public SortedDocumentStream(
+      FindPlan findPlan, RecordStream<Pair<CropId, Document>> recordStream) {
+    this.findPlan = findPlan;
+    this.recordStream = recordStream;
+  }
 
-    @Override
-    public Iterator<Pair<CropId, Document>> iterator() {
-        if (recordStream == null) return Collections.emptyIterator();
+  @Override
+  public Iterator<Pair<CropId, Document>> iterator() {
+    if (recordStream == null) return Collections.emptyIterator();
 
-        DocumentSorter documentSorter = new DocumentSorter(findPlan.getCollator(),
-            findPlan.getBlockingSortOrder());
+    DocumentSorter documentSorter =
+        new DocumentSorter(findPlan.getCollator(), findPlan.getBlockingSortOrder());
 
-        List<Pair<CropId, Document>> recordList = Iterables.toList(recordStream);
-        Collections.sort(recordList, documentSorter);
+    List<Pair<CropId, Document>> recordList = Iterables.toList(recordStream);
+    Collections.sort(recordList, documentSorter);
 
-        return recordList.iterator();
-    }
+    return recordList.iterator();
+  }
 }

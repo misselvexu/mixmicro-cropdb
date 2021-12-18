@@ -23,12 +23,8 @@ package xyz.vopen.framework.cropdb.common;
  * @since 1.0
  */
 public enum SortOrder {
-    /**
-     * Ascending sort order.
-     */
-    Ascending,
-    /**
-     * Descending sort order.
-     */
-    Descending
+  /** Ascending sort order. */
+  Ascending,
+  /** Descending sort order. */
+  Descending
 }

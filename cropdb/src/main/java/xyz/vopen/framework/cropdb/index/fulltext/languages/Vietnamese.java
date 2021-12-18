@@ -29,9 +29,10 @@ import java.util.Set;
  * @since 2.1.0
  */
 public class Vietnamese implements Language {
-    @Override
-    public Set<String> stopWords() {
-        return new HashSet<>(Arrays.asList(
+  @Override
+  public Set<String> stopWords() {
+    return new HashSet<>(
+        Arrays.asList(
             "a ha",
             "a-lô",
             "ai",
@@ -676,7 +677,6 @@ public class Vietnamese implements Language {
             "ứ hự",
             "ứ ừ",
             "ừ",
-            "ử"
-        ));
-    }
+            "ử"));
+  }
 }

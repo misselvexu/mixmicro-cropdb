@@ -20,30 +20,29 @@ import xyz.vopen.framework.cropdb.collection.CropId;
 import xyz.vopen.framework.cropdb.collection.Document;
 
 /**
- * Exception thrown when a {@link Document}
- * does not have any {@link CropId} associated
- * with it or it has invalid/incompatible {@link CropId}.
+ * Exception thrown when a {@link Document} does not have any {@link CropId} associated with it or
+ * it has invalid/incompatible {@link CropId}.
  *
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 1.0
  */
 public class InvalidIdException extends CropException {
-    /**
-     * Instantiates a new Invalid id exception.
-     *
-     * @param message the message
-     */
-    public InvalidIdException(String message) {
-        super(message);
-    }
+  /**
+   * Instantiates a new Invalid id exception.
+   *
+   * @param message the message
+   */
+  public InvalidIdException(String message) {
+    super(message);
+  }
 
-    /**
-     * Instantiates a new Invalid id exception.
-     *
-     * @param message the message
-     * @param cause   the cause
-     */
-    public InvalidIdException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  /**
+   * Instantiates a new Invalid id exception.
+   *
+   * @param message the message
+   * @param cause the cause
+   */
+  public InvalidIdException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

@@ -29,27 +29,24 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class IndexOptions {
 
-    /**
-     * Specifies the type of an index to create.
-     *
-     * @param indexType type of an index.
-     * @return type of an index to create.
-     */
-    @Getter
-    @Setter
-    private String indexType;
+  /**
+   * Specifies the type of an index to create.
+   *
+   * @param indexType type of an index.
+   * @return type of an index to create.
+   */
+  @Getter @Setter private String indexType;
 
-    /**
-     * Creates an {@link IndexOptions} with the specified `indexType`. Index creation
-     * will be synchronous with this option.
-     *
-     * @param indexType the type of index to be created.
-     * @return a new synchronous index creation option.
-     */
-    public static IndexOptions indexOptions(String indexType) {
-        IndexOptions options = new IndexOptions();
-        options.setIndexType(indexType);
-        return options;
-    }
+  /**
+   * Creates an {@link IndexOptions} with the specified `indexType`. Index creation will be
+   * synchronous with this option.
+   *
+   * @param indexType the type of index to be created.
+   * @return a new synchronous index creation option.
+   */
+  public static IndexOptions indexOptions(String indexType) {
+    IndexOptions options = new IndexOptions();
+    options.setIndexType(indexType);
+    return options;
+  }
 }
-

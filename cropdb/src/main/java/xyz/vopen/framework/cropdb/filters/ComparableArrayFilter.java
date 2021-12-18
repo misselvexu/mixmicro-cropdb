@@ -20,31 +20,29 @@ package xyz.vopen.framework.cropdb.filters;
 import xyz.vopen.framework.cropdb.common.mapper.CropMapper;
 import xyz.vopen.framework.cropdb.common.util.ValidationUtils;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 abstract class ComparableArrayFilter extends ComparableFilter {
-    /**
-     * Instantiates a new Comparable filter.
-     *
-     * @param field the field
-     * @param value the value
-     */
-    public ComparableArrayFilter(String field, Object value) {
-        super(field, value);
-    }
+  /**
+   * Instantiates a new Comparable filter.
+   *
+   * @param field the field
+   * @param value the value
+   */
+  public ComparableArrayFilter(String field, Object value) {
+    super(field, value);
+  }
 
-    @Override
-    protected void validateSearchTerm(CropMapper cropMapper, String field, Object value) {
-        ValidationUtils.notNull(field, "field cannot be null");
-        ValidationUtils.notEmpty(field, "field cannot be empty");
+  @Override
+  protected void validateSearchTerm(CropMapper cropMapper, String field, Object value) {
+    ValidationUtils.notNull(field, "field cannot be null");
+    ValidationUtils.notEmpty(field, "field cannot be empty");
 
-        if (value != null) {
-            if (value.getClass().isArray()) {
-                ValidationUtils.validateFilterArrayField(value, field);
-            } else if (value instanceof Iterable) {
-                ValidationUtils.validateFilterIterableField((Iterable<?>) value, field);
-            }
-        }
+    if (value != null) {
+      if (value.getClass().isArray()) {
+        ValidationUtils.validateFilterArrayField(value, field);
+      } else if (value instanceof Iterable) {
+        ValidationUtils.validateFilterIterableField((Iterable<?>) value, field);
+      }
     }
+  }
 }

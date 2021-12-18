@@ -24,31 +24,31 @@ import java.io.Serializable;
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public interface BoundingBox extends Serializable {
-    /**
-     * Gets min x.
-     *
-     * @return the min x
-     */
-    float getMinX();
+  /**
+   * Gets min x.
+   *
+   * @return the min x
+   */
+  float getMinX();
 
-    /**
-     * Gets max x.
-     *
-     * @return the max x
-     */
-    float getMaxX();
+  /**
+   * Gets max x.
+   *
+   * @return the max x
+   */
+  float getMaxX();
 
-    /**
-     * Gets min y.
-     *
-     * @return the min y
-     */
-    float getMinY();
+  /**
+   * Gets min y.
+   *
+   * @return the min y
+   */
+  float getMinY();
 
-    /**
-     * Gets max y.
-     *
-     * @return the max y
-     */
-    float getMaxY();
+  /**
+   * Gets max y.
+   *
+   * @return the max y
+   */
+  float getMaxY();
 }

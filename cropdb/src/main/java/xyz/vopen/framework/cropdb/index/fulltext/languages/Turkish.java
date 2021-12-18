@@ -29,9 +29,10 @@ import java.util.Set;
  * @since 2.1.0
  */
 public class Turkish implements Language {
-    @Override
-    public Set<String> stopWords() {
-        return new HashSet<>(Arrays.asList(
+  @Override
+  public Set<String> stopWords() {
+    return new HashSet<>(
+        Arrays.asList(
             "acaba",
             "acep",
             "adamakıllı",
@@ -535,7 +536,6 @@ public class Turkish implements Language {
             "ţayet",
             "ţimdi",
             "ţu",
-            "ţöyle"
-        ));
-    }
+            "ţöyle"));
+  }
 }

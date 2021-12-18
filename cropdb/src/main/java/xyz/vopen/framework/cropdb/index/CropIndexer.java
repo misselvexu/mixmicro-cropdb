@@ -32,52 +32,54 @@ import java.util.LinkedHashSet;
  * @since 4.0
  */
 public interface CropIndexer extends CropPlugin {
-    /**
-     * Gets the index type.
-     *
-     * @return the index type
-     */
-    String getIndexType();
+  /**
+   * Gets the index type.
+   *
+   * @return the index type
+   */
+  String getIndexType();
 
-    /**
-     * Validates an index on the fields.
-     *
-     * @param fields the fields
-     */
-    void validateIndex(Fields fields);
+  /**
+   * Validates an index on the fields.
+   *
+   * @param fields the fields
+   */
+  void validateIndex(Fields fields);
 
-    /**
-     * Drops the index specified by the index descriptor.
-     *
-     * @param indexDescriptor the index descriptor
-     * @param cropConfig   the crop config
-     */
-    void dropIndex(IndexDescriptor indexDescriptor, CropConfig cropConfig);
+  /**
+   * Drops the index specified by the index descriptor.
+   *
+   * @param indexDescriptor the index descriptor
+   * @param cropConfig the crop config
+   */
+  void dropIndex(IndexDescriptor indexDescriptor, CropConfig cropConfig);
 
-    /**
-     * Writes an index entry.
-     *
-     * @param fieldValues     the field values
-     * @param indexDescriptor the index descriptor
-     * @param cropConfig   the crop config
-     */
-    void writeIndexEntry(FieldValues fieldValues, IndexDescriptor indexDescriptor, CropConfig cropConfig);
+  /**
+   * Writes an index entry.
+   *
+   * @param fieldValues the field values
+   * @param indexDescriptor the index descriptor
+   * @param cropConfig the crop config
+   */
+  void writeIndexEntry(
+      FieldValues fieldValues, IndexDescriptor indexDescriptor, CropConfig cropConfig);
 
-    /**
-     * Removes an index entry.
-     *
-     * @param fieldValues     the field values
-     * @param indexDescriptor the index descriptor
-     * @param cropConfig   the crop config
-     */
-    void removeIndexEntry(FieldValues fieldValues, IndexDescriptor indexDescriptor, CropConfig cropConfig);
+  /**
+   * Removes an index entry.
+   *
+   * @param fieldValues the field values
+   * @param indexDescriptor the index descriptor
+   * @param cropConfig the crop config
+   */
+  void removeIndexEntry(
+      FieldValues fieldValues, IndexDescriptor indexDescriptor, CropConfig cropConfig);
 
-    /**
-     * Finds a list of {@link CropId} after executing the {@link FindPlan} on the index.
-     *
-     * @param findPlan      the find plan
-     * @param cropConfig the crop config
-     * @return the linked hash set
-     */
-    LinkedHashSet<CropId> findByFilter(FindPlan findPlan, CropConfig cropConfig);
+  /**
+   * Finds a list of {@link CropId} after executing the {@link FindPlan} on the index.
+   *
+   * @param findPlan the find plan
+   * @param cropConfig the crop config
+   * @return the linked hash set
+   */
+  LinkedHashSet<CropId> findByFilter(FindPlan findPlan, CropConfig cropConfig);
 }

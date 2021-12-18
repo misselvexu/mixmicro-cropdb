@@ -34,28 +34,27 @@ import static xyz.vopen.framework.cropdb.common.Constants.TAG_MAP_METADATA;
  */
 @Data
 public class MapMetaData implements MetaData {
-    @Getter
-    private Set<String> mapNames;
+  @Getter private Set<String> mapNames;
 
-    /**
-     * Instantiates a new {@link MapMetaData}.
-     *
-     * @param metadata the metadata
-     */
-    public MapMetaData(Document metadata) {
-        populateInfo(metadata);
-    }
+  /**
+   * Instantiates a new {@link MapMetaData}.
+   *
+   * @param metadata the metadata
+   */
+  public MapMetaData(Document metadata) {
+    populateInfo(metadata);
+  }
 
-    @Override
-    public Document getInfo() {
-        return Document.createDocument(TAG_MAP_METADATA, mapNames);
-    }
+  @Override
+  public Document getInfo() {
+    return Document.createDocument(TAG_MAP_METADATA, mapNames);
+  }
 
-    @SuppressWarnings("unchecked")
-    private void populateInfo(Document metadata) {
-        mapNames = (Set<String>) metadata.get(TAG_MAP_METADATA, Set.class);
-        if (mapNames == null) {
-            mapNames = new HashSet<>();
-        }
+  @SuppressWarnings("unchecked")
+  private void populateInfo(Document metadata) {
+    mapNames = (Set<String>) metadata.get(TAG_MAP_METADATA, Set.class);
+    if (mapNames == null) {
+      mapNames = new HashSet<>();
     }
+  }
 }

@@ -31,6 +31,6 @@ import xyz.vopen.framework.cropdb.CropConfig;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EventInfo {
-    private StoreEvents event;
-    private CropConfig cropConfig;
+  private StoreEvents event;
+  private CropConfig cropConfig;
 }

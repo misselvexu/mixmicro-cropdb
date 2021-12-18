@@ -9,10 +9,10 @@ import xyz.vopen.framework.cropdb.CropDB;
  * @since 4.0
  */
 public interface CustomInstruction {
-    /**
-     * Performs the instruction on the crop database.
-     *
-     * @param cropdb the crop database
-     */
-    void perform(CropDB cropdb);
+  /**
+   * Performs the instruction on the crop database.
+   *
+   * @param cropdb the crop database
+   */
+  void perform(CropDB cropdb);
 }

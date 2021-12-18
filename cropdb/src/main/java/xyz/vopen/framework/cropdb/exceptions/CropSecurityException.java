@@ -23,22 +23,22 @@ package xyz.vopen.framework.cropdb.exceptions;
  * @since 1.0
  */
 public class CropSecurityException extends CropException {
-    /**
-     * Instantiates a new {@link CropSecurityException}.
-     *
-     * @param errorMessage the error message
-     */
-    public CropSecurityException(String errorMessage) {
-        super(errorMessage);
-    }
+  /**
+   * Instantiates a new {@link CropSecurityException}.
+   *
+   * @param errorMessage the error message
+   */
+  public CropSecurityException(String errorMessage) {
+    super(errorMessage);
+  }
 
-    /**
-     * Instantiates a new {@link CropSecurityException}.
-     *
-     * @param errorMessage the error message
-     * @param cause        the cause
-     */
-    public CropSecurityException(String errorMessage, Throwable cause) {
-        super(errorMessage, cause);
-    }
+  /**
+   * Instantiates a new {@link CropSecurityException}.
+   *
+   * @param errorMessage the error message
+   * @param cause the cause
+   */
+  public CropSecurityException(String errorMessage, Throwable cause) {
+    super(errorMessage, cause);
+  }
 }

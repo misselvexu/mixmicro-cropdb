@@ -17,24 +17,23 @@
 package xyz.vopen.framework.cropdb.collection.meta;
 
 /**
- * Interface to be implemented by database objects that wish to be
- * aware of their meta data.
+ * Interface to be implemented by database objects that wish to be aware of their meta data.
  *
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 1.0
  */
 public interface MetadataAware {
-    /**
-     * Returns the meta data attributes of an object.
-     *
-     * @return the meta data attributes.
-     */
-    Attributes getAttributes();
+  /**
+   * Returns the meta data attributes of an object.
+   *
+   * @return the meta data attributes.
+   */
+  Attributes getAttributes();
 
-    /**
-     * Sets new meta data attributes.
-     *
-     * @param attributes new meta data attributes.
-     */
-    void setAttributes(Attributes attributes);
+  /**
+   * Sets new meta data attributes.
+   *
+   * @param attributes new meta data attributes.
+   */
+  void setAttributes(Attributes attributes);
 }

@@ -29,60 +29,13 @@ import java.util.Set;
  * @since 2.1.0
  */
 public class Afrikaans implements Language {
-    @Override
-    public Set<String> stopWords() {
-        return new HashSet<>(Arrays.asList(
-            "'n",
-            "aan",
-            "af",
-            "al",
-            "as",
-            "baie",
-            "by",
-            "daar",
-            "dag",
-            "dat",
-            "die",
-            "dit",
-            "een",
-            "ek",
-            "en",
-            "gaan",
-            "gesê",
-            "haar",
-            "het",
-            "hom",
-            "hulle",
-            "hy",
-            "in",
-            "is",
-            "jou",
-            "jy",
-            "kan",
-            "kom",
-            "ma",
-            "maar",
-            "met",
-            "my",
-            "na",
-            "nie",
-            "om",
-            "ons",
-            "op",
-            "saam",
-            "sal",
-            "se",
-            "sien",
-            "so",
-            "sy",
-            "te",
-            "toe",
-            "uit",
-            "van",
-            "vir",
-            "was",
-            "wat",
-            "ŉ"
-        ));
-    }
+  @Override
+  public Set<String> stopWords() {
+    return new HashSet<>(
+        Arrays.asList(
+            "'n", "aan", "af", "al", "as", "baie", "by", "daar", "dag", "dat", "die", "dit", "een",
+            "ek", "en", "gaan", "gesê", "haar", "het", "hom", "hulle", "hy", "in", "is", "jou",
+            "jy", "kan", "kom", "ma", "maar", "met", "my", "na", "nie", "om", "ons", "op", "saam",
+            "sal", "se", "sien", "so", "sy", "te", "toe", "uit", "van", "vir", "was", "wat", "ŉ"));
+  }
 }

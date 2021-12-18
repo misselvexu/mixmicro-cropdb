@@ -26,10 +26,10 @@ import java.util.Set;
  */
 public interface Language {
 
-    /**
-     * A set of stop words for the language.
-     *
-     * @return the set of stop words.
-     */
-    Set<String> stopWords();
+  /**
+   * A set of stop words for the language.
+   *
+   * @return the set of stop words.
+   */
+  Set<String> stopWords();
 }

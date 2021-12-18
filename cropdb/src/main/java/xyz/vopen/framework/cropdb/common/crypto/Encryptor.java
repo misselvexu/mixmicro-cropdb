@@ -24,19 +24,19 @@ package xyz.vopen.framework.cropdb.common.crypto;
  * @since 4.0
  */
 public interface Encryptor {
-    /**
-     * Returns a base64 encoded encrypted string.
-     *
-     * @param plainText the plain text
-     * @return the encrypted string
-     */
-    String encrypt(byte[] plainText);
+  /**
+   * Returns a base64 encoded encrypted string.
+   *
+   * @param plainText the plain text
+   * @return the encrypted string
+   */
+  String encrypt(byte[] plainText);
 
-    /**
-     * Returns the decrypted string, encoded by this encryptor.
-     *
-     * @param encryptedText the encrypted text
-     * @return the string
-     */
-    String decrypt(String encryptedText);
+  /**
+   * Returns the decrypted string, encoded by this encryptor.
+   *
+   * @param encryptedText the encrypted text
+   * @return the string
+   */
+  String decrypt(String encryptedText);
 }

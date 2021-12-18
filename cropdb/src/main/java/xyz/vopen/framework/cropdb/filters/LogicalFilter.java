@@ -22,22 +22,21 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Represents a filter which does a logical operation (AND, OR)
- * between a set of filters.
+ * Represents a filter which does a logical operation (AND, OR) between a set of filters.
  *
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 1.0
  */
 @Getter
 public abstract class LogicalFilter extends CropFilter {
-    private final List<Filter> filters;
+  private final List<Filter> filters;
 
-    /**
-     * Instantiates a new Logical filter.
-     *
-     * @param filters the filters
-     */
-    public LogicalFilter(Filter... filters) {
-        this.filters = Arrays.asList(filters);
-    }
+  /**
+   * Instantiates a new Logical filter.
+   *
+   * @param filters the filters
+   */
+  public LogicalFilter(Filter... filters) {
+    this.filters = Arrays.asList(filters);
+  }
 }

@@ -29,9 +29,10 @@ import java.util.Set;
  * @since 2.1.0
  */
 public class Irish implements Language {
-    @Override
-    public Set<String> stopWords() {
-        return new HashSet<>(Arrays.asList(
+  @Override
+  public Set<String> stopWords() {
+    return new HashSet<>(
+        Arrays.asList(
             "a",
             "ach",
             "ag",
@@ -140,7 +141,6 @@ public class Irish implements Language {
             "ó",
             "ón",
             "óna",
-            "ónár"
-        ));
-    }
+            "ónár"));
+  }
 }

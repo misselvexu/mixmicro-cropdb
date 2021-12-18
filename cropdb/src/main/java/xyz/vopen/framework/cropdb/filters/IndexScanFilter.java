@@ -36,20 +36,19 @@ import java.util.List;
  */
 @ToString
 public class IndexScanFilter implements Filter {
-    @Getter
-    private final List<ComparableFilter> filters;
+  @Getter private final List<ComparableFilter> filters;
 
-    /**
-     * Instantiates a new Index scan filter.
-     *
-     * @param filters the filters
-     */
-    public IndexScanFilter(Collection<ComparableFilter> filters) {
-        this.filters = new ArrayList<>(filters);
-    }
+  /**
+   * Instantiates a new Index scan filter.
+   *
+   * @param filters the filters
+   */
+  public IndexScanFilter(Collection<ComparableFilter> filters) {
+    this.filters = new ArrayList<>(filters);
+  }
 
-    @Override
-    public boolean apply(Pair<CropId, Document> element) {
-        throw new InvalidOperationException("index scan filter cannot be applied on collection");
-    }
+  @Override
+  public boolean apply(Pair<CropId, Document> element) {
+    throw new InvalidOperationException("index scan filter cannot be applied on collection");
+  }
 }

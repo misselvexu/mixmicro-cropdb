@@ -26,32 +26,31 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 public class DocumentSerializer extends StdScalarSerializer<Document> {
 
-    protected DocumentSerializer() {
-        super(Document.class);
-    }
+  protected DocumentSerializer() {
+    super(Document.class);
+  }
 
-    @Override
-    public void serialize(Document value, JsonGenerator gen, SerializerProvider provider) throws IOException {
-        if (value != null) {
-            Map<String, Object> map = fromDocument(value);
-            gen.writeObject(map);
-        }
+  @Override
+  public void serialize(Document value, JsonGenerator gen, SerializerProvider provider)
+      throws IOException {
+    if (value != null) {
+      Map<String, Object> map = fromDocument(value);
+      gen.writeObject(map);
     }
+  }
 
-    private Map<String, Object> fromDocument(Document document) {
-        Map<String, Object> map = new HashMap<>();
-        for (Pair<String, Object> pair : document) {
-            Object value = pair.getSecond();
-            if (value instanceof Document) {
-                value = fromDocument((Document) value);
-            }
-            map.put(pair.getFirst(), value);
-        }
-        return map;
+  private Map<String, Object> fromDocument(Document document) {
+    Map<String, Object> map = new HashMap<>();
+    for (Pair<String, Object> pair : document) {
+      Object value = pair.getSecond();
+      if (value instanceof Document) {
+        value = fromDocument((Document) value);
+      }
+      map.put(pair.getFirst(), value);
     }
+    return map;
+  }
 }

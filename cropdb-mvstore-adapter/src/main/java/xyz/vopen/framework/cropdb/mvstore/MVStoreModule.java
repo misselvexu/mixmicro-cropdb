@@ -33,26 +33,26 @@ import java.util.Set;
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class MVStoreModule implements StoreModule {
-    @Setter(AccessLevel.PACKAGE)
-    private MVStoreConfig storeConfig;
+  @Setter(AccessLevel.PACKAGE)
+  private MVStoreConfig storeConfig;
 
-    public MVStoreModule(String path) {
-        this.storeConfig = new MVStoreConfig();
-        this.storeConfig.filePath(path);
-    }
+  public MVStoreModule(String path) {
+    this.storeConfig = new MVStoreConfig();
+    this.storeConfig.filePath(path);
+  }
 
-    @Override
-    public Set<CropPlugin> plugins() {
-        return Iterables.setOf(getStore());
-    }
+  @Override
+  public Set<CropPlugin> plugins() {
+    return Iterables.setOf(getStore());
+  }
 
-    public static MVStoreModuleBuilder withConfig() {
-        return new MVStoreModuleBuilder();
-    }
+  public static MVStoreModuleBuilder withConfig() {
+    return new MVStoreModuleBuilder();
+  }
 
-    public CropStore<?> getStore() {
-        CropMVStore store = new CropMVStore();
-        store.setStoreConfig(storeConfig);
-        return store;
-    }
+  public CropStore<?> getStore() {
+    CropMVStore store = new CropMVStore();
+    store.setStoreConfig(storeConfig);
+    return store;
+  }
 }

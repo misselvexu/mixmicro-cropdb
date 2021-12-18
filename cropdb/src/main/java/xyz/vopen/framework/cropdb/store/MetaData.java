@@ -26,10 +26,10 @@ import xyz.vopen.framework.cropdb.collection.Document;
  * @since 4.0
  */
 public interface MetaData {
-    /**
-     * Gets metadata of the instance.
-     *
-     * @return the info
-     */
-    Document getInfo();
+  /**
+   * Gets metadata of the instance.
+   *
+   * @return the info
+   */
+  Document getInfo();
 }

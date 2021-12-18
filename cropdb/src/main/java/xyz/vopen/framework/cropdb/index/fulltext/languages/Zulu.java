@@ -29,9 +29,10 @@ import java.util.Set;
  * @since 2.1.0
  */
 public class Zulu implements Language {
-    @Override
-    public Set<String> stopWords() {
-        return new HashSet<>(Arrays.asList(
+  @Override
+  public Set<String> stopWords() {
+    return new HashSet<>(
+        Arrays.asList(
             "futhi",
             "kahle",
             "kakhulu",
@@ -60,7 +61,6 @@ public class Zulu implements Language {
             "wathi",
             "yakhe",
             "zakhe",
-            "zonke"
-        ));
-    }
+            "zonke"));
+  }
 }

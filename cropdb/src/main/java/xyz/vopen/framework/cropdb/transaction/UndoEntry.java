@@ -8,6 +8,6 @@ import lombok.Data;
  */
 @Data
 class UndoEntry {
-    private String collectionName;
-    private Command rollback;
+  private String collectionName;
+  private Command rollback;
 }

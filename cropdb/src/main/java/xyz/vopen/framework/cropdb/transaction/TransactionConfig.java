@@ -14,52 +14,52 @@ import xyz.vopen.framework.cropdb.store.CropStore;
  */
 @Slf4j
 class TransactionConfig extends CropConfig {
-    private final CropConfig config;
+  private final CropConfig config;
 
-    public TransactionConfig(CropConfig config) {
-        super();
-        this.config = config;
-    }
+  public TransactionConfig(CropConfig config) {
+    super();
+    this.config = config;
+  }
 
-    @Override
-    public CropIndexer findIndexer(String indexType) {
-        CropIndexer cropIndexer = pluginManager.getIndexerMap().get(indexType);
-        if (cropIndexer != null) {
-            cropIndexer.initialize(this);
-            return cropIndexer;
-        } else {
-            throw new IndexingException("no indexer found for index type " + indexType);
-        }
+  @Override
+  public CropIndexer findIndexer(String indexType) {
+    CropIndexer cropIndexer = pluginManager.getIndexerMap().get(indexType);
+    if (cropIndexer != null) {
+      cropIndexer.initialize(this);
+      return cropIndexer;
+    } else {
+      throw new IndexingException("no indexer found for index type " + indexType);
     }
+  }
 
-    @Override
-    public void fieldSeparator(String separator) {
-        config.fieldSeparator(separator);
-    }
+  @Override
+  public void fieldSeparator(String separator) {
+    config.fieldSeparator(separator);
+  }
 
-    @Override
-    public CropConfig loadModule(CropModule module) {
-        pluginManager.loadModule(module);
-        return this;
-    }
+  @Override
+  public CropConfig loadModule(CropModule module) {
+    pluginManager.loadModule(module);
+    return this;
+  }
 
-    @Override
-    public void autoConfigure() {
-        pluginManager.findAndLoadPlugins();
-    }
+  @Override
+  public void autoConfigure() {
+    pluginManager.findAndLoadPlugins();
+  }
 
-    @Override
-    public CropMapper cropMapper() {
-        return config.cropMapper();
-    }
+  @Override
+  public CropMapper cropMapper() {
+    return config.cropMapper();
+  }
 
-    @Override
-    public CropStore<?> getCropStore() {
-        return pluginManager.getCropStore();
-    }
+  @Override
+  public CropStore<?> getCropStore() {
+    return pluginManager.getCropStore();
+  }
 
-    @Override
-    public void initialize() {
-        super.initialize();
-    }
+  @Override
+  public void initialize() {
+    super.initialize();
+  }
 }

@@ -24,37 +24,35 @@ import xyz.vopen.framework.cropdb.exceptions.FilterException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 class RegexFilter extends FieldBasedFilter {
-    private final Pattern pattern;
+  private final Pattern pattern;
 
-    RegexFilter(String field, String value) {
-        super(field, value);
-        pattern = Pattern.compile(value);
-    }
+  RegexFilter(String field, String value) {
+    super(field, value);
+    pattern = Pattern.compile(value);
+  }
 
-    @Override
-    public boolean apply(Pair<CropId, Document> element) {
-        Document document = element.getSecond();
-        Object fieldValue = document.get(getField());
-        if (fieldValue != null) {
-            if (fieldValue instanceof String) {
-                Matcher matcher = pattern.matcher((String) fieldValue);
-                if (matcher.find()) {
-                    return true;
-                }
-                matcher.reset();
-            } else {
-                throw new FilterException(getField() + " does not contain string value");
-            }
+  @Override
+  public boolean apply(Pair<CropId, Document> element) {
+    Document document = element.getSecond();
+    Object fieldValue = document.get(getField());
+    if (fieldValue != null) {
+      if (fieldValue instanceof String) {
+        Matcher matcher = pattern.matcher((String) fieldValue);
+        if (matcher.find()) {
+          return true;
         }
-        return false;
+        matcher.reset();
+      } else {
+        throw new FilterException(getField() + " does not contain string value");
+      }
     }
+    return false;
+  }
 
-    @Override
-    public String toString() {
-        return "(" + getField() + " regex " + getValue() + ")";
-    }
+  @Override
+  public String toString() {
+    return "(" + getField() + " regex " + getValue() + ")";
+  }
 }

@@ -31,25 +31,23 @@ import java.util.List;
  * @since 4.0.0
  */
 public class GeometryExtension implements JacksonExtension {
-    /**
-     * The constant GEOMETRY_ID
-     */
-    public static final String GEOMETRY_ID = "geometry:";
+  /** The constant GEOMETRY_ID */
+  public static final String GEOMETRY_ID = "geometry:";
 
-    @Override
-    public List<Class<?>> getSupportedTypes() {
-        return Iterables.listOf(Geometry.class);
-    }
+  @Override
+  public List<Class<?>> getSupportedTypes() {
+    return Iterables.listOf(Geometry.class);
+  }
 
-    @Override
-    public Module getModule() {
-        return new SimpleModule() {
-            @Override
-            public void setupModule(SetupContext context) {
-                addSerializer(Geometry.class, new GeometrySerializer());
-                addDeserializer(Geometry.class, new GeometryDeserializer());
-                super.setupModule(context);
-            }
-        };
-    }
+  @Override
+  public Module getModule() {
+    return new SimpleModule() {
+      @Override
+      public void setupModule(SetupContext context) {
+        addSerializer(Geometry.class, new GeometrySerializer());
+        addDeserializer(Geometry.class, new GeometryDeserializer());
+        super.setupModule(context);
+      }
+    };
+  }
 }

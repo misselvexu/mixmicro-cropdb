@@ -9,15 +9,15 @@ import xyz.vopen.framework.cropdb.CropDB;
  * @since 4.0
  */
 public interface Command extends AutoCloseable {
-    /**
-     * Executes a migration step on the database.
-     *
-     * @param cropdb the crop database instance
-     */
-    void execute(CropDB cropdb);
+  /**
+   * Executes a migration step on the database.
+   *
+   * @param cropdb the crop database instance
+   */
+  void execute(CropDB cropdb);
 
-    default void close() {
-        // this is just to make Command a functional interface
-        // and make close() not throw checked exception
-    }
+  default void close() {
+    // this is just to make Command a functional interface
+    // and make close() not throw checked exception
+  }
 }

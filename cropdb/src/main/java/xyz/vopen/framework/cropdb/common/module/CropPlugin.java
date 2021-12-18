@@ -25,15 +25,15 @@ import xyz.vopen.framework.cropdb.CropConfig;
  * @since 4.0
  */
 public interface CropPlugin extends AutoCloseable {
-    /**
-     * Initializes the plugin instance.
-     *
-     * @param cropConfig the crop config
-     */
-    void initialize(CropConfig cropConfig);
+  /**
+   * Initializes the plugin instance.
+   *
+   * @param cropConfig the crop config
+   */
+  void initialize(CropConfig cropConfig);
 
-    default void close() {
-        // this is to make CropPlugin a functional interface
-        // and make close() not throw checked exception
-    }
+  default void close() {
+    // this is to make CropPlugin a functional interface
+    // and make close() not throw checked exception
+  }
 }

@@ -47,431 +47,436 @@ import java.util.concurrent.locks.Lock;
 
 import static xyz.vopen.framework.cropdb.collection.UpdateOptions.updateOptions;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>. */
 class DefaultCropCollection implements CropCollection {
-    private final String collectionName;
-    private final LockService lockService;
+  private final String collectionName;
+  private final LockService lockService;
 
-    protected CropMap<CropId, Document> cropMap;
-    protected CropConfig cropConfig;
-    protected CropStore<?> cropStore;
+  protected CropMap<CropId, Document> cropMap;
+  protected CropConfig cropConfig;
+  protected CropStore<?> cropStore;
 
-    private Lock writeLock;
-    private Lock readLock;
-    private CollectionOperations collectionOperations;
-    private EventBus<CollectionEventInfo<?>, CollectionEventListener> eventBus;
+  private Lock writeLock;
+  private Lock readLock;
+  private CollectionOperations collectionOperations;
+  private EventBus<CollectionEventInfo<?>, CollectionEventListener> eventBus;
 
-    @Getter
-    private volatile boolean isDropped;
+  @Getter private volatile boolean isDropped;
 
-    DefaultCropCollection(String name, CropMap<CropId, Document> cropMap,
-                          CropConfig cropConfig, LockService lockService) {
-        this.collectionName = name;
-        this.cropConfig = cropConfig;
-        this.cropMap = cropMap;
-        this.lockService = lockService;
+  DefaultCropCollection(
+      String name,
+      CropMap<CropId, Document> cropMap,
+      CropConfig cropConfig,
+      LockService lockService) {
+    this.collectionName = name;
+    this.cropConfig = cropConfig;
+    this.cropMap = cropMap;
+    this.lockService = lockService;
 
-        initialize();
+    initialize();
+  }
+
+  @Override
+  public void addProcessor(Processor processor) {
+    ValidationUtils.notNull(processor, "a null processor cannot be added");
+
+    try {
+      writeLock.lock();
+      checkOpened();
+      collectionOperations.addProcessor(processor);
+    } finally {
+      writeLock.unlock();
+    }
+  }
+
+  @Override
+  public void removeProcessor(Processor processor) {
+    ValidationUtils.notNull(processor, "a null processor cannot be removed");
+
+    try {
+      writeLock.lock();
+      checkOpened();
+      collectionOperations.removeProcessor(processor);
+    } finally {
+      writeLock.unlock();
+    }
+  }
+
+  public WriteResult insert(Document[] documents) {
+    ValidationUtils.notNull(documents, "a null document cannot be inserted");
+    ValidationUtils.containsNull(documents, "a null document cannot be inserted");
+
+    try {
+      writeLock.lock();
+      checkOpened();
+      return collectionOperations.insert(documents);
+    } finally {
+      writeLock.unlock();
+    }
+  }
+
+  public WriteResult update(Document document, boolean insertIfAbsent) {
+    ValidationUtils.notNull(document, "a null document cannot be used for update");
+
+    if (insertIfAbsent) {
+      return update(DocumentUtils.createUniqueFilter(document), document, updateOptions(true));
+    } else {
+      if (document.hasId()) {
+        return update(DocumentUtils.createUniqueFilter(document), document, updateOptions(false));
+      } else {
+        throw new NotIdentifiableException(
+            "update operation failed as no id value found for the document");
+      }
+    }
+  }
+
+  public WriteResult update(Filter filter, Document update, UpdateOptions updateOptions) {
+    ValidationUtils.notNull(update, "a null document cannot be used for update");
+    ValidationUtils.notNull(updateOptions, "updateOptions cannot be null");
+
+    try {
+      writeLock.lock();
+      checkOpened();
+      return collectionOperations.update(filter, update, updateOptions);
+    } finally {
+      writeLock.unlock();
+    }
+  }
+
+  public WriteResult remove(Document document) {
+    ValidationUtils.notNull(document, "a null document cannot be removed");
+
+    if (document.hasId()) {
+      try {
+        writeLock.lock();
+        checkOpened();
+        return collectionOperations.remove(document);
+      } finally {
+        writeLock.unlock();
+      }
+    } else {
+      throw new NotIdentifiableException(
+          "remove operation failed as no id value found for the document");
+    }
+  }
+
+  public WriteResult remove(Filter filter, boolean justOne) {
+    if ((filter == null || filter == Filter.ALL) && justOne) {
+      throw new InvalidOperationException("remove all cannot be combined with just once");
     }
 
-    @Override
-    public void addProcessor(Processor processor) {
-        ValidationUtils.notNull(processor, "a null processor cannot be added");
+    try {
+      writeLock.lock();
+      checkOpened();
+      return collectionOperations.remove(filter, justOne);
+    } finally {
+      writeLock.unlock();
+    }
+  }
 
-        try {
-            writeLock.lock();
-            checkOpened();
-            collectionOperations.addProcessor(processor);
-        } finally {
-            writeLock.unlock();
-        }
+  public void clear() {
+    try {
+      writeLock.lock();
+      checkOpened();
+      cropMap.clear();
+    } finally {
+      writeLock.unlock();
+    }
+  }
+
+  public DocumentCursor find(Filter filter, FindOptions findOptions) {
+    try {
+      readLock.lock();
+      checkOpened();
+      return collectionOperations.find(filter, findOptions);
+    } finally {
+      readLock.unlock();
+    }
+  }
+
+  public void createIndex(IndexOptions indexOptions, String... fields) {
+    ValidationUtils.notNull(fields, "fields cannot be null");
+
+    Fields indexFields = Fields.withNames(fields);
+    try {
+      writeLock.lock();
+      checkOpened();
+
+      if (indexOptions == null) {
+        collectionOperations.createIndex(indexFields, IndexType.UNIQUE);
+      } else {
+        collectionOperations.createIndex(indexFields, indexOptions.getIndexType());
+      }
+    } finally {
+      writeLock.unlock();
+    }
+  }
+
+  public void rebuildIndex(String... fields) {
+    ValidationUtils.notNull(fields, "fields cannot be null");
+
+    IndexDescriptor indexDescriptor;
+    Fields indexFields = Fields.withNames(fields);
+    try {
+      readLock.lock();
+      checkOpened();
+      indexDescriptor = collectionOperations.findIndex(indexFields);
+    } finally {
+      readLock.unlock();
     }
 
-    @Override
-    public void removeProcessor(Processor processor) {
-        ValidationUtils.notNull(processor, "a null processor cannot be removed");
+    if (indexDescriptor != null) {
+      validateRebuildIndex(indexDescriptor);
 
-        try {
-            writeLock.lock();
-            checkOpened();
-            collectionOperations.removeProcessor(processor);
-        } finally {
-            writeLock.unlock();
-        }
+      try {
+        writeLock.lock();
+        checkOpened();
+        collectionOperations.rebuildIndex(indexDescriptor);
+      } finally {
+        writeLock.unlock();
+      }
+    } else {
+      throw new IndexingException(Arrays.toString(fields) + " is not indexed");
     }
+  }
 
-    public WriteResult insert(Document[] documents) {
-        ValidationUtils.notNull(documents, "a null document cannot be inserted");
-        ValidationUtils.containsNull(documents, "a null document cannot be inserted");
-
-        try {
-            writeLock.lock();
-            checkOpened();
-            return collectionOperations.insert(documents);
-        } finally {
-            writeLock.unlock();
-        }
+  public Collection<IndexDescriptor> listIndices() {
+    try {
+      readLock.lock();
+      checkOpened();
+      return collectionOperations.listIndexes();
+    } finally {
+      readLock.unlock();
     }
+  }
 
-    public WriteResult update(Document document, boolean insertIfAbsent) {
-        ValidationUtils.notNull(document, "a null document cannot be used for update");
+  public boolean hasIndex(String... fields) {
+    ValidationUtils.notNull(fields, "fields cannot be null");
 
-        if (insertIfAbsent) {
-            return update(DocumentUtils.createUniqueFilter(document), document, updateOptions(true));
-        } else {
-            if (document.hasId()) {
-                return update(DocumentUtils.createUniqueFilter(document), document, updateOptions(false));
-            } else {
-                throw new NotIdentifiableException("update operation failed as no id value found for the document");
-            }
-        }
+    Fields indexFields = Fields.withNames(fields);
+    try {
+      readLock.lock();
+      checkOpened();
+      return collectionOperations.hasIndex(indexFields);
+    } finally {
+      readLock.unlock();
     }
+  }
 
-    public WriteResult update(Filter filter, Document update, UpdateOptions updateOptions) {
-        ValidationUtils.notNull(update, "a null document cannot be used for update");
-        ValidationUtils.notNull(updateOptions, "updateOptions cannot be null");
+  public boolean isIndexing(String... fields) {
+    ValidationUtils.notNull(fields, "field cannot be null");
 
-        try {
-            writeLock.lock();
-            checkOpened();
-            return collectionOperations.update(filter, update, updateOptions);
-        } finally {
-            writeLock.unlock();
-        }
+    Fields indexFields = Fields.withNames(fields);
+    try {
+      readLock.lock();
+      checkOpened();
+      return collectionOperations.isIndexing(indexFields);
+    } finally {
+      readLock.unlock();
     }
+  }
 
-    public WriteResult remove(Document document) {
-        ValidationUtils.notNull(document, "a null document cannot be removed");
+  public void dropIndex(String... fields) {
+    ValidationUtils.notNull(fields, "fields cannot be null");
 
-        if (document.hasId()) {
-            try {
-                writeLock.lock();
-                checkOpened();
-                return collectionOperations.remove(document);
-            } finally {
-                writeLock.unlock();
-            }
-        } else {
-            throw new NotIdentifiableException("remove operation failed as no id value found for the document");
-        }
+    Fields indexFields = Fields.withNames(fields);
+    try {
+      writeLock.lock();
+      checkOpened();
+      collectionOperations.dropIndex(indexFields);
+    } finally {
+      writeLock.unlock();
     }
+  }
 
-    public WriteResult remove(Filter filter, boolean justOne) {
-        if ((filter == null || filter == Filter.ALL) && justOne) {
-            throw new InvalidOperationException("remove all cannot be combined with just once");
-        }
-
-        try {
-            writeLock.lock();
-            checkOpened();
-            return collectionOperations.remove(filter, justOne);
-        } finally {
-            writeLock.unlock();
-        }
+  public void dropAllIndices() {
+    try {
+      writeLock.lock();
+      checkOpened();
+      collectionOperations.dropAllIndices();
+    } finally {
+      writeLock.unlock();
     }
+  }
 
-    public void clear() {
-        try {
-            writeLock.lock();
-            checkOpened();
-            cropMap.clear();
-        } finally {
-            writeLock.unlock();
-        }
+  public Document getById(CropId cropId) {
+    ValidationUtils.notNull(cropId, "cropId cannot be null");
+
+    try {
+      readLock.lock();
+      checkOpened();
+      return collectionOperations.getById(cropId);
+    } finally {
+      readLock.unlock();
     }
+  }
 
-    public DocumentCursor find(Filter filter, FindOptions findOptions) {
-        try {
-            readLock.lock();
-            checkOpened();
-            return collectionOperations.find(filter, findOptions);
-        } finally {
-            readLock.unlock();
-        }
+  public void drop() {
+    try {
+      writeLock.lock();
+      checkOpened();
+
+      if (collectionOperations != null) {
+        // close collection and indexes
+        collectionOperations.close();
+
+        // drop collection and indexes
+        collectionOperations.dropCollection();
+      }
+
+      // set all reference to null
+      this.cropMap = null;
+      this.cropConfig = null;
+      this.collectionOperations = null;
+      this.cropStore = null;
+
+      // close event bus
+      closeEventBus();
+    } finally {
+      writeLock.unlock();
     }
+    isDropped = true;
+  }
 
-    public void createIndex(IndexOptions indexOptions, String... fields) {
-        ValidationUtils.notNull(fields, "fields cannot be null");
-
-        Fields indexFields = Fields.withNames(fields);
-        try {
-            writeLock.lock();
-            checkOpened();
-
-            if (indexOptions == null) {
-                collectionOperations.createIndex(indexFields, IndexType.UNIQUE);
-            } else {
-                collectionOperations.createIndex(indexFields, indexOptions.getIndexType());
-            }
-        } finally {
-            writeLock.unlock();
-        }
+  public boolean isOpen() {
+    try {
+      readLock.lock();
+      return cropStore != null && !cropStore.isClosed() && !isDropped;
+    } catch (Exception e) {
+      throw new CropIOException("failed to close the database", e);
+    } finally {
+      readLock.unlock();
     }
+  }
 
-    public void rebuildIndex(String... fields) {
-        ValidationUtils.notNull(fields, "fields cannot be null");
+  public void close() {
+    try {
+      writeLock.lock();
+      if (collectionOperations != null) {
+        // close collection and indexes
+        collectionOperations.close();
+      }
 
-        IndexDescriptor indexDescriptor;
-        Fields indexFields = Fields.withNames(fields);
-        try {
-            readLock.lock();
-            checkOpened();
-            indexDescriptor = collectionOperations.findIndex(indexFields);
-        } finally {
-            readLock.unlock();
-        }
-
-        if (indexDescriptor != null) {
-            validateRebuildIndex(indexDescriptor);
-
-            try {
-                writeLock.lock();
-                checkOpened();
-                collectionOperations.rebuildIndex(indexDescriptor);
-            } finally {
-                writeLock.unlock();
-            }
-        } else {
-            throw new IndexingException(Arrays.toString(fields) + " is not indexed");
-        }
+      // set all reference to null
+      this.cropMap = null;
+      this.cropConfig = null;
+      this.collectionOperations = null;
+      this.cropStore = null;
+      closeEventBus();
+    } finally {
+      writeLock.unlock();
     }
+  }
 
-    public Collection<IndexDescriptor> listIndices() {
-        try {
-            readLock.lock();
-            checkOpened();
-            return collectionOperations.listIndexes();
-        } finally {
-            readLock.unlock();
-        }
+  public String getName() {
+    return collectionName;
+  }
+
+  public long size() {
+    try {
+      readLock.lock();
+      checkOpened();
+      return collectionOperations.getSize();
+    } finally {
+      readLock.unlock();
     }
+  }
 
-    public boolean hasIndex(String... fields) {
-        ValidationUtils.notNull(fields, "fields cannot be null");
-
-        Fields indexFields = Fields.withNames(fields);
-        try {
-            readLock.lock();
-            checkOpened();
-            return collectionOperations.hasIndex(indexFields);
-        } finally {
-            readLock.unlock();
-        }
+  public CropStore<?> getStore() {
+    try {
+      writeLock.lock();
+      return cropStore;
+    } finally {
+      writeLock.unlock();
     }
+  }
 
-    public boolean isIndexing(String... fields) {
-        ValidationUtils.notNull(fields, "field cannot be null");
-
-        Fields indexFields = Fields.withNames(fields);
-        try {
-            readLock.lock();
-            checkOpened();
-            return collectionOperations.isIndexing(indexFields);
-        } finally {
-            readLock.unlock();
-        }
+  public void subscribe(CollectionEventListener listener) {
+    ValidationUtils.notNull(listener, "listener cannot be null");
+    try {
+      writeLock.lock();
+      checkOpened();
+      eventBus.register(listener);
+    } finally {
+      writeLock.unlock();
     }
+  }
 
-    public void dropIndex(String... fields) {
-        ValidationUtils.notNull(fields, "fields cannot be null");
+  public void unsubscribe(CollectionEventListener listener) {
+    ValidationUtils.notNull(listener, "listener cannot be null");
+    try {
+      writeLock.lock();
+      checkOpened();
 
-        Fields indexFields = Fields.withNames(fields);
-        try {
-            writeLock.lock();
-            checkOpened();
-            collectionOperations.dropIndex(indexFields);
-        } finally {
-            writeLock.unlock();
-        }
+      if (eventBus != null) {
+        eventBus.deregister(listener);
+      }
+    } finally {
+      writeLock.unlock();
     }
+  }
 
-    public void dropAllIndices() {
-        try {
-            writeLock.lock();
-            checkOpened();
-            collectionOperations.dropAllIndices();
-        } finally {
-            writeLock.unlock();
-        }
+  public Attributes getAttributes() {
+    try {
+      readLock.lock();
+      checkOpened();
+      return collectionOperations.getAttributes();
+    } finally {
+      readLock.unlock();
     }
+  }
 
-    public Document getById(CropId cropId) {
-        ValidationUtils.notNull(cropId, "cropId cannot be null");
+  public void setAttributes(Attributes attributes) {
+    ValidationUtils.notNull(attributes, "attributes cannot be null");
 
-        try {
-            readLock.lock();
-            checkOpened();
-            return collectionOperations.getById(cropId);
-        } finally {
-            readLock.unlock();
-        }
+    try {
+      writeLock.lock();
+      checkOpened();
+      collectionOperations.setAttributes(attributes);
+    } finally {
+      writeLock.unlock();
     }
+  }
 
-    public void drop() {
-        try {
-            writeLock.lock();
-            checkOpened();
-
-            if (collectionOperations != null) {
-                // close collection and indexes
-                collectionOperations.close();
-
-                // drop collection and indexes
-                collectionOperations.dropCollection();
-            }
-
-            // set all reference to null
-            this.cropMap = null;
-            this.cropConfig = null;
-            this.collectionOperations = null;
-            this.cropStore = null;
-
-            // close event bus
-            closeEventBus();
-        } finally {
-            writeLock.unlock();
-        }
-        isDropped = true;
+  private void closeEventBus() {
+    if (eventBus != null) {
+      eventBus.close();
     }
+    eventBus = null;
+  }
 
-    public boolean isOpen() {
-        try {
-            readLock.lock();
-            return cropStore != null && !cropStore.isClosed() && !isDropped;
-        } catch (Exception e) {
-            throw new CropIOException("failed to close the database", e);
-        } finally {
-            readLock.unlock();
-        }
+  private void initialize() {
+    this.isDropped = false;
+    this.readLock = lockService.getReadLock(collectionName);
+    this.writeLock = lockService.getWriteLock(collectionName);
+    this.cropStore = cropConfig.getCropStore();
+    this.eventBus = new CollectionEventBus();
+    this.collectionOperations =
+        new CollectionOperations(collectionName, cropMap, cropConfig, eventBus);
+  }
+
+  private void checkOpened() {
+    if (isOpen()) return;
+    throw new CropIOException("collection is closed");
+  }
+
+  private void validateRebuildIndex(IndexDescriptor indexDescriptor) {
+    ValidationUtils.notNull(indexDescriptor, "index cannot be null");
+
+    String[] indexFields = indexDescriptor.getIndexFields().getFieldNames().toArray(new String[0]);
+    if (isIndexing(indexFields)) {
+      throw new IndexingException(
+          "indexing on value " + indexDescriptor.getIndexFields() + " is currently running");
     }
+  }
 
-    public void close() {
-        try {
-            writeLock.lock();
-            if (collectionOperations != null) {
-                // close collection and indexes
-                collectionOperations.close();
-            }
+  private static class CollectionEventBus
+      extends CropEventBus<CollectionEventInfo<?>, CollectionEventListener> {
 
-            // set all reference to null
-            this.cropMap = null;
-            this.cropConfig = null;
-            this.collectionOperations = null;
-            this.cropStore = null;
-            closeEventBus();
-        } finally {
-            writeLock.unlock();
-        }
+    public void post(CollectionEventInfo<?> collectionEventInfo) {
+      for (final CollectionEventListener listener : getListeners()) {
+        getEventExecutor().submit(() -> listener.onEvent(collectionEventInfo));
+      }
     }
-
-    public String getName() {
-        return collectionName;
-    }
-
-    public long size() {
-        try {
-            readLock.lock();
-            checkOpened();
-            return collectionOperations.getSize();
-        } finally {
-            readLock.unlock();
-        }
-    }
-
-    public CropStore<?> getStore() {
-        try {
-            writeLock.lock();
-            return cropStore;
-        } finally {
-            writeLock.unlock();
-        }
-    }
-
-    public void subscribe(CollectionEventListener listener) {
-        ValidationUtils.notNull(listener, "listener cannot be null");
-        try {
-            writeLock.lock();
-            checkOpened();
-            eventBus.register(listener);
-        } finally {
-            writeLock.unlock();
-        }
-    }
-
-    public void unsubscribe(CollectionEventListener listener) {
-        ValidationUtils.notNull(listener, "listener cannot be null");
-        try {
-            writeLock.lock();
-            checkOpened();
-
-            if (eventBus != null) {
-                eventBus.deregister(listener);
-            }
-        } finally {
-            writeLock.unlock();
-        }
-    }
-
-    public Attributes getAttributes() {
-        try {
-            readLock.lock();
-            checkOpened();
-            return collectionOperations.getAttributes();
-        } finally {
-            readLock.unlock();
-        }
-    }
-
-    public void setAttributes(Attributes attributes) {
-        ValidationUtils.notNull(attributes, "attributes cannot be null");
-
-        try {
-            writeLock.lock();
-            checkOpened();
-            collectionOperations.setAttributes(attributes);
-        } finally {
-            writeLock.unlock();
-        }
-    }
-
-    private void closeEventBus() {
-        if (eventBus != null) {
-            eventBus.close();
-        }
-        eventBus = null;
-    }
-
-    private void initialize() {
-        this.isDropped = false;
-        this.readLock = lockService.getReadLock(collectionName);
-        this.writeLock = lockService.getWriteLock(collectionName);
-        this.cropStore = cropConfig.getCropStore();
-        this.eventBus = new CollectionEventBus();
-        this.collectionOperations = new CollectionOperations(collectionName, cropMap, cropConfig, eventBus);
-    }
-
-    private void checkOpened() {
-        if (isOpen()) return;
-        throw new CropIOException("collection is closed");
-    }
-
-    private void validateRebuildIndex(IndexDescriptor indexDescriptor) {
-        ValidationUtils.notNull(indexDescriptor, "index cannot be null");
-
-        String[] indexFields = indexDescriptor.getIndexFields().getFieldNames().toArray(new String[0]);
-        if (isIndexing(indexFields)) {
-            throw new IndexingException("indexing on value " + indexDescriptor.getIndexFields() + " is currently running");
-        }
-    }
-
-    private static class CollectionEventBus extends CropEventBus<CollectionEventInfo<?>, CollectionEventListener> {
-
-        public void post(CollectionEventInfo<?> collectionEventInfo) {
-            for (final CollectionEventListener listener : getListeners()) {
-                getEventExecutor().submit(() -> listener.onEvent(collectionEventInfo));
-            }
-        }
-    }
+  }
 }

@@ -27,38 +27,36 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 @Data
 public class DBValue implements Comparable<DBValue>, Serializable {
-    private static final long serialVersionUID = 1617440702L;
+  private static final long serialVersionUID = 1617440702L;
 
-    @Setter(AccessLevel.PRIVATE)
-    private Comparable<?> value;
+  @Setter(AccessLevel.PRIVATE)
+  private Comparable<?> value;
 
-    public DBValue(Comparable<?> value) {
-        this.value = value;
+  public DBValue(Comparable<?> value) {
+    this.value = value;
+  }
+
+  @Override
+  public int compareTo(DBValue o) {
+    if (o == null || o.value == null) {
+      return 1;
     }
 
-    @Override
-    public int compareTo(DBValue o) {
-        if (o == null || o.value == null) {
-            return 1;
-        }
-
-        if (value == null) {
-            return -1;
-        }
-
-        return Comparables.compare(value, o.value);
+    if (value == null) {
+      return -1;
     }
 
-    private void writeObject(ObjectOutputStream stream) throws IOException {
-        stream.writeObject(value);
-    }
+    return Comparables.compare(value, o.value);
+  }
 
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        this.value = (Comparable<?>) stream.readObject();
-    }
+  private void writeObject(ObjectOutputStream stream) throws IOException {
+    stream.writeObject(value);
+  }
+
+  private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    this.value = (Comparable<?>) stream.readObject();
+  }
 }

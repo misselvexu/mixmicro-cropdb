@@ -23,55 +23,52 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents a {@link Processor} chain. It executes a
- * list of processor on a document.
+ * Represents a {@link Processor} chain. It executes a list of processor on a document.
  *
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public class ProcessorChain implements Processor {
-    private final List<Processor> processors;
+  private final List<Processor> processors;
 
-    /**
-     * Instantiates a new Processor chain.
-     */
-    public ProcessorChain() {
-        processors = new ArrayList<>();
-    }
+  /** Instantiates a new Processor chain. */
+  public ProcessorChain() {
+    processors = new ArrayList<>();
+  }
 
-    /**
-     * Adds a processor to the chain.
-     *
-     * @param processor the processor
-     */
-    public void add(Processor processor) {
-        processors.add(processor);
-    }
+  /**
+   * Adds a processor to the chain.
+   *
+   * @param processor the processor
+   */
+  public void add(Processor processor) {
+    processors.add(processor);
+  }
 
-    /**
-     * Removes a processor from the chain.
-     *
-     * @param processor the processor
-     */
-    public void remove(Processor processor) {
-        processors.remove(processor);
-    }
+  /**
+   * Removes a processor from the chain.
+   *
+   * @param processor the processor
+   */
+  public void remove(Processor processor) {
+    processors.remove(processor);
+  }
 
-    @Override
-    public Document processBeforeWrite(Document document) {
-        Document processed = document;
-        for (Processor processor : processors) {
-            processed = processor.processBeforeWrite(processed);
-        }
-        return processed;
+  @Override
+  public Document processBeforeWrite(Document document) {
+    Document processed = document;
+    for (Processor processor : processors) {
+      processed = processor.processBeforeWrite(processed);
     }
+    return processed;
+  }
 
-    @Override
-    public Document processAfterRead(Document document) {
-        Document processed = document;
-        for (Processor processor : processors) {
-            processed = processor.processAfterRead(processed);
-        }
-        return processed;
+  @Override
+  public Document processAfterRead(Document document) {
+    Document processed = document;
+    for (Processor processor : processors) {
+      processed = processor.processAfterRead(processed);
     }
+    return processed;
+  }
 }

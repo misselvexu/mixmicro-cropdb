@@ -29,60 +29,57 @@ import java.util.List;
 import static xyz.vopen.framework.cropdb.common.util.ValidationUtils.notEmpty;
 
 /**
- * Represents a list of document field with
- * sorting direction for find query.
+ * Represents a list of document field with sorting direction for find query.
  *
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 public class SortableFields extends Fields {
-    @Setter(AccessLevel.PACKAGE)
-    private List<Pair<String, SortOrder>> sortingOrders;
+  @Setter(AccessLevel.PACKAGE)
+  private List<Pair<String, SortOrder>> sortingOrders;
 
-    /**
-     * Instantiates a new {@link SortableFields}.
-     */
-    public SortableFields() {
-        super();
-        sortingOrders = new ArrayList<>();
+  /** Instantiates a new {@link SortableFields}. */
+  public SortableFields() {
+    super();
+    sortingOrders = new ArrayList<>();
+  }
+
+  /**
+   * Creates a {@link SortableFields} instance with field names.
+   *
+   * @param fields the fields
+   * @return the fields
+   */
+  public static SortableFields withNames(String... fields) {
+    ValidationUtils.notNull(fields, "fields cannot be null");
+    ValidationUtils.notEmpty(fields, "fields cannot be empty");
+
+    SortableFields sortableFields = new SortableFields();
+    for (String field : fields) {
+      sortableFields.addField(field, SortOrder.Ascending);
     }
+    return sortableFields;
+  }
 
-    /**
-     * Creates a {@link SortableFields} instance with field names.
-     *
-     * @param fields the fields
-     * @return the fields
-     */
-    public static SortableFields withNames(String... fields) {
-        ValidationUtils.notNull(fields, "fields cannot be null");
-        ValidationUtils.notEmpty(fields, "fields cannot be empty");
+  /**
+   * Adds the sort order for a field.
+   *
+   * @param field the field
+   * @param sortOrder the sort order
+   * @return the sortable fields
+   */
+  public SortableFields addField(String field, SortOrder sortOrder) {
+    super.fieldNames.add(field);
+    this.sortingOrders.add(Pair.pair(field, sortOrder));
+    return this;
+  }
 
-        SortableFields sortableFields = new SortableFields();
-        for (String field : fields) {
-            sortableFields.addField(field, SortOrder.Ascending);
-        }
-        return sortableFields;
-    }
-
-    /**
-     * Adds the sort order for a field.
-     *
-     * @param field     the field
-     * @param sortOrder the sort order
-     * @return the sortable fields
-     */
-    public SortableFields addField(String field, SortOrder sortOrder) {
-        super.fieldNames.add(field);
-        this.sortingOrders.add(Pair.pair(field, sortOrder));
-        return this;
-    }
-
-    /**
-     * Gets the sort by field specifications.
-     *
-     * @return the sort specs
-     */
-    public List<Pair<String, SortOrder>> getSortingOrders() {
-        return Collections.unmodifiableList(sortingOrders);
-    }
+  /**
+   * Gets the sort by field specifications.
+   *
+   * @return the sort specs
+   */
+  public List<Pair<String, SortOrder>> getSortingOrders() {
+    return Collections.unmodifiableList(sortingOrders);
+  }
 }

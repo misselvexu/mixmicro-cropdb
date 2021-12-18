@@ -46,173 +46,173 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @since 4.0
  */
 public class TextIndex implements CropIndex {
-    @Getter
-    private final IndexDescriptor indexDescriptor;
-    private final CropStore<?> cropStore;
-    private final TextTokenizer textTokenizer;
+  @Getter private final IndexDescriptor indexDescriptor;
+  private final CropStore<?> cropStore;
+  private final TextTokenizer textTokenizer;
 
-    /**
-     * Instantiates a new {@link TextIndex}.
-     *
-     * @param textTokenizer   the text tokenizer
-     * @param indexDescriptor the index descriptor
-     * @param cropStore    the crop store
-     */
-    public TextIndex(TextTokenizer textTokenizer,
-                     IndexDescriptor indexDescriptor,
-                     CropStore<?> cropStore) {
-        this.textTokenizer = textTokenizer;
-        this.indexDescriptor = indexDescriptor;
-        this.cropStore = cropStore;
+  /**
+   * Instantiates a new {@link TextIndex}.
+   *
+   * @param textTokenizer the text tokenizer
+   * @param indexDescriptor the index descriptor
+   * @param cropStore the crop store
+   */
+  public TextIndex(
+      TextTokenizer textTokenizer, IndexDescriptor indexDescriptor, CropStore<?> cropStore) {
+    this.textTokenizer = textTokenizer;
+    this.indexDescriptor = indexDescriptor;
+    this.cropStore = cropStore;
+  }
+
+  @Override
+  public void write(FieldValues fieldValues) {
+    Fields fields = fieldValues.getFields();
+    List<String> fieldNames = fields.getFieldNames();
+
+    String firstField = fieldNames.get(0);
+    Object element = fieldValues.get(firstField);
+
+    CropMap<String, List<?>> indexMap = findIndexMap();
+
+    if (element == null) {
+      addIndexElement(indexMap, fieldValues, null);
+    } else if (element instanceof String) {
+      addIndexElement(indexMap, fieldValues, (String) element);
+    } else if (element.getClass().isArray()) {
+      ValidationUtils.validateStringArrayIndexField(element, firstField);
+      Object[] array = ObjectUtils.convertToObjectArray(element);
+
+      for (Object item : array) {
+        addIndexElement(indexMap, fieldValues, (String) item);
+      }
+    } else if (element instanceof Iterable) {
+      ValidationUtils.validateStringIterableIndexField((Iterable<?>) element, firstField);
+      Iterable<?> iterable = (Iterable<?>) element;
+
+      for (Object item : iterable) {
+        addIndexElement(indexMap, fieldValues, (String) item);
+      }
+    } else {
+      throw new IndexingException("string data is expected");
     }
+  }
 
-    @Override
-    public void write(FieldValues fieldValues) {
-        Fields fields = fieldValues.getFields();
-        List<String> fieldNames = fields.getFieldNames();
+  @Override
+  public void remove(FieldValues fieldValues) {
+    Fields fields = fieldValues.getFields();
+    List<String> fieldNames = fields.getFieldNames();
 
-        String firstField = fieldNames.get(0);
-        Object element = fieldValues.get(firstField);
+    String firstField = fieldNames.get(0);
+    Object element = fieldValues.get(firstField);
 
-        CropMap<String, List<?>> indexMap = findIndexMap();
+    CropMap<String, List<?>> indexMap = findIndexMap();
+    if (element == null) {
+      removeIndexElement(indexMap, fieldValues, null);
+    } else if (element instanceof String) {
+      removeIndexElement(indexMap, fieldValues, (String) element);
+    } else if (element.getClass().isArray()) {
+      ValidationUtils.validateStringArrayIndexField(element, firstField);
+      Object[] array = ObjectUtils.convertToObjectArray(element);
 
-        if (element == null) {
-            addIndexElement(indexMap, fieldValues, null);
-        } else if (element instanceof String) {
-            addIndexElement(indexMap, fieldValues, (String) element);
-        } else if (element.getClass().isArray()) {
-            ValidationUtils.validateStringArrayIndexField(element, firstField);
-            Object[] array = ObjectUtils.convertToObjectArray(element);
+      for (Object item : array) {
+        removeIndexElement(indexMap, fieldValues, (String) item);
+      }
+    } else if (element instanceof Iterable) {
+      ValidationUtils.validateStringIterableIndexField((Iterable<?>) element, firstField);
+      Iterable<?> iterable = (Iterable<?>) element;
 
-            for (Object item : array) {
-                addIndexElement(indexMap, fieldValues, (String) item);
-            }
-        } else if (element instanceof Iterable) {
-            ValidationUtils.validateStringIterableIndexField((Iterable<?>) element, firstField);
-            Iterable<?> iterable = (Iterable<?>) element;
+      for (Object item : iterable) {
+        removeIndexElement(indexMap, fieldValues, (String) item);
+      }
+    } else {
+      throw new IndexingException("string data is expected");
+    }
+  }
 
-            for (Object item : iterable) {
-                addIndexElement(indexMap, fieldValues, (String) item);
-            }
+  @Override
+  public void drop() {
+    CropMap<String, List<?>> indexMap = findIndexMap();
+    indexMap.clear();
+    indexMap.drop();
+  }
+
+  @Override
+  public LinkedHashSet<CropId> findCropIds(FindPlan findPlan) {
+    if (findPlan.getIndexScanFilter() == null) return new LinkedHashSet<>();
+
+    CropMap<String, List<?>> indexMap = findIndexMap();
+    List<ComparableFilter> filters = findPlan.getIndexScanFilter().getFilters();
+
+    if (filters.size() == 1 && filters.get(0) instanceof TextFilter) {
+      TextFilter textFilter = (TextFilter) filters.get(0);
+      textFilter.setTextTokenizer(textTokenizer);
+      return textFilter.applyOnIndex(indexMap);
+    }
+    throw new FilterException("invalid filter found for full-text index");
+  }
+
+  private CropMap<String, List<?>> findIndexMap() {
+    String mapName = IndexUtils.deriveIndexMapName(indexDescriptor);
+    return cropStore.openMap(mapName, String.class, CopyOnWriteArrayList.class);
+  }
+
+  @SuppressWarnings("unchecked")
+  private void addIndexElement(
+      CropMap<String, List<?>> indexMap, FieldValues fieldValues, String value) {
+    Set<String> words = decompose(value);
+
+    for (String word : words) {
+      List<CropId> cropIds = (List<CropId>) indexMap.get(word);
+
+      if (cropIds == null) {
+        cropIds = new CopyOnWriteArrayList<>();
+      }
+
+      cropIds = addCropIds(cropIds, fieldValues);
+      indexMap.put(word, cropIds);
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private void removeIndexElement(
+      CropMap<String, List<?>> indexMap, FieldValues fieldValues, String value) {
+    Set<String> words = decompose(value);
+    for (String word : words) {
+      List<CropId> cropIds = (List<CropId>) indexMap.get(word);
+      if (cropIds != null && !cropIds.isEmpty()) {
+        cropIds.remove(fieldValues.getCropId());
+        if (cropIds.isEmpty()) {
+          indexMap.remove(word);
         } else {
-            throw new IndexingException("string data is expected");
+          indexMap.put(word, cropIds);
         }
+      }
+    }
+  }
+
+  private Set<String> decompose(Object fieldValue) {
+    Set<String> result = new HashSet<>();
+    if (fieldValue == null) {
+      result.add(null);
+    } else if (fieldValue instanceof String) {
+      result.add((String) fieldValue);
+    } else if (fieldValue instanceof Iterable) {
+      Iterable<?> iterable = (Iterable<?>) fieldValue;
+      for (Object item : iterable) {
+        result.addAll(decompose(item));
+      }
+    } else if (fieldValue.getClass().isArray()) {
+      Object[] array = ObjectUtils.convertToObjectArray(fieldValue);
+      for (Object item : array) {
+        result.addAll(decompose(item));
+      }
     }
 
-    @Override
-    public void remove(FieldValues fieldValues) {
-        Fields fields = fieldValues.getFields();
-        List<String> fieldNames = fields.getFieldNames();
-
-        String firstField = fieldNames.get(0);
-        Object element = fieldValues.get(firstField);
-
-        CropMap<String, List<?>> indexMap = findIndexMap();
-        if (element == null) {
-            removeIndexElement(indexMap, fieldValues, null);
-        } else if (element instanceof String) {
-            removeIndexElement(indexMap, fieldValues, (String) element);
-        } else if (element.getClass().isArray()) {
-            ValidationUtils.validateStringArrayIndexField(element, firstField);
-            Object[] array = ObjectUtils.convertToObjectArray(element);
-
-            for (Object item : array) {
-                removeIndexElement(indexMap, fieldValues, (String) item);
-            }
-        } else if (element instanceof Iterable) {
-            ValidationUtils.validateStringIterableIndexField((Iterable<?>) element, firstField);
-            Iterable<?> iterable = (Iterable<?>) element;
-
-            for (Object item : iterable) {
-                removeIndexElement(indexMap, fieldValues, (String) item);
-            }
-        } else {
-            throw new IndexingException("string data is expected");
-        }
+    Set<String> words = new HashSet<>();
+    for (String item : result) {
+      words.addAll(textTokenizer.tokenize(item));
     }
 
-    @Override
-    public void drop() {
-        CropMap<String, List<?>> indexMap = findIndexMap();
-        indexMap.clear();
-        indexMap.drop();
-    }
-
-    @Override
-    public LinkedHashSet<CropId> findCropIds(FindPlan findPlan) {
-        if (findPlan.getIndexScanFilter() == null) return new LinkedHashSet<>();
-
-        CropMap<String, List<?>> indexMap = findIndexMap();
-        List<ComparableFilter> filters = findPlan.getIndexScanFilter().getFilters();
-
-        if (filters.size() == 1 && filters.get(0) instanceof TextFilter) {
-            TextFilter textFilter = (TextFilter) filters.get(0);
-            textFilter.setTextTokenizer(textTokenizer);
-            return textFilter.applyOnIndex(indexMap);
-        }
-        throw new FilterException("invalid filter found for full-text index");
-    }
-
-    private CropMap<String, List<?>> findIndexMap() {
-        String mapName = IndexUtils.deriveIndexMapName(indexDescriptor);
-        return cropStore.openMap(mapName, String.class, CopyOnWriteArrayList.class);
-    }
-
-    @SuppressWarnings("unchecked")
-    private void addIndexElement(CropMap<String, List<?>> indexMap, FieldValues fieldValues, String value) {
-        Set<String> words = decompose(value);
-
-        for (String word : words) {
-            List<CropId> cropIds = (List<CropId>) indexMap.get(word);
-
-            if (cropIds == null) {
-                cropIds = new CopyOnWriteArrayList<>();
-            }
-
-            cropIds = addCropIds(cropIds, fieldValues);
-            indexMap.put(word, cropIds);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void removeIndexElement(CropMap<String, List<?>> indexMap, FieldValues fieldValues, String value) {
-        Set<String> words = decompose(value);
-        for (String word : words) {
-            List<CropId> cropIds = (List<CropId>) indexMap.get(word);
-            if (cropIds != null && !cropIds.isEmpty()) {
-                cropIds.remove(fieldValues.getCropId());
-                if (cropIds.isEmpty()) {
-                    indexMap.remove(word);
-                } else {
-                    indexMap.put(word, cropIds);
-                }
-            }
-        }
-    }
-
-    private Set<String> decompose(Object fieldValue) {
-        Set<String> result = new HashSet<>();
-        if (fieldValue == null) {
-            result.add(null);
-        } else if (fieldValue instanceof String) {
-            result.add((String) fieldValue);
-        } else if (fieldValue instanceof Iterable) {
-            Iterable<?> iterable = (Iterable<?>) fieldValue;
-            for (Object item : iterable) {
-                result.addAll(decompose(item));
-            }
-        } else if (fieldValue.getClass().isArray()) {
-            Object[] array = ObjectUtils.convertToObjectArray(fieldValue);
-            for (Object item : array) {
-                result.addAll(decompose(item));
-            }
-        }
-
-        Set<String> words = new HashSet<>();
-        for (String item : result) {
-            words.addAll(textTokenizer.tokenize(item));
-        }
-
-        return words;
-    }
+    return words;
+  }
 }

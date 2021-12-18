@@ -26,98 +26,94 @@ import java.io.*;
 
 import static xyz.vopen.framework.cropdb.support.Exporter.createObjectMapper;
 
-
 /**
- * Crop database import utility. It imports data from
- * a json file. Contents of a Crop database can be imported
- * using this tool.
- * <p>
- * [[app-listing]]
- * include::/src/docs/asciidoc/tools/data-format.adoc[]
+ * Crop database import utility. It imports data from a json file. Contents of a Crop database can
+ * be imported using this tool.
+ *
+ * <p>[[app-listing]] include::/src/docs/asciidoc/tools/data-format.adoc[]
  *
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 1.0
  */
 public class Importer {
-    private CropDB db;
-    private JsonFactory jsonFactory;
+  private CropDB db;
+  private JsonFactory jsonFactory;
 
-    private Importer() {
+  private Importer() {}
+
+  /**
+   * Creates a new {@link Importer} instance.
+   *
+   * @param db the db
+   * @return the importer instance
+   */
+  public static Importer of(CropDB db) {
+    return of(db, createObjectMapper());
+  }
+
+  public static Importer of(CropDB db, ObjectMapper objectMapper) {
+    Importer importer = new Importer();
+    importer.db = db;
+    importer.jsonFactory = objectMapper.getFactory();
+    return importer;
+  }
+
+  /**
+   * Imports data from a file path.
+   *
+   * @param file the file path
+   */
+  public void importFrom(String file) {
+    importFrom(new File(file));
+  }
+
+  /**
+   * Imports data from a file.
+   *
+   * @param file the file
+   * @throws CropIOException if there is any low-level I/O error.
+   */
+  public void importFrom(File file) {
+    try (FileInputStream stream = new FileInputStream(file)) {
+      importFrom(stream);
+    } catch (IOException ioe) {
+      throw new CropIOException("I/O error while reading content from file " + file, ioe);
+    }
+  }
+
+  /**
+   * Imports data from an {@link InputStream}.
+   *
+   * @param stream the stream
+   */
+  public void importFrom(InputStream stream) throws IOException {
+    try (InputStreamReader reader = new InputStreamReader(stream)) {
+      importFrom(reader);
+    }
+  }
+
+  /**
+   * Imports data from a {@link Reader}.
+   *
+   * @param reader the reader
+   * @throws CropIOException if there is any error while reading the data.
+   */
+  public void importFrom(Reader reader) {
+    JsonParser parser;
+    try {
+      parser = jsonFactory.createParser(reader);
+    } catch (IOException ioe) {
+      throw new CropIOException("I/O error while creating parser from reader", ioe);
     }
 
-    /**
-     * Creates a new {@link Importer} instance.
-     *
-     * @param db the db
-     * @return the importer instance
-     */
-    public static Importer of(CropDB db) {
-        return of(db, createObjectMapper());
+    if (parser != null) {
+      CropJsonImporter jsonImporter = new CropJsonImporter(db);
+      jsonImporter.setParser(parser);
+      try {
+        jsonImporter.importData();
+      } catch (IOException | ClassNotFoundException e) {
+        throw new CropIOException("error while importing data", e);
+      }
     }
-
-    public static Importer of(CropDB db, ObjectMapper objectMapper) {
-        Importer importer = new Importer();
-        importer.db = db;
-        importer.jsonFactory = objectMapper.getFactory();
-        return importer;
-    }
-
-    /**
-     * Imports data from a file path.
-     *
-     * @param file the file path
-     */
-    public void importFrom(String file) {
-        importFrom(new File(file));
-    }
-
-    /**
-     * Imports data from a file.
-     *
-     * @param file the file
-     * @throws CropIOException if there is any low-level I/O error.
-     */
-    public void importFrom(File file) {
-        try (FileInputStream stream = new FileInputStream(file)) {
-            importFrom(stream);
-        } catch (IOException ioe) {
-            throw new CropIOException("I/O error while reading content from file " + file, ioe);
-        }
-    }
-
-    /**
-     * Imports data from an {@link InputStream}.
-     *
-     * @param stream the stream
-     */
-    public void importFrom(InputStream stream) throws IOException {
-        try(InputStreamReader reader = new InputStreamReader(stream)) {
-            importFrom(reader);
-        }
-    }
-
-    /**
-     * Imports data from a {@link Reader}.
-     *
-     * @param reader the reader
-     * @throws CropIOException if there is any error while reading the data.
-     */
-    public void importFrom(Reader reader) {
-        JsonParser parser;
-        try {
-            parser = jsonFactory.createParser(reader);
-        } catch (IOException ioe) {
-            throw new CropIOException("I/O error while creating parser from reader", ioe);
-        }
-
-        if (parser != null) {
-            CropJsonImporter jsonImporter = new CropJsonImporter(db);
-            jsonImporter.setParser(parser);
-            try {
-                jsonImporter.importData();
-            } catch (IOException | ClassNotFoundException e) {
-                throw new CropIOException("error while importing data", e);
-            }
-        }
-    }
+  }
 }

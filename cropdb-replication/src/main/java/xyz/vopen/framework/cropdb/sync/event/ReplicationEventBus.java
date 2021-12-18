@@ -22,27 +22,23 @@ import xyz.vopen.framework.cropdb.common.Constants;
 
 import java.util.concurrent.ExecutorService;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 public class ReplicationEventBus extends CropEventBus<ReplicationEvent, ReplicationEventListener> {
-    private ExecutorService executorService;
+  private ExecutorService executorService;
 
-    @Override
-    public void post(ReplicationEvent replicationEvent) {
-        for (final ReplicationEventListener listener : getListeners()) {
-            getEventExecutor().submit(() -> listener.onEvent(replicationEvent));
-        }
+  @Override
+  public void post(ReplicationEvent replicationEvent) {
+    for (final ReplicationEventListener listener : getListeners()) {
+      getEventExecutor().submit(() -> listener.onEvent(replicationEvent));
     }
+  }
 
-    @Override
-    protected ExecutorService getEventExecutor() {
-        if (executorService == null
-            || executorService.isTerminated()
-            || executorService.isShutdown()) {
-            int core = Runtime.getRuntime().availableProcessors();
-            executorService = ThreadPoolManager.getThreadPool(core, Constants.SYNC_THREAD_NAME);
-        }
-        return executorService;
+  @Override
+  protected ExecutorService getEventExecutor() {
+    if (executorService == null || executorService.isTerminated() || executorService.isShutdown()) {
+      int core = Runtime.getRuntime().availableProcessors();
+      executorService = ThreadPoolManager.getThreadPool(core, Constants.SYNC_THREAD_NAME);
     }
+    return executorService;
+  }
 }

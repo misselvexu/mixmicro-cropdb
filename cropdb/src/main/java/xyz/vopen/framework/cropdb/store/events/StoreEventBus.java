@@ -26,10 +26,10 @@ import xyz.vopen.framework.cropdb.common.event.CropEventBus;
  * @since 4.0.0
  */
 public class StoreEventBus extends CropEventBus<EventInfo, StoreEventListener> {
-    @Override
-    public void post(EventInfo storeEvent) {
-        for (final StoreEventListener listener : getListeners()) {
-            getEventExecutor().submit(() -> listener.onEvent(storeEvent));
-        }
+  @Override
+  public void post(EventInfo storeEvent) {
+    for (final StoreEventListener listener : getListeners()) {
+      getEventExecutor().submit(() -> listener.onEvent(storeEvent));
     }
+  }
 }

@@ -26,19 +26,19 @@ import xyz.vopen.framework.cropdb.collection.Document;
  * @since 4.0
  */
 public interface Processor {
-    /**
-     * Processes a document before writing it into database.
-     *
-     * @param document the document
-     * @return the document
-     */
-    Document processBeforeWrite(Document document);
+  /**
+   * Processes a document before writing it into database.
+   *
+   * @param document the document
+   * @return the document
+   */
+  Document processBeforeWrite(Document document);
 
-    /**
-     * Processes a document after reading from the database.
-     *
-     * @param document the document
-     * @return the document
-     */
-    Document processAfterRead(Document document);
+  /**
+   * Processes a document after reading from the database.
+   *
+   * @param document the document
+   * @return the document
+   */
+  Document processAfterRead(Document document);
 }

@@ -9,10 +9,10 @@ import xyz.vopen.framework.cropdb.common.module.CropModule;
  * @since 4.0
  */
 public interface StoreModule extends CropModule {
-    /**
-     * Gets the {@link CropStore} instance from this module.
-     *
-     * @return the store
-     */
-    CropStore<?> getStore();
+  /**
+   * Gets the {@link CropStore} instance from this module.
+   *
+   * @return the store
+   */
+  CropStore<?> getStore();
 }

@@ -29,73 +29,73 @@ import xyz.vopen.framework.cropdb.common.Constants;
 
 import java.util.Collections;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 @Slf4j
 class ReplicaChangeListener implements CollectionEventListener {
-    private final ReplicationTemplate replicationTemplate;
-    private final MessageTemplate messageTemplate;
+  private final ReplicationTemplate replicationTemplate;
+  private final MessageTemplate messageTemplate;
 
-    public ReplicaChangeListener(ReplicationTemplate replicationTemplate, MessageTemplate messageTemplate) {
-        this.replicationTemplate = replicationTemplate;
-        this.messageTemplate = messageTemplate;
-    }
+  public ReplicaChangeListener(
+      ReplicationTemplate replicationTemplate, MessageTemplate messageTemplate) {
+    this.replicationTemplate = replicationTemplate;
+    this.messageTemplate = messageTemplate;
+  }
 
-    @Override
-    public void onEvent(CollectionEventInfo<?> eventInfo) {
-        try {
-            if (eventInfo != null) {
-                if (!Constants.REPLICATOR.equals(eventInfo.getOriginator())) {
-                    switch (eventInfo.getEventType()) {
-                        case Insert:
-                        case Update:
-                            Document document = (Document) eventInfo.getItem();
-                            handleModifyEvent(document);
-                            break;
-                        case Remove:
-                            document = (Document) eventInfo.getItem();
-                            handleRemoveEvent(document);
-                            break;
-                        case IndexStart:
-                        case IndexEnd:
-                            break;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            log.error("Error while processing collection event", e);
-            replicationTemplate.postEvent(new ReplicationEvent(ReplicationEventType.Error, e));
+  @Override
+  public void onEvent(CollectionEventInfo<?> eventInfo) {
+    try {
+      if (eventInfo != null) {
+        if (!Constants.REPLICATOR.equals(eventInfo.getOriginator())) {
+          switch (eventInfo.getEventType()) {
+            case Insert:
+            case Update:
+              Document document = (Document) eventInfo.getItem();
+              handleModifyEvent(document);
+              break;
+            case Remove:
+              document = (Document) eventInfo.getItem();
+              handleRemoveEvent(document);
+              break;
+            case IndexStart:
+            case IndexEnd:
+              break;
+          }
         }
+      }
+    } catch (Exception e) {
+      log.error("Error while processing collection event", e);
+      replicationTemplate.postEvent(new ReplicationEvent(ReplicationEventType.Error, e));
     }
+  }
 
-    private void handleRemoveEvent(Document document) {
-        LastWriteWinState state = new LastWriteWinState();
-        CropId cropId = document.getId();
-        Long deleteTime = document.getLastModifiedSinceEpoch();
+  private void handleRemoveEvent(Document document) {
+    LastWriteWinState state = new LastWriteWinState();
+    CropId cropId = document.getId();
+    Long deleteTime = document.getLastModifiedSinceEpoch();
 
-        if (replicationTemplate.getCrdt() != null) {
-            replicationTemplate.getCrdt().getTombstones().put(cropId, deleteTime);
-            state.setTombstones(Collections.singletonMap(cropId.getIdValue(), deleteTime));
-            sendFeed(state);
-        }
+    if (replicationTemplate.getCrdt() != null) {
+      replicationTemplate.getCrdt().getTombstones().put(cropId, deleteTime);
+      state.setTombstones(Collections.singletonMap(cropId.getIdValue(), deleteTime));
+      sendFeed(state);
     }
+  }
 
-    private void handleModifyEvent(Document document) {
-        LastWriteWinState state = new LastWriteWinState();
-        state.setChanges(Collections.singleton(document));
-        sendFeed(state);
+  private void handleModifyEvent(Document document) {
+    LastWriteWinState state = new LastWriteWinState();
+    state.setChanges(Collections.singleton(document));
+    sendFeed(state);
+  }
+
+  private void sendFeed(LastWriteWinState state) {
+    if (replicationTemplate.shouldExchangeFeed() && messageTemplate != null) {
+      MessageFactory factory = replicationTemplate.getMessageFactory();
+      DataGateFeed feedMessage =
+          factory.createFeedMessage(
+              replicationTemplate.getConfig(), replicationTemplate.getReplicaId(), state);
+
+      FeedJournal journal = replicationTemplate.getFeedJournal();
+      messageTemplate.sendMessage(feedMessage);
+      journal.write(state);
     }
-
-    private void sendFeed(LastWriteWinState state) {
-        if (replicationTemplate.shouldExchangeFeed() && messageTemplate != null) {
-            MessageFactory factory = replicationTemplate.getMessageFactory();
-            DataGateFeed feedMessage = factory.createFeedMessage(replicationTemplate.getConfig(),
-                replicationTemplate.getReplicaId(), state);
-
-            FeedJournal journal = replicationTemplate.getFeedJournal();
-            messageTemplate.sendMessage(feedMessage);
-            journal.write(state);
-        }
-    }
+  }
 }

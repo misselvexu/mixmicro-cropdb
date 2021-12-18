@@ -9,11 +9,11 @@ package xyz.vopen.framework.cropdb.migration;
  * @since 4.0
  */
 public interface TypeConverter<S, T> {
-    /**
-     * Converts an object of type <code>S</code> to an object of type <code>T</code>.
-     *
-     * @param source the source
-     * @return the target object
-     */
-    T convert(S source);
+  /**
+   * Converts an object of type <code>S</code> to an object of type <code>T</code>.
+   *
+   * @param source the source
+   * @return the target object
+   */
+  T convert(S source);
 }

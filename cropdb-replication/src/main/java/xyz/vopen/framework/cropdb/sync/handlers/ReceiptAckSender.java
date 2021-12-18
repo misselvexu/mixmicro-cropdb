@@ -23,23 +23,21 @@ import xyz.vopen.framework.cropdb.sync.message.DataGateMessage;
 import xyz.vopen.framework.cropdb.sync.message.Receipt;
 import xyz.vopen.framework.cropdb.sync.message.ReceiptAware;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 public interface ReceiptAckSender<Ack extends DataGateMessage> {
-    ReplicationTemplate getReplicationTemplate();
+  ReplicationTemplate getReplicationTemplate();
 
-    Ack createAck(String correlationId, Receipt receipt);
+  Ack createAck(String correlationId, Receipt receipt);
 
-    default void sendAck(ReceiptAware message) {
-        if (message != null) {
-            LastWriteWinState state = message.getFeed();
-            getReplicationTemplate().getCrdt().merge(state);
+  default void sendAck(ReceiptAware message) {
+    if (message != null) {
+      LastWriteWinState state = message.getFeed();
+      getReplicationTemplate().getCrdt().merge(state);
 
-            Receipt receipt = message.calculateReceipt();
-            Ack ack = createAck(message.getHeader().getId(), receipt);
-            MessageTemplate messageTemplate = getReplicationTemplate().getMessageTemplate();
-            messageTemplate.sendMessage(ack);
-        }
+      Receipt receipt = message.calculateReceipt();
+      Ack ack = createAck(message.getHeader().getId(), receipt);
+      MessageTemplate messageTemplate = getReplicationTemplate().getMessageTemplate();
+      messageTemplate.sendMessage(ack);
     }
+  }
 }

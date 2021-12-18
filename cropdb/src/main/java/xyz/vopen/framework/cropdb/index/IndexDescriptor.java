@@ -39,101 +39,98 @@ import static xyz.vopen.framework.cropdb.common.util.ValidationUtils.notEmpty;
 @Data
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class IndexDescriptor implements Comparable<IndexDescriptor>, Serializable {
-    private static final long serialVersionUID = 1576690829L;
+  private static final long serialVersionUID = 1576690829L;
 
-    /**
-     * Specifies the type of the index.
-     *
-     * @param indexType index type
-     * @return the type of the index.
-     * @see IndexType
-     */
-    @Getter
-    private String indexType;
+  /**
+   * Specifies the type of the index.
+   *
+   * @param indexType index type
+   * @return the type of the index.
+   * @see IndexType
+   */
+  @Getter private String indexType;
 
-    /**
-     * Gets the target fields for the index.
-     *
-     * @param indexFields fields in the index
-     * @return the target fields.
-     */
-    @Getter
-    private Fields indexFields;
+  /**
+   * Gets the target fields for the index.
+   *
+   * @param indexFields fields in the index
+   * @return the target fields.
+   */
+  @Getter private Fields indexFields;
 
-    /**
-     * Gets the collection name.
-     *
-     * @param collectionName collection name
-     * @return the collection name.
-     */
-    @Getter
-    private String collectionName;
+  /**
+   * Gets the collection name.
+   *
+   * @param collectionName collection name
+   * @return the collection name.
+   */
+  @Getter private String collectionName;
 
-    /**
-     * Instantiates a new Index.
-     *
-     * @param indexType      the index type
-     * @param fields         the value
-     * @param collectionName the collection name
-     */
-    public IndexDescriptor(String indexType, Fields fields, String collectionName) {
-        ValidationUtils.notNull(indexType, "indexType cannot be null");
-        ValidationUtils.notNull(fields, "fields cannot be null");
-        ValidationUtils.notNull(collectionName, "collectionName cannot be null");
-        ValidationUtils.notEmpty(collectionName, "collectionName cannot be empty");
+  /**
+   * Instantiates a new Index.
+   *
+   * @param indexType the index type
+   * @param fields the value
+   * @param collectionName the collection name
+   */
+  public IndexDescriptor(String indexType, Fields fields, String collectionName) {
+    ValidationUtils.notNull(indexType, "indexType cannot be null");
+    ValidationUtils.notNull(fields, "fields cannot be null");
+    ValidationUtils.notNull(collectionName, "collectionName cannot be null");
+    ValidationUtils.notEmpty(collectionName, "collectionName cannot be empty");
 
-        this.indexType = indexType;
-        this.indexFields = fields;
-        this.collectionName = collectionName;
+    this.indexType = indexType;
+    this.indexFields = fields;
+    this.collectionName = collectionName;
+  }
+
+  @Override
+  public int compareTo(IndexDescriptor other) {
+    if (other == null) return 1;
+
+    // compound index have highest cardinality
+    if (this.isCompoundIndex() && !other.isCompoundIndex()) return 1;
+
+    // unique index has the next highest cardinality
+    if (this.isUniqueIndex() && !other.isUniqueIndex()) return 1;
+
+    // for two unique indices, the one with encompassing higher
+    // number of fields has the higher cardinality
+    if (this.isUniqueIndex()) {
+      return this.indexFields.compareTo(other.indexFields);
     }
 
-    @Override
-    public int compareTo(IndexDescriptor other) {
-        if (other == null) return 1;
-
-        // compound index have highest cardinality
-        if (this.isCompoundIndex() && !other.isCompoundIndex()) return 1;
-
-        // unique index has the next highest cardinality
-        if (this.isUniqueIndex() && !other.isUniqueIndex()) return 1;
-
-        // for two unique indices, the one with encompassing higher
-        // number of fields has the higher cardinality
-        if (this.isUniqueIndex()) {
-            return this.indexFields.compareTo(other.indexFields);
-        }
-
-        // for two non-unique indices, the one with encompassing higher
-        // number of fields has the higher cardinality
-        if (!other.isUniqueIndex()) {
-            return this.indexFields.compareTo(other.indexFields);
-        }
-
-        return -1;
+    // for two non-unique indices, the one with encompassing higher
+    // number of fields has the higher cardinality
+    if (!other.isUniqueIndex()) {
+      return this.indexFields.compareTo(other.indexFields);
     }
 
-    /**
-     * Is compound index boolean.
-     *
-     * @return the boolean
-     */
-    public boolean isCompoundIndex() {
-        return indexFields.getFieldNames().size() > 1;
-    }
+    return -1;
+  }
 
-    private boolean isUniqueIndex() {
-        return indexType.equals(IndexType.UNIQUE);
-    }
+  /**
+   * Is compound index boolean.
+   *
+   * @return the boolean
+   */
+  public boolean isCompoundIndex() {
+    return indexFields.getFieldNames().size() > 1;
+  }
 
-    private void writeObject(ObjectOutputStream stream) throws IOException {
-        stream.writeUTF(indexType);
-        stream.writeObject(indexFields);
-        stream.writeUTF(collectionName);
-    }
+  private boolean isUniqueIndex() {
+    return indexType.equals(IndexType.UNIQUE);
+  }
 
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        indexType = stream.readUTF();
-        indexFields = (Fields) stream.readObject();
-        collectionName = stream.readUTF();
-    }
+  private void writeObject(ObjectOutputStream stream) throws IOException {
+    stream.writeUTF(indexType);
+    stream.writeObject(indexFields);
+    stream.writeUTF(collectionName);
+  }
+
+  private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    indexType = stream.readUTF();
+    indexFields = (Fields) stream.readObject();
+    collectionName = stream.readUTF();
+  }
 }

@@ -33,44 +33,46 @@ import java.util.Map;
  */
 @Slf4j
 class CropObjectInputStream extends ObjectInputStream {
-    private static final Map<String, Class<?>> migrationMap = new HashMap<>();
+  private static final Map<String, Class<?>> migrationMap = new HashMap<>();
 
-    static {
-        migrationMap.put("xyz.vopen.framework.cropdb.Security$UserCredential", Compat.UserCredential.class);
-        migrationMap.put("xyz.vopen.framework.cropdb.CropId", Compat.CropId.class);
-        migrationMap.put("xyz.vopen.framework.cropdb.Index", Compat.Index.class);
-        migrationMap.put("xyz.vopen.framework.cropdb.IndexType", Compat.IndexType.class);
-        migrationMap.put("xyz.vopen.framework.cropdb.internals.IndexMetaService$IndexMeta", Compat.IndexMeta.class);
-        migrationMap.put("xyz.vopen.framework.cropdb.Document", Compat.Document.class);
-        migrationMap.put("xyz.vopen.framework.cropdb.meta.Attributes", Compat.Attributes.class);
-    }
+  static {
+    migrationMap.put(
+        "xyz.vopen.framework.cropdb.Security$UserCredential", Compat.UserCredential.class);
+    migrationMap.put("xyz.vopen.framework.cropdb.CropId", Compat.CropId.class);
+    migrationMap.put("xyz.vopen.framework.cropdb.Index", Compat.Index.class);
+    migrationMap.put("xyz.vopen.framework.cropdb.IndexType", Compat.IndexType.class);
+    migrationMap.put(
+        "xyz.vopen.framework.cropdb.internals.IndexMetaService$IndexMeta", Compat.IndexMeta.class);
+    migrationMap.put("xyz.vopen.framework.cropdb.Document", Compat.Document.class);
+    migrationMap.put("xyz.vopen.framework.cropdb.meta.Attributes", Compat.Attributes.class);
+  }
 
-    /**
-     * Instantiates a new Crop object input stream.
-     *
-     * @param stream the stream
-     * @throws IOException the io exception
-     */
-    public CropObjectInputStream(InputStream stream) throws IOException {
-        super(stream);
-    }
+  /**
+   * Instantiates a new Crop object input stream.
+   *
+   * @param stream the stream
+   * @throws IOException the io exception
+   */
+  public CropObjectInputStream(InputStream stream) throws IOException {
+    super(stream);
+  }
 
-    @Override
-    protected ObjectStreamClass readClassDescriptor() throws IOException, ClassNotFoundException {
-        ObjectStreamClass resultClassDescriptor = super.readClassDescriptor();
+  @Override
+  protected ObjectStreamClass readClassDescriptor() throws IOException, ClassNotFoundException {
+    ObjectStreamClass resultClassDescriptor = super.readClassDescriptor();
 
-        for (final String oldName : migrationMap.keySet()) {
-            if (resultClassDescriptor != null && resultClassDescriptor.getName().equals(oldName)) {
-                Class<?> replacement = migrationMap.get(oldName);
+    for (final String oldName : migrationMap.keySet()) {
+      if (resultClassDescriptor != null && resultClassDescriptor.getName().equals(oldName)) {
+        Class<?> replacement = migrationMap.get(oldName);
 
-                try {
-                    resultClassDescriptor = ObjectStreamClass.lookup(replacement);
-                } catch (Exception e) {
-                    log.error("Error while replacing class name." + e.getMessage(), e);
-                }
-            }
+        try {
+          resultClassDescriptor = ObjectStreamClass.lookup(replacement);
+        } catch (Exception e) {
+          log.error("Error while replacing class name." + e.getMessage(), e);
         }
-
-        return resultClassDescriptor;
+      }
     }
+
+    return resultClassDescriptor;
+  }
 }

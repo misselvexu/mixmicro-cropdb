@@ -16,17 +16,15 @@
 
 package xyz.vopen.framework.cropdb.sync.net;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 public class Status {
-    public final static int CONNECTED = 1;
-    public final static int CONNECTING = 0;
-    public final static int RECONNECT = 2;
-    public final static int DISCONNECTED = -1;
+  public static final int CONNECTED = 1;
+  public static final int CONNECTING = 0;
+  public static final int RECONNECT = 2;
+  public static final int DISCONNECTED = -1;
 
-    interface CODE {
-        int NORMAL_CLOSE = 1000;
-        int ABNORMAL_CLOSE = 1001;
-    }
+  interface CODE {
+    int NORMAL_CLOSE = 1000;
+    int ABNORMAL_CLOSE = 1001;
+  }
 }

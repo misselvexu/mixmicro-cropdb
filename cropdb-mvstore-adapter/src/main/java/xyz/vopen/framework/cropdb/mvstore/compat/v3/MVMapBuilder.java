@@ -23,16 +23,13 @@ import org.h2.mvstore.MVMap;
  *
  * @param <K> the type parameter
  * @param <V> the type parameter
- *
  * @since 4.0.0
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  */
 class MVMapBuilder<K, V> extends MVMap.Builder<K, V> {
-    /**
-     * Instantiates a new Mv map builder.
-     */
-    public MVMapBuilder() {
-        setKeyType(new CropDataType());
-        setValueType(new CropDataType());
-    }
+  /** Instantiates a new Mv map builder. */
+  public MVMapBuilder() {
+    setKeyType(new CropDataType());
+    setValueType(new CropDataType());
+  }
 }

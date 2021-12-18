@@ -34,21 +34,21 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Data
 @NoArgsConstructor
 public class IndexMeta implements Serializable {
-    private static final long serialVersionUID = 1576690663L;
+  private static final long serialVersionUID = 1576690663L;
 
-    private IndexDescriptor indexDescriptor;
-    private String indexMap;
-    private AtomicBoolean isDirty;
+  private IndexDescriptor indexDescriptor;
+  private String indexMap;
+  private AtomicBoolean isDirty;
 
-    private void writeObject(ObjectOutputStream stream) throws IOException {
-        stream.writeObject(indexDescriptor);
-        stream.writeUTF(indexMap);
-        stream.writeObject(isDirty);
-    }
+  private void writeObject(ObjectOutputStream stream) throws IOException {
+    stream.writeObject(indexDescriptor);
+    stream.writeUTF(indexMap);
+    stream.writeObject(isDirty);
+  }
 
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        indexDescriptor = (IndexDescriptor) stream.readObject();
-        indexMap = stream.readUTF();
-        isDirty = (AtomicBoolean) stream.readObject();
-    }
+  private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    indexDescriptor = (IndexDescriptor) stream.readObject();
+    indexMap = stream.readUTF();
+    isDirty = (AtomicBoolean) stream.readObject();
+  }
 }

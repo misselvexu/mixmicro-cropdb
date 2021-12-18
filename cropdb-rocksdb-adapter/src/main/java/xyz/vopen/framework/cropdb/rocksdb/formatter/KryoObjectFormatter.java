@@ -16,7 +16,6 @@
 
 package xyz.vopen.framework.cropdb.rocksdb.formatter;
 
-
 import com.esotericsoftware.kryo.kryo5.Kryo;
 import com.esotericsoftware.kryo.kryo5.Serializer;
 import com.esotericsoftware.kryo.kryo5.io.Input;
@@ -33,107 +32,105 @@ import java.util.Map;
 
 import static xyz.vopen.framework.cropdb.rocksdb.Constants.DB_NULL;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 @Slf4j
 public class KryoObjectFormatter implements ObjectFormatter {
-    private static final Kryo kryo = new Kryo();
-    private final Map<Class<?>, KryoKeySerializer<?>> keySerializerRegistry;
+  private static final Kryo kryo = new Kryo();
+  private final Map<Class<?>, KryoKeySerializer<?>> keySerializerRegistry;
 
-    public KryoObjectFormatter() {
-        this.keySerializerRegistry = new HashMap<>();
-        kryo.setRegistrationRequired(false);
-        registerInternalSerializers();
+  public KryoObjectFormatter() {
+    this.keySerializerRegistry = new HashMap<>();
+    kryo.setRegistrationRequired(false);
+    registerInternalSerializers();
+  }
+
+  @Override
+  public <T> byte[] encode(T object) {
+    if (object == null) return DB_NULL;
+
+    try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+      try (Output output = new Output(byteArrayOutputStream)) {
+        synchronized (kryo) {
+          kryo.writeObject(output, object);
+        }
+      }
+      return byteArrayOutputStream.toByteArray();
+    } catch (IOException e) {
+      throw new CropIOException("failed to close output stream", e);
+    }
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public <T> byte[] encodeKey(T object) {
+    if (object == null) return DB_NULL;
+
+    Class<?> clazz = object.getClass();
+    KryoKeySerializer<T> serializer = (KryoKeySerializer<T>) keySerializerRegistry.get(clazz);
+    if (serializer == null) {
+      return encode(object);
     }
 
-    @Override
-    public <T> byte[] encode(T object) {
-        if (object == null) return DB_NULL;
+    try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+      try (Output output = new Output(byteArrayOutputStream)) {
+        serializer.writeKey(kryo, output, object);
+      }
+      return byteArrayOutputStream.toByteArray();
+    } catch (IOException e) {
+      throw new CropIOException("failed to close output stream", e);
+    }
+  }
 
-        try(ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-            try (Output output = new Output(byteArrayOutputStream)) {
-                synchronized (kryo) {
-                    kryo.writeObject(output, object);
-                }
-            }
-            return byteArrayOutputStream.toByteArray();
-        } catch (IOException e) {
-            throw new CropIOException("failed to close output stream", e);
-        }
+  @Override
+  public <T> T decode(byte[] bytes, Class<T> type) {
+    if (Arrays.equals(bytes, DB_NULL)) return null;
+
+    try (Input input = new Input(bytes, 0, bytes.length)) {
+      synchronized (kryo) {
+        return kryo.readObject(input, type);
+      }
+    }
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public <T> T decodeKey(byte[] bytes, Class<T> type) {
+    if (Arrays.equals(bytes, DB_NULL)) return null;
+
+    KryoKeySerializer<T> serializer = (KryoKeySerializer<T>) keySerializerRegistry.get(type);
+    if (serializer == null) {
+      return decode(bytes, type);
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public <T> byte[] encodeKey(T object) {
-        if (object == null) return DB_NULL;
-
-        Class<?> clazz = object.getClass();
-        KryoKeySerializer<T> serializer = (KryoKeySerializer<T>) keySerializerRegistry.get(clazz);
-        if (serializer == null) {
-            return encode(object);
-        }
-
-        try(ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-            try (Output output = new Output(byteArrayOutputStream)) {
-                serializer.writeKey(kryo, output, object);
-            }
-            return byteArrayOutputStream.toByteArray();
-        } catch (IOException e) {
-            throw new CropIOException("failed to close output stream", e);
-        }
+    try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes)) {
+      try (Input input = new Input(byteArrayInputStream)) {
+        return serializer.readKey(kryo, input, type);
+      }
+    } catch (IOException e) {
+      throw new CropIOException("failed to close output stream", e);
     }
+  }
 
-    @Override
-    public <T> T decode(byte[] bytes, Class<T> type) {
-        if (Arrays.equals(bytes, DB_NULL)) return null;
-
-        try (Input input = new Input(bytes, 0, bytes.length)) {
-            synchronized (kryo) {
-                return kryo.readObject(input, type);
-            }
-        }
+  public void registerSerializer(Class<?> type, Serializer<?> serializer) {
+    if (serializer instanceof KryoKeySerializer) {
+      KryoKeySerializer<?> kryoKeySerializer = (KryoKeySerializer<?>) serializer;
+      if (kryoKeySerializer.registerToKryo()) {
+        kryo.register(type, serializer);
+      }
+      keySerializerRegistry.put(type, kryoKeySerializer);
+    } else {
+      kryo.register(type, serializer);
     }
+  }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public <T> T decodeKey(byte[] bytes, Class<T> type) {
-        if (Arrays.equals(bytes, DB_NULL)) return null;
-
-        KryoKeySerializer<T> serializer = (KryoKeySerializer<T>) keySerializerRegistry.get(type);
-        if (serializer == null) {
-            return decode(bytes, type);
-        }
-
-        try(ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes)) {
-            try (Input input = new Input(byteArrayInputStream)) {
-                return serializer.readKey(kryo, input, type);
-            }
-        } catch (IOException e) {
-            throw new CropIOException("failed to close output stream", e);
-        }
+  private void registerInternalSerializers() {
+    try {
+      CropSerializers.registerAll(this);
+      DefaultJavaSerializers.registerAll(this);
+      DefaultTimeKeySerializers.registerAll(this);
+    } catch (Exception e) {
+      log.error("Error while registering default serializers", e);
+      throw new CropIOException("failed to register default serializers", e);
     }
-
-    public void registerSerializer(Class<?> type, Serializer<?> serializer) {
-        if (serializer instanceof KryoKeySerializer) {
-            KryoKeySerializer<?> kryoKeySerializer = (KryoKeySerializer<?>) serializer;
-            if (kryoKeySerializer.registerToKryo()) {
-                kryo.register(type, serializer);
-            }
-            keySerializerRegistry.put(type, kryoKeySerializer);
-        } else {
-            kryo.register(type, serializer);
-        }
-    }
-
-    private void registerInternalSerializers() {
-        try {
-            CropSerializers.registerAll(this);
-            DefaultJavaSerializers.registerAll(this);
-            DefaultTimeKeySerializers.registerAll(this);
-        } catch (Exception e) {
-            log.error("Error while registering default serializers", e);
-            throw new CropIOException("failed to register default serializers", e);
-        }
-    }
+  }
 }

@@ -35,55 +35,55 @@ import static xyz.vopen.framework.cropdb.common.util.ValidationUtils.notEmpty;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public abstract class FieldBasedFilter extends CropFilter {
-    private String field;
+  private String field;
 
-    @Getter(AccessLevel.NONE)
-    private Object value;
+  @Getter(AccessLevel.NONE)
+  private Object value;
 
-    @Getter(AccessLevel.NONE)
-    private boolean processed = false;
+  @Getter(AccessLevel.NONE)
+  private boolean processed = false;
 
-    /**
-     * Instantiates a new Field based filter.
-     *
-     * @param field the field
-     * @param value the value
-     */
-    protected FieldBasedFilter(String field, Object value) {
-        this.field = field;
-        this.value = value;
+  /**
+   * Instantiates a new Field based filter.
+   *
+   * @param field the field
+   * @param value the value
+   */
+  protected FieldBasedFilter(String field, Object value) {
+    this.field = field;
+    this.value = value;
+  }
+
+  /**
+   * Gets the value fo the filter.
+   *
+   * @return the value
+   */
+  public Object getValue() {
+    if (this.processed) return value;
+
+    if (value == null) return null;
+
+    if (getObjectFilter()) {
+      CropMapper cropMapper = getCropConfig().cropMapper();
+      validateSearchTerm(cropMapper, field, value);
+      if (cropMapper.isValue(value)) {
+        value = cropMapper.convert(value, Comparable.class);
+      }
     }
 
-    /**
-     * Gets the value fo the filter.
-     *
-     * @return the value
-     */
-    public Object getValue() {
-        if (this.processed) return value;
+    this.processed = true;
+    return value;
+  }
 
-        if (value == null) return null;
+  protected void validateSearchTerm(CropMapper cropMapper, String field, Object value) {
+    ValidationUtils.notNull(field, "field cannot be null");
+    ValidationUtils.notEmpty(field, "field cannot be empty");
 
-        if (getObjectFilter()) {
-            CropMapper cropMapper = getCropConfig().cropMapper();
-            validateSearchTerm(cropMapper, field, value);
-            if (cropMapper.isValue(value)) {
-                value = cropMapper.convert(value, Comparable.class);
-            }
-        }
-
-        this.processed = true;
-        return value;
+    if (value != null) {
+      if (!cropMapper.isValue(value) && !(value instanceof Comparable)) {
+        throw new ValidationException("search term is not comparable " + value);
+      }
     }
-
-    protected void validateSearchTerm(CropMapper cropMapper, String field, Object value) {
-        ValidationUtils.notNull(field, "field cannot be null");
-        ValidationUtils.notEmpty(field, "field cannot be empty");
-
-        if (value != null) {
-            if (!cropMapper.isValue(value) && !(value instanceof Comparable)) {
-                throw new ValidationException("search term is not comparable " + value);
-            }
-        }
-    }
+  }
 }

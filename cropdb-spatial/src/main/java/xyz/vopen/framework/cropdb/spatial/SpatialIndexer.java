@@ -36,66 +36,64 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 4.0.0
  */
 public class SpatialIndexer implements CropIndexer {
-    /**
-     * Spatial index type.
-     */
-    public static final String SPATIAL_INDEX = "Spatial";
-    private final Map<IndexDescriptor, SpatialIndex> indexRegistry;
+  /** Spatial index type. */
+  public static final String SPATIAL_INDEX = "Spatial";
 
-    /**
-     * Instantiates a new {@link SpatialIndexer}.
-     */
-    public SpatialIndexer() {
-        this.indexRegistry = new ConcurrentHashMap<>();
+  private final Map<IndexDescriptor, SpatialIndex> indexRegistry;
+
+  /** Instantiates a new {@link SpatialIndexer}. */
+  public SpatialIndexer() {
+    this.indexRegistry = new ConcurrentHashMap<>();
+  }
+
+  @Override
+  public String getIndexType() {
+    return SPATIAL_INDEX;
+  }
+
+  @Override
+  public void validateIndex(Fields fields) {
+    if (fields.getFieldNames().size() > 1) {
+      throw new IndexingException("spatial index can only be created on a single field");
+    }
+  }
+
+  @Override
+  public void dropIndex(IndexDescriptor indexDescriptor, CropConfig cropConfig) {
+    SpatialIndex spatialIndex = findSpatialIndex(indexDescriptor, cropConfig);
+    spatialIndex.drop();
+  }
+
+  @Override
+  public void writeIndexEntry(
+      FieldValues fieldValues, IndexDescriptor indexDescriptor, CropConfig cropConfig) {
+    SpatialIndex spatialIndex = findSpatialIndex(indexDescriptor, cropConfig);
+    spatialIndex.write(fieldValues);
+  }
+
+  @Override
+  public void removeIndexEntry(
+      FieldValues fieldValues, IndexDescriptor indexDescriptor, CropConfig cropConfig) {
+    SpatialIndex spatialIndex = findSpatialIndex(indexDescriptor, cropConfig);
+    spatialIndex.remove(fieldValues);
+  }
+
+  @Override
+  public LinkedHashSet<CropId> findByFilter(FindPlan findPlan, CropConfig cropConfig) {
+    SpatialIndex spatialIndex = findSpatialIndex(findPlan.getIndexDescriptor(), cropConfig);
+    return spatialIndex.findCropIds(findPlan);
+  }
+
+  @Override
+  public void initialize(CropConfig cropConfig) {}
+
+  private SpatialIndex findSpatialIndex(IndexDescriptor indexDescriptor, CropConfig cropConfig) {
+    if (indexRegistry.containsKey(indexDescriptor)) {
+      return indexRegistry.get(indexDescriptor);
     }
 
-    @Override
-    public String getIndexType() {
-        return SPATIAL_INDEX;
-    }
-
-    @Override
-    public void validateIndex(Fields fields) {
-        if (fields.getFieldNames().size() > 1) {
-            throw new IndexingException("spatial index can only be created on a single field");
-        }
-    }
-
-    @Override
-    public void dropIndex(IndexDescriptor indexDescriptor, CropConfig cropConfig) {
-        SpatialIndex spatialIndex = findSpatialIndex(indexDescriptor, cropConfig);
-        spatialIndex.drop();
-    }
-
-    @Override
-    public void writeIndexEntry(FieldValues fieldValues, IndexDescriptor indexDescriptor, CropConfig cropConfig) {
-        SpatialIndex spatialIndex = findSpatialIndex(indexDescriptor, cropConfig);
-        spatialIndex.write(fieldValues);
-    }
-
-    @Override
-    public void removeIndexEntry(FieldValues fieldValues, IndexDescriptor indexDescriptor, CropConfig cropConfig) {
-        SpatialIndex spatialIndex = findSpatialIndex(indexDescriptor, cropConfig);
-        spatialIndex.remove(fieldValues);
-    }
-
-    @Override
-    public LinkedHashSet<CropId> findByFilter(FindPlan findPlan, CropConfig cropConfig) {
-        SpatialIndex spatialIndex = findSpatialIndex(findPlan.getIndexDescriptor(), cropConfig);
-        return spatialIndex.findCropIds(findPlan);
-    }
-
-    @Override
-    public void initialize(CropConfig cropConfig) {
-    }
-
-    private SpatialIndex findSpatialIndex(IndexDescriptor indexDescriptor, CropConfig cropConfig) {
-        if (indexRegistry.containsKey(indexDescriptor)) {
-            return indexRegistry.get(indexDescriptor);
-        }
-
-        SpatialIndex cropIndex = new SpatialIndex(indexDescriptor, cropConfig);
-        indexRegistry.put(indexDescriptor, cropIndex);
-        return cropIndex;
-    }
+    SpatialIndex cropIndex = new SpatialIndex(indexDescriptor, cropConfig);
+    indexRegistry.put(indexDescriptor, cropIndex);
+    return cropIndex;
+  }
 }

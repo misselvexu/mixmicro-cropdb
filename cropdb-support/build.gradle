@@ -47,7 +47,7 @@ dependencies {
 
     annotationProcessor "org.projectlombok:lombok:1.18.22"
 
-    testAnnotationProcessor "org.projectlombok:lombok:1.18.20"
+    testAnnotationProcessor "org.projectlombok:lombok:1.18.22"
     testImplementation project(path: ':cropdb-mvstore-adapter', configuration: 'default')
     testImplementation "junit:junit:4.13.2"
 }

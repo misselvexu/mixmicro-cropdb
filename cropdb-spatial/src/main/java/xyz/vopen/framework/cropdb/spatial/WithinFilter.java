@@ -26,18 +26,18 @@ import java.util.List;
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 class WithinFilter extends SpatialFilter {
-    protected WithinFilter(String field, Geometry geometry) {
-        super(field, geometry);
-    }
+  protected WithinFilter(String field, Geometry geometry) {
+    super(field, geometry);
+  }
 
-    @Override
-    public List<?> applyOnIndex(IndexMap indexMap) {
-        // calculated from SpatialIndex
-        return null;
-    }
+  @Override
+  public List<?> applyOnIndex(IndexMap indexMap) {
+    // calculated from SpatialIndex
+    return null;
+  }
 
-    @Override
-    public String toString() {
-        return "(" + getField() + " within " + getValue() + ")";
-    }
+  @Override
+  public String toString() {
+    return "(" + getField() + " within " + getValue() + ")";
+  }
 }

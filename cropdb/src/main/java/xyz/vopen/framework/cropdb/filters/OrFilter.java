@@ -29,37 +29,37 @@ import xyz.vopen.framework.cropdb.common.tuples.Pair;
  */
 @Getter
 public class OrFilter extends LogicalFilter {
-    /**
-     * Instantiates a new Or filter.
-     *
-     * @param filters the filters
-     */
-    OrFilter(Filter... filters) {
-        super(filters);
-    }
+  /**
+   * Instantiates a new Or filter.
+   *
+   * @param filters the filters
+   */
+  OrFilter(Filter... filters) {
+    super(filters);
+  }
 
-    @Override
-    public boolean apply(Pair<CropId, Document> element) {
-        boolean result = false;
-        for (Filter filter : getFilters()) {
-            result = result || filter.apply(element);
-        }
-        return result;
+  @Override
+  public boolean apply(Pair<CropId, Document> element) {
+    boolean result = false;
+    for (Filter filter : getFilters()) {
+      result = result || filter.apply(element);
     }
+    return result;
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("(");
-        for (int i = 0; i < getFilters().size(); i++) {
-            Filter filter = getFilters().get(i);
-            if (i == 0) {
-                stringBuilder.append(filter.toString());
-            } else {
-                stringBuilder.append(" || ").append(filter.toString());
-            }
-        }
-        stringBuilder.append(")");
-        return stringBuilder.toString();
+  @Override
+  public String toString() {
+    StringBuilder stringBuilder = new StringBuilder();
+    stringBuilder.append("(");
+    for (int i = 0; i < getFilters().size(); i++) {
+      Filter filter = getFilters().get(i);
+      if (i == 0) {
+        stringBuilder.append(filter.toString());
+      } else {
+        stringBuilder.append(" || ").append(filter.toString());
+      }
     }
+    stringBuilder.append(")");
+    return stringBuilder.toString();
+  }
 }

@@ -23,22 +23,22 @@ package xyz.vopen.framework.cropdb.exceptions;
  * @since 1.0
  */
 public class CropIOException extends CropException {
-    /**
-     * Instantiates a new {@link CropIOException}.
-     *
-     * @param errorMessage the error message
-     */
-    public CropIOException(String errorMessage) {
-        super(errorMessage);
-    }
+  /**
+   * Instantiates a new {@link CropIOException}.
+   *
+   * @param errorMessage the error message
+   */
+  public CropIOException(String errorMessage) {
+    super(errorMessage);
+  }
 
-    /**
-     * Instantiates a new {@link CropIOException}.
-     *
-     * @param message the message
-     * @param cause   the cause
-     */
-    public CropIOException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  /**
+   * Instantiates a new {@link CropIOException}.
+   *
+   * @param message the message
+   * @param cause the cause
+   */
+  public CropIOException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

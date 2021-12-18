@@ -32,18 +32,18 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Entity {
-    /**
-     * Name of the {@link ObjectRepository}. By default,
-     * the name would be the class name of the entity.
-     *
-     * @return the name
-     */
-    String value() default "";
+  /**
+   * Name of the {@link ObjectRepository}. By default, the name would be the class name of the
+   * entity.
+   *
+   * @return the name
+   */
+  String value() default "";
 
-    /**
-     * Index definitions of the entity.
-     *
-     * @return the index definitions
-     */
-    Index[] indices() default {};
+  /**
+   * Index definitions of the entity.
+   *
+   * @return the index definitions
+   */
+  Index[] indices() default {};
 }

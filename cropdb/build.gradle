@@ -46,7 +46,7 @@ dependencies {
     api "org.jasypt:jasypt"
     annotationProcessor "org.projectlombok:lombok:1.18.22"
 
-    testAnnotationProcessor "org.projectlombok:lombok:1.18.20"
+    testAnnotationProcessor "org.projectlombok:lombok:1.18.22"
     testImplementation "junit:junit:4.13.2"
     testImplementation "org.mockito:mockito-core:4.1.0"
     testImplementation "uk.co.jemos.podam:podam:7.2.7.RELEASE"

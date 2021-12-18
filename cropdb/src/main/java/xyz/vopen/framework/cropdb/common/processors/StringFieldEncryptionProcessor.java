@@ -30,88 +30,88 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * A string field encryption processor. It encrypts the field value
- * of type {@link String} in a crop document using the provided {@link Encryptor}.
+ * A string field encryption processor. It encrypts the field value of type {@link String} in a crop
+ * document using the provided {@link Encryptor}.
  *
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @since 4.0
  */
 @Slf4j
 public class StringFieldEncryptionProcessor implements Processor {
-    private final Encryptor encryptor;
-    private final List<String> fields;
+  private final Encryptor encryptor;
+  private final List<String> fields;
 
-    /**
-     * Instantiates a new {@link StringFieldEncryptionProcessor}.
-     *
-     * @param password the password
-     */
-    public StringFieldEncryptionProcessor(String password) {
-        this(new AESEncryptor(password));
-    }
+  /**
+   * Instantiates a new {@link StringFieldEncryptionProcessor}.
+   *
+   * @param password the password
+   */
+  public StringFieldEncryptionProcessor(String password) {
+    this(new AESEncryptor(password));
+  }
 
-    /**
-     * Instantiates a new {@link StringFieldEncryptionProcessor}.
-     *
-     * @param encryptor the encryptor
-     */
-    public StringFieldEncryptionProcessor(Encryptor encryptor) {
-        this.encryptor = encryptor;
-        this.fields = new ArrayList<>();
-    }
+  /**
+   * Instantiates a new {@link StringFieldEncryptionProcessor}.
+   *
+   * @param encryptor the encryptor
+   */
+  public StringFieldEncryptionProcessor(Encryptor encryptor) {
+    this.encryptor = encryptor;
+    this.fields = new ArrayList<>();
+  }
 
-    /**
-     * Adds fields for encryption.
-     *
-     * @param fields the fields
-     */
-    public void addFields(String... fields){
-        this.fields.addAll(Arrays.asList(fields));
-    }
+  /**
+   * Adds fields for encryption.
+   *
+   * @param fields the fields
+   */
+  public void addFields(String... fields) {
+    this.fields.addAll(Arrays.asList(fields));
+  }
 
-    @Override
-    public Document processBeforeWrite(Document document) {
-        try {
-            Document copy = document.clone();
-            if (!fields.isEmpty()) {
-                for (String field : fields) {
-                    String value = copy.get(field, String.class);
-                    if (!StringUtils.isNullOrEmpty(value)) {
-                        // encrypt
-                        value = encryptor.encrypt(value.getBytes(StandardCharsets.UTF_8));
+  @Override
+  public Document processBeforeWrite(Document document) {
+    try {
+      Document copy = document.clone();
+      if (!fields.isEmpty()) {
+        for (String field : fields) {
+          String value = copy.get(field, String.class);
+          if (!StringUtils.isNullOrEmpty(value)) {
+            // encrypt
+            value = encryptor.encrypt(value.getBytes(StandardCharsets.UTF_8));
 
-                        // set the value
-                        copy.put(field, value);
-                    }
-                }
-            }
-            return copy;
-        } catch (Exception e) {
-            log.error("Error while processing document before write", e);
-            throw new CropIOException("failed to process document before write", e);
+            // set the value
+            copy.put(field, value);
+          }
         }
+      }
+      return copy;
+    } catch (Exception e) {
+      log.error("Error while processing document before write", e);
+      throw new CropIOException("failed to process document before write", e);
     }
+  }
 
-    @Override
-    public Document processAfterRead(Document document) {
-        try {
-            Document copy = document.clone();
-            if (!fields.isEmpty()) {
-                for (String field : fields) {
-                    String value = copy.get(field, String.class);
-                    if (!StringUtils.isNullOrEmpty(value)) {
-                        // decrypt
-                        value = encryptor.decrypt(value);
+  @Override
+  public Document processAfterRead(Document document) {
+    try {
+      Document copy = document.clone();
+      if (!fields.isEmpty()) {
+        for (String field : fields) {
+          String value = copy.get(field, String.class);
+          if (!StringUtils.isNullOrEmpty(value)) {
+            // decrypt
+            value = encryptor.decrypt(value);
 
-                        // set the value
-                        copy.put(field, value);
-                    }
-                }
-            }
-            return copy;
-        } catch (Exception e) {
-            log.error("Error while processing document after read", e);
-            throw new CropIOException("failed to process document after read", e);
+            // set the value
+            copy.put(field, value);
+          }
         }
+      }
+      return copy;
+    } catch (Exception e) {
+      log.error("Error while processing document after read", e);
+      throw new CropIOException("failed to process document after read", e);
     }
+  }
 }

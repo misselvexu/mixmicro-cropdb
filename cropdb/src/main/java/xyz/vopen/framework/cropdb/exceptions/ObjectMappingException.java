@@ -19,30 +19,29 @@ package xyz.vopen.framework.cropdb.exceptions;
 import xyz.vopen.framework.cropdb.collection.Document;
 
 /**
- * Exception thrown while mapping of {@link Document} from
- * objects fails or vice versa.
+ * Exception thrown while mapping of {@link Document} from objects fails or vice versa.
  *
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>.
  * @since 1.0
  */
 public class ObjectMappingException extends CropException {
 
-    /**
-     * Instantiates a new Object mapping exception.
-     *
-     * @param message the message
-     */
-    public ObjectMappingException(String message) {
-        super(message);
-    }
+  /**
+   * Instantiates a new Object mapping exception.
+   *
+   * @param message the message
+   */
+  public ObjectMappingException(String message) {
+    super(message);
+  }
 
-    /**
-     * Instantiates a new Object mapping exception.
-     *
-     * @param message the message
-     * @param cause   the inner cause
-     */
-    public ObjectMappingException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  /**
+   * Instantiates a new Object mapping exception.
+   *
+   * @param message the message
+   * @param cause the inner cause
+   */
+  public ObjectMappingException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

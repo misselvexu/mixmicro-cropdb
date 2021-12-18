@@ -16,9 +16,7 @@
 
 package xyz.vopen.framework.cropdb.rocksdb;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 public class Constants {
-    public static final byte[] DB_NULL = new byte[]{-1};
+  public static final byte[] DB_NULL = new byte[] {-1};
 }

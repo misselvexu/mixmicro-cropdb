@@ -20,22 +20,20 @@ import lombok.extern.slf4j.Slf4j;
 import xyz.vopen.framework.cropdb.sync.ReplicationTemplate;
 import xyz.vopen.framework.cropdb.sync.message.ConnectAck;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 @Slf4j
 public class ConnectAckHandler implements MessageHandler<ConnectAck> {
-    private final ReplicationTemplate replica;
+  private final ReplicationTemplate replica;
 
-    public ConnectAckHandler(ReplicationTemplate replica) {
-        this.replica = replica;
-    }
+  public ConnectAckHandler(ReplicationTemplate replica) {
+    this.replica = replica;
+  }
 
-    @Override
-    public void handleMessage(ConnectAck message) {
-        replica.collectGarbage(message.getTombstoneTtl());
-        replica.setConnected();
-        replica.startFeedExchange();
-        replica.sendChanges();
-    }
+  @Override
+  public void handleMessage(ConnectAck message) {
+    replica.collectGarbage(message.getTombstoneTtl());
+    replica.setConnected();
+    replica.startFeedExchange();
+    replica.sendChanges();
+  }
 }

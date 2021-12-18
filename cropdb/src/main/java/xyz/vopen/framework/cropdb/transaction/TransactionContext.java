@@ -14,21 +14,21 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 @Data
 class TransactionContext implements AutoCloseable {
-    private String collectionName;
-    private Queue<JournalEntry> journal;
-    private CropMap<CropId, Document> cropMap;
-    private TransactionConfig config;
-    private AtomicBoolean active;
+  private String collectionName;
+  private Queue<JournalEntry> journal;
+  private CropMap<CropId, Document> cropMap;
+  private TransactionConfig config;
+  private AtomicBoolean active;
 
-    public TransactionContext() {
-        active = new AtomicBoolean(true);
-    }
+  public TransactionContext() {
+    active = new AtomicBoolean(true);
+  }
 
-    @Override
-    public void close() throws Exception {
-        journal.clear();
-        cropMap.clear();
-        cropMap.close();
-        active.compareAndSet(true, false);
-    }
+  @Override
+  public void close() throws Exception {
+    journal.clear();
+    cropMap.clear();
+    cropMap.close();
+    active.compareAndSet(true, false);
+  }
 }

@@ -22,27 +22,24 @@ import xyz.vopen.framework.cropdb.common.WriteResult;
 
 import java.util.*;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 @ToString
 class WriteResultImpl implements WriteResult {
-    private List<CropId> cropIds;
+  private List<CropId> cropIds;
 
-    void setCropIds(List<CropId> cropIds) {
-        this.cropIds = cropIds;
-    }
+  void setCropIds(List<CropId> cropIds) {
+    this.cropIds = cropIds;
+  }
 
-    void addToList(CropId cropId) {
-        if (cropIds == null) {
-            cropIds = new ArrayList<>();
-        }
-        cropIds.add(cropId);
+  void addToList(CropId cropId) {
+    if (cropIds == null) {
+      cropIds = new ArrayList<>();
     }
+    cropIds.add(cropId);
+  }
 
-    @Override
-    public Iterator<CropId> iterator() {
-        return cropIds == null ? Collections.emptyIterator()
-            : cropIds.iterator();
-    }
+  @Override
+  public Iterator<CropId> iterator() {
+    return cropIds == null ? Collections.emptyIterator() : cropIds.iterator();
+  }
 }

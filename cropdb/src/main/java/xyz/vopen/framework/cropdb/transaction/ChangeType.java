@@ -7,63 +7,39 @@ package xyz.vopen.framework.cropdb.transaction;
  * @since 4.0
  */
 enum ChangeType {
-    /**
-     * Insert
-     */
-    Insert,
+  /** Insert */
+  Insert,
 
-    /**
-     * Update.
-     */
-    Update,
+  /** Update. */
+  Update,
 
-    /**
-     * Remove.
-     */
-    Remove,
+  /** Remove. */
+  Remove,
 
-    /**
-     * Clear.
-     */
-    Clear,
+  /** Clear. */
+  Clear,
 
-    /**
-     * Create index.
-     */
-    CreateIndex,
+  /** Create index. */
+  CreateIndex,
 
-    /**
-     * Rebuild index.
-     */
-    RebuildIndex,
+  /** Rebuild index. */
+  RebuildIndex,
 
-    /**
-     * Drop index.
-     */
-    DropIndex,
+  /** Drop index. */
+  DropIndex,
 
-    /**
-     * Drop all indices.
-     */
-    DropAllIndices,
+  /** Drop all indices. */
+  DropAllIndices,
 
-    /**
-     * Drop collection.
-     */
-    DropCollection,
+  /** Drop collection. */
+  DropCollection,
 
-    /**
-     * Set attribute.
-     */
-    SetAttribute,
+  /** Set attribute. */
+  SetAttribute,
 
-    /**
-     * Add processor
-     * */
-    AddProcessor,
+  /** Add processor */
+  AddProcessor,
 
-    /**
-     * Remove processor
-     * */
-    RemoveProcessor,
+  /** Remove processor */
+  RemoveProcessor,
 }

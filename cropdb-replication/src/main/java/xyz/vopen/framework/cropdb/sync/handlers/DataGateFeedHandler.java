@@ -23,30 +23,32 @@ import xyz.vopen.framework.cropdb.sync.message.DataGateFeed;
 import xyz.vopen.framework.cropdb.sync.message.DataGateFeedAck;
 import xyz.vopen.framework.cropdb.sync.message.Receipt;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 @Data
-public class DataGateFeedHandler implements MessageHandler<DataGateFeed>, ReceiptAckSender<DataGateFeedAck> {
-    private ReplicationTemplate replicationTemplate;
+public class DataGateFeedHandler
+    implements MessageHandler<DataGateFeed>, ReceiptAckSender<DataGateFeedAck> {
+  private ReplicationTemplate replicationTemplate;
 
-    public DataGateFeedHandler(ReplicationTemplate replicationTemplate) {
-        this.replicationTemplate = replicationTemplate;
-    }
+  public DataGateFeedHandler(ReplicationTemplate replicationTemplate) {
+    this.replicationTemplate = replicationTemplate;
+  }
 
-    @Override
-    public void handleMessage(DataGateFeed message) {
-        sendAck(message);
-        if (replicationTemplate.shouldAcceptCheckpoint()) {
-            Long time = message.getHeader().getTimestamp();
-            replicationTemplate.saveLastSyncTime(time);
-        }
+  @Override
+  public void handleMessage(DataGateFeed message) {
+    sendAck(message);
+    if (replicationTemplate.shouldAcceptCheckpoint()) {
+      Long time = message.getHeader().getTimestamp();
+      replicationTemplate.saveLastSyncTime(time);
     }
+  }
 
-    @Override
-    public DataGateFeedAck createAck(String correlationId, Receipt receipt) {
-        MessageFactory factory = replicationTemplate.getMessageFactory();
-        return factory.createFeedAck(replicationTemplate.getConfig(),
-            replicationTemplate.getReplicaId(), correlationId, receipt);
-    }
+  @Override
+  public DataGateFeedAck createAck(String correlationId, Receipt receipt) {
+    MessageFactory factory = replicationTemplate.getMessageFactory();
+    return factory.createFeedAck(
+        replicationTemplate.getConfig(),
+        replicationTemplate.getReplicaId(),
+        correlationId,
+        receipt);
+  }
 }

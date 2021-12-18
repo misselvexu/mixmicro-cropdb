@@ -26,33 +26,33 @@ import xyz.vopen.framework.cropdb.store.events.StoreEventListener;
  * @since 4.0
  */
 public interface StoreConfig {
-    /**
-     * Gets file path for the store.
-     *
-     * @return the file path
-     */
-    String filePath();
+  /**
+   * Gets file path for the store.
+   *
+   * @return the file path
+   */
+  String filePath();
 
-    /**
-     * Indicates if the {@link CropStore} is a readonly store.
-     *
-     * @return <code>true</code>, if readonly store; otherwise <code>false</code>.
-     */
-    Boolean isReadOnly();
+  /**
+   * Indicates if the {@link CropStore} is a readonly store.
+   *
+   * @return <code>true</code>, if readonly store; otherwise <code>false</code>.
+   */
+  Boolean isReadOnly();
 
-    /**
-     * Adds a {@link StoreEventListener} instance and subscribe it to store event.
-     *
-     * @param listener the listener
-     */
-    void addStoreEventListener(StoreEventListener listener);
+  /**
+   * Adds a {@link StoreEventListener} instance and subscribe it to store event.
+   *
+   * @param listener the listener
+   */
+  void addStoreEventListener(StoreEventListener listener);
 
-    /**
-     * Indicates if the {@link CropStore} is an in-memory store.
-     *
-     * @return <code>true</code>, if in-memory store; otherwise <code>false</code>.
-     */
-    default boolean isInMemory() {
-        return StringUtils.isNullOrEmpty(filePath());
-    }
+  /**
+   * Indicates if the {@link CropStore} is an in-memory store.
+   *
+   * @return <code>true</code>, if in-memory store; otherwise <code>false</code>.
+   */
+  default boolean isInMemory() {
+    return StringUtils.isNullOrEmpty(filePath());
+  }
 }

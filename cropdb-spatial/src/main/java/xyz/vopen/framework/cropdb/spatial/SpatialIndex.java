@@ -46,117 +46,116 @@ import java.util.List;
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  */
 public class SpatialIndex implements CropIndex {
-    @Getter
-    private final IndexDescriptor indexDescriptor;
-    private final CropStore<?> cropStore;
-    private final CropConfig cropConfig;
+  @Getter private final IndexDescriptor indexDescriptor;
+  private final CropStore<?> cropStore;
+  private final CropConfig cropConfig;
 
-    /**
-     * Instantiates a new {@link SpatialIndex}.
-     *
-     * @param indexDescriptor the index descriptor
-     * @param cropConfig   the crop config
-     */
-    public SpatialIndex(IndexDescriptor indexDescriptor, CropConfig cropConfig) {
-        this.indexDescriptor = indexDescriptor;
-        this.cropConfig = cropConfig;
-        this.cropStore = cropConfig.getCropStore();
+  /**
+   * Instantiates a new {@link SpatialIndex}.
+   *
+   * @param indexDescriptor the index descriptor
+   * @param cropConfig the crop config
+   */
+  public SpatialIndex(IndexDescriptor indexDescriptor, CropConfig cropConfig) {
+    this.indexDescriptor = indexDescriptor;
+    this.cropConfig = cropConfig;
+    this.cropStore = cropConfig.getCropStore();
+  }
+
+  @Override
+  public void write(FieldValues fieldValues) {
+    Fields fields = fieldValues.getFields();
+    List<String> fieldNames = fields.getFieldNames();
+
+    String firstField = fieldNames.get(0);
+    Object element = fieldValues.get(firstField);
+
+    CropRTree<BoundingBox, Geometry> indexMap = findIndexMap();
+    if (element == null) {
+      indexMap.add(null, fieldValues.getCropId());
+    } else {
+      Geometry geometry = parseGeometry(firstField, element);
+      BoundingBox boundingBox = new CropBoundingBox(geometry);
+      indexMap.add(boundingBox, fieldValues.getCropId());
+    }
+  }
+
+  @Override
+  public void remove(FieldValues fieldValues) {
+    Fields fields = fieldValues.getFields();
+    List<String> fieldNames = fields.getFieldNames();
+
+    String firstField = fieldNames.get(0);
+    Object element = fieldValues.get(firstField);
+
+    CropRTree<BoundingBox, Geometry> indexMap = findIndexMap();
+    if (element == null) {
+      indexMap.remove(null, fieldValues.getCropId());
+    } else {
+      Geometry geometry = parseGeometry(firstField, element);
+      BoundingBox boundingBox = new CropBoundingBox(geometry);
+      indexMap.remove(boundingBox, fieldValues.getCropId());
+    }
+  }
+
+  @Override
+  public void drop() {
+    CropRTree<BoundingBox, Geometry> indexMap = findIndexMap();
+    indexMap.clear();
+    indexMap.drop();
+  }
+
+  @Override
+  public LinkedHashSet<CropId> findCropIds(FindPlan findPlan) {
+    IndexScanFilter indexScanFilter = findPlan.getIndexScanFilter();
+    if (indexScanFilter == null
+        || indexScanFilter.getFilters() == null
+        || indexScanFilter.getFilters().isEmpty()) {
+      throw new FilterException("no spatial filter found");
     }
 
-    @Override
-    public void write(FieldValues fieldValues) {
-        Fields fields = fieldValues.getFields();
-        List<String> fieldNames = fields.getFieldNames();
+    List<ComparableFilter> filters = indexScanFilter.getFilters();
+    ComparableFilter filter = filters.get(0);
 
-        String firstField = fieldNames.get(0);
-        Object element = fieldValues.get(firstField);
-
-        CropRTree<BoundingBox, Geometry> indexMap = findIndexMap();
-        if (element == null) {
-            indexMap.add(null, fieldValues.getCropId());
-        } else {
-            Geometry geometry = parseGeometry(firstField, element);
-            BoundingBox boundingBox = new CropBoundingBox(geometry);
-            indexMap.add(boundingBox, fieldValues.getCropId());
-        }
+    if (!(filter instanceof SpatialFilter)) {
+      throw new FilterException("spatial filter must be the first filter for index scan");
     }
 
-    @Override
-    public void remove(FieldValues fieldValues) {
-        Fields fields = fieldValues.getFields();
-        List<String> fieldNames = fields.getFieldNames();
+    RecordStream<CropId> keys = null;
+    CropRTree<BoundingBox, Geometry> indexMap = findIndexMap();
 
-        String firstField = fieldNames.get(0);
-        Object element = fieldValues.get(firstField);
+    SpatialFilter spatialFilter = (SpatialFilter) filter;
+    Geometry geometry = spatialFilter.getValue();
+    BoundingBox boundingBox = new CropBoundingBox(geometry);
 
-        CropRTree<BoundingBox, Geometry> indexMap = findIndexMap();
-        if (element == null) {
-            indexMap.remove(null, fieldValues.getCropId());
-        } else {
-            Geometry geometry = parseGeometry(firstField, element);
-            BoundingBox boundingBox = new CropBoundingBox(geometry);
-            indexMap.remove(boundingBox, fieldValues.getCropId());
-        }
+    if (filter instanceof WithinFilter) {
+      keys = indexMap.findContainedKeys(boundingBox);
+    } else if (filter instanceof IntersectsFilter) {
+      keys = indexMap.findIntersectingKeys(boundingBox);
     }
 
-    @Override
-    public void drop() {
-        CropRTree<BoundingBox, Geometry> indexMap = findIndexMap();
-        indexMap.clear();
-        indexMap.drop();
+    LinkedHashSet<CropId> cropIds = new LinkedHashSet<>();
+    if (keys != null) {
+      for (CropId cropId : keys) {
+        cropIds.add(cropId);
+      }
     }
 
-    @Override
-    public LinkedHashSet<CropId> findCropIds(FindPlan findPlan) {
-        IndexScanFilter indexScanFilter = findPlan.getIndexScanFilter();
-        if (indexScanFilter == null
-            || indexScanFilter.getFilters() == null
-            || indexScanFilter.getFilters().isEmpty()) {
-            throw new FilterException("no spatial filter found");
-        }
+    return cropIds;
+  }
 
-        List<ComparableFilter> filters = indexScanFilter.getFilters();
-        ComparableFilter filter = filters.get(0);
+  private CropRTree<BoundingBox, Geometry> findIndexMap() {
+    String mapName = IndexUtils.deriveIndexMapName(indexDescriptor);
+    return cropStore.openRTree(mapName, BoundingBox.class, Geometry.class);
+  }
 
-        if (!(filter instanceof SpatialFilter)) {
-            throw new FilterException("spatial filter must be the first filter for index scan");
-        }
-
-        RecordStream<CropId> keys = null;
-        CropRTree<BoundingBox, Geometry> indexMap = findIndexMap();
-
-        SpatialFilter spatialFilter = (SpatialFilter) filter;
-        Geometry geometry = spatialFilter.getValue();
-        BoundingBox boundingBox = new CropBoundingBox(geometry);
-
-        if (filter instanceof WithinFilter) {
-            keys = indexMap.findContainedKeys(boundingBox);
-        } else if (filter instanceof IntersectsFilter) {
-            keys = indexMap.findIntersectingKeys(boundingBox);
-        }
-
-        LinkedHashSet<CropId> cropIds = new LinkedHashSet<>();
-        if (keys != null) {
-            for (CropId cropId : keys) {
-                cropIds.add(cropId);
-            }
-        }
-
-        return cropIds;
+  private Geometry parseGeometry(String field, Object fieldValue) {
+    if (fieldValue == null) return null;
+    if (fieldValue instanceof String) {
+      return cropConfig.cropMapper().convert(fieldValue, Geometry.class);
+    } else if (fieldValue instanceof Geometry) {
+      return (Geometry) fieldValue;
     }
-
-    private CropRTree<BoundingBox, Geometry> findIndexMap() {
-        String mapName = IndexUtils.deriveIndexMapName(indexDescriptor);
-        return cropStore.openRTree(mapName, BoundingBox.class, Geometry.class);
-    }
-
-    private Geometry parseGeometry(String field, Object fieldValue) {
-        if (fieldValue == null) return null;
-        if (fieldValue instanceof String) {
-            return cropConfig.cropMapper().convert(fieldValue, Geometry.class);
-        } else if (fieldValue instanceof Geometry) {
-            return (Geometry) fieldValue;
-        }
-        throw new IndexingException("field " + field + " does not contain Geometry data");
-    }
+    throw new IndexingException("field " + field + " does not contain Geometry data");
+  }
 }

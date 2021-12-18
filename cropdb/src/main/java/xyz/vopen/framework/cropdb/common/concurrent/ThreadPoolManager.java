@@ -34,96 +34,94 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class ThreadPoolManager {
-    private final static List<ExecutorService> threadPools;
-    private final static ExecutorService commonPool;
-    private final static Object lock;
+  private static final List<ExecutorService> threadPools;
+  private static final ExecutorService commonPool;
+  private static final Object lock;
 
-    static {
-        threadPools = new ArrayList<>();
-        commonPool = workerPool();
-        threadPools.add(commonPool);
-        lock = new Object();
-    }
+  static {
+    threadPools = new ArrayList<>();
+    commonPool = workerPool();
+    threadPools.add(commonPool);
+    lock = new Object();
+  }
 
-    /**
-     * Creates an {@link ExecutorService} with pull size {@link Runtime#availableProcessors()}
-     * where all {@link Thread}s are daemon threads and uncaught error aware.
-     *
-     * @return the {@link ExecutorService}.
-     */
-    public static ExecutorService workerPool() {
-        return getThreadPool(Runtime.getRuntime().availableProcessors(), Constants.DAEMON_THREAD_NAME);
-    }
+  /**
+   * Creates an {@link ExecutorService} with pull size {@link Runtime#availableProcessors()} where
+   * all {@link Thread}s are daemon threads and uncaught error aware.
+   *
+   * @return the {@link ExecutorService}.
+   */
+  public static ExecutorService workerPool() {
+    return getThreadPool(Runtime.getRuntime().availableProcessors(), Constants.DAEMON_THREAD_NAME);
+  }
 
-    /**
-     * Creates an {@link ExecutorService} with provided size where
-     * all {@link Thread}s are daemon threads and uncaught error aware.
-     *
-     * @param size       the size of the thread pool
-     * @param threadName the thread name
-     * @return the {@link ExecutorService}.
-     */
-    public static ExecutorService getThreadPool(int size, String threadName) {
-        ExecutorService threadPool = Executors.newFixedThreadPool(size, threadFactory(threadName));
-        threadPools.add(threadPool);
-        return threadPool;
-    }
+  /**
+   * Creates an {@link ExecutorService} with provided size where all {@link Thread}s are daemon
+   * threads and uncaught error aware.
+   *
+   * @param size the size of the thread pool
+   * @param threadName the thread name
+   * @return the {@link ExecutorService}.
+   */
+  public static ExecutorService getThreadPool(int size, String threadName) {
+    ExecutorService threadPool = Executors.newFixedThreadPool(size, threadFactory(threadName));
+    threadPools.add(threadPool);
+    return threadPool;
+  }
 
-    /**
-     * Returns a new {@link ErrorAwareThreadFactory} where thread name
-     * will be set to the <code>name</code> specified.
-     *
-     * @param name the name
-     * @return the error aware thread factory
-     */
-    public static ErrorAwareThreadFactory threadFactory(String name) {
-        return new ErrorAwareThreadFactory() {
-            @Override
-            public Thread createThread(Runnable runnable) {
-                Thread thread = new Thread(runnable);
-                thread.setName(name);
-                thread.setDaemon(true);
-                return thread;
-            }
-        };
-    }
+  /**
+   * Returns a new {@link ErrorAwareThreadFactory} where thread name will be set to the <code>name
+   * </code> specified.
+   *
+   * @param name the name
+   * @return the error aware thread factory
+   */
+  public static ErrorAwareThreadFactory threadFactory(String name) {
+    return new ErrorAwareThreadFactory() {
+      @Override
+      public Thread createThread(Runnable runnable) {
+        Thread thread = new Thread(runnable);
+        thread.setName(name);
+        thread.setDaemon(true);
+        return thread;
+      }
+    };
+  }
 
-    /**
-     * Submits a runnable task asynchronously on common pool.
-     *
-     * @param runnable the runnable task
-     * @return the future
-     */
-    public static Future<?> runAsync(Runnable runnable) {
-        return commonPool.submit(runnable);
-    }
+  /**
+   * Submits a runnable task asynchronously on common pool.
+   *
+   * @param runnable the runnable task
+   * @return the future
+   */
+  public static Future<?> runAsync(Runnable runnable) {
+    return commonPool.submit(runnable);
+  }
 
-    /**
-     * Shuts down all thread pools.
-     */
-    public synchronized static void shutdownThreadPools() {
-        for (ExecutorService threadPool : threadPools) {
-            synchronized (lock) {
-                if (threadPool != null) {
-                    threadPool.shutdown();
-                }
-            }
-            try {
-                if (threadPool != null && !threadPool.awaitTermination(10, TimeUnit.SECONDS)) {
-                    synchronized (lock) {
-                        threadPool.shutdownNow();
-                    }
-
-                    if (!threadPool.awaitTermination(10, TimeUnit.SECONDS)) {
-                        log.error("Thread pool did not terminate");
-                    }
-                }
-            } catch (InterruptedException e) {
-                synchronized (lock) {
-                    threadPool.shutdownNow();
-                }
-                Thread.currentThread().interrupt();
-            }
+  /** Shuts down all thread pools. */
+  public static synchronized void shutdownThreadPools() {
+    for (ExecutorService threadPool : threadPools) {
+      synchronized (lock) {
+        if (threadPool != null) {
+          threadPool.shutdown();
         }
+      }
+      try {
+        if (threadPool != null && !threadPool.awaitTermination(10, TimeUnit.SECONDS)) {
+          synchronized (lock) {
+            threadPool.shutdownNow();
+          }
+
+          if (!threadPool.awaitTermination(10, TimeUnit.SECONDS)) {
+            log.error("Thread pool did not terminate");
+          }
+        }
+      } catch (InterruptedException e) {
+        synchronized (lock) {
+          threadPool.shutdownNow();
+        }
+        Thread.currentThread().interrupt();
+      }
     }
+  }
 }

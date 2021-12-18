@@ -34,102 +34,102 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @since 4.0
  */
 public interface CropIndex {
-    /**
-     * Gets index descriptor.
-     *
-     * @return the index descriptor
-     */
-    IndexDescriptor getIndexDescriptor();
+  /**
+   * Gets index descriptor.
+   *
+   * @return the index descriptor
+   */
+  IndexDescriptor getIndexDescriptor();
 
-    /**
-     * Writes a {@link FieldValues} in the index.
-     *
-     * @param fieldValues the field values
-     */
-    void write(FieldValues fieldValues);
+  /**
+   * Writes a {@link FieldValues} in the index.
+   *
+   * @param fieldValues the field values
+   */
+  void write(FieldValues fieldValues);
 
-    /**
-     * Removes a {@link FieldValues} from the index.
-     *
-     * @param fieldValues the field values
-     */
-    void remove(FieldValues fieldValues);
+  /**
+   * Removes a {@link FieldValues} from the index.
+   *
+   * @param fieldValues the field values
+   */
+  void remove(FieldValues fieldValues);
 
-    /**
-     * Drops this index.
-     */
-    void drop();
+  /** Drops this index. */
+  void drop();
 
-    /**
-     * Finds a set of {@link CropId}s from the index after executing the {@link FindPlan}.
-     *
-     * @param findPlan the find plan
-     * @return the linked hash set
-     */
-    LinkedHashSet<CropId> findCropIds(FindPlan findPlan);
+  /**
+   * Finds a set of {@link CropId}s from the index after executing the {@link FindPlan}.
+   *
+   * @param findPlan the find plan
+   * @return the linked hash set
+   */
+  LinkedHashSet<CropId> findCropIds(FindPlan findPlan);
 
-    /**
-     * Indicates if this is an unique index.
-     *
-     * @return the boolean
-     */
-    default boolean isUnique() {
-        return getIndexDescriptor().getIndexType().equalsIgnoreCase(IndexType.UNIQUE);
+  /**
+   * Indicates if this is an unique index.
+   *
+   * @return the boolean
+   */
+  default boolean isUnique() {
+    return getIndexDescriptor().getIndexType().equalsIgnoreCase(IndexType.UNIQUE);
+  }
+
+  /**
+   * Validates the index field.
+   *
+   * @param value the value
+   * @param field the field
+   */
+  default void validateIndexField(Object value, String field) {
+    if (value == null) return;
+    if (value instanceof Iterable) {
+      ValidationUtils.validateIterableIndexField((Iterable<?>) value, field);
+    } else if (value.getClass().isArray()) {
+      ValidationUtils.validateArrayIndexField(value, field);
+    } else {
+      if (!(value instanceof Comparable)) {
+        throw new ValidationException(value + " is not comparable");
+      }
+    }
+  }
+
+  /**
+   * Adds a {@link CropId} of the {@link FieldValues} to the existing indexed list of {@link
+   * CropId}s.
+   *
+   * @param cropIds the crop ids
+   * @param fieldValues the field values
+   * @return the list
+   */
+  default List<CropId> addCropIds(List<CropId> cropIds, FieldValues fieldValues) {
+    if (cropIds == null) {
+      cropIds = new CopyOnWriteArrayList<>();
     }
 
-    /**
-     * Validates the index field.
-     *
-     * @param value the value
-     * @param field the field
-     */
-    default void validateIndexField(Object value, String field) {
-        if (value == null) return;
-        if (value instanceof Iterable) {
-            ValidationUtils.validateIterableIndexField((Iterable<?>) value, field);
-        } else if (value.getClass().isArray()) {
-            ValidationUtils.validateArrayIndexField(value, field);
-        } else {
-            if (!(value instanceof Comparable)) {
-                throw new ValidationException(value + " is not comparable");
-            }
-        }
+    if (isUnique() && cropIds.size() == 1 && !cropIds.contains(fieldValues.getCropId())) {
+      // if key is already exists for unique type, throw error
+      throw new UniqueConstraintException(
+          "unique key constraint violation for " + fieldValues.getFields());
     }
 
-    /**
-     * Adds a {@link CropId} of the {@link FieldValues} to the existing indexed list of {@link CropId}s.
-     *
-     * @param cropIds  the crop ids
-     * @param fieldValues the field values
-     * @return the list
-     */
-    default List<CropId> addCropIds(List<CropId> cropIds, FieldValues fieldValues) {
-        if (cropIds == null) {
-            cropIds = new CopyOnWriteArrayList<>();
-        }
+    // index always are in ascending format
+    cropIds.add(fieldValues.getCropId());
+    return cropIds;
+  }
 
-        if (isUnique() && cropIds.size() == 1
-            && !cropIds.contains(fieldValues.getCropId())) {
-            // if key is already exists for unique type, throw error
-            throw new UniqueConstraintException("unique key constraint violation for " + fieldValues.getFields());
-        }
-
-        // index always are in ascending format
-        cropIds.add(fieldValues.getCropId());
-        return cropIds;
+  /**
+   * Removes a {@link CropId} of the {@link FieldValues} from the existing indexed list of {@link
+   * CropId}s.
+   *
+   * @param cropIds the crop ids
+   * @param fieldValues the field values
+   * @return the list
+   */
+  default List<CropId> removeCropIds(List<CropId> cropIds, FieldValues fieldValues) {
+    if (cropIds != null && !cropIds.isEmpty()) {
+      cropIds.remove(fieldValues.getCropId());
     }
-
-    /**
-     * Removes a {@link CropId} of the {@link FieldValues} from the existing indexed list of {@link CropId}s.
-     *
-     * @param cropIds  the crop ids
-     * @param fieldValues the field values
-     * @return the list
-     */
-    default List<CropId> removeCropIds(List<CropId> cropIds, FieldValues fieldValues) {
-        if (cropIds != null && !cropIds.isEmpty()) {
-            cropIds.remove(fieldValues.getCropId());
-        }
-        return cropIds;
-    }
+    return cropIds;
+  }
 }

@@ -16,9 +16,7 @@
 
 package xyz.vopen.framework.cropdb.sync.event;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 public interface ReplicationEventListener {
-    void onEvent(ReplicationEvent event);
+  void onEvent(ReplicationEvent event);
 }

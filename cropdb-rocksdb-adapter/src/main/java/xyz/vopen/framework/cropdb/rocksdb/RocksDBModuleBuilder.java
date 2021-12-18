@@ -30,59 +30,57 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 @Getter
 @Setter
 @Accessors(fluent = true)
 public class RocksDBModuleBuilder {
-    private String filePath;
-    private Options options;
-    private DBOptions dbOptions;
-    private ColumnFamilyOptions columnFamilyOptions;
-    private ObjectFormatter objectFormatter;
-    private RocksDBConfig dbConfig;
+  private String filePath;
+  private Options options;
+  private DBOptions dbOptions;
+  private ColumnFamilyOptions columnFamilyOptions;
+  private ObjectFormatter objectFormatter;
+  private RocksDBConfig dbConfig;
 
-    @Setter(AccessLevel.NONE)
-    private final Set<StoreEventListener> eventListeners;
+  @Setter(AccessLevel.NONE)
+  private final Set<StoreEventListener> eventListeners;
 
-    RocksDBModuleBuilder() {
-        dbConfig = new RocksDBConfig();
-        eventListeners = new HashSet<>();
+  RocksDBModuleBuilder() {
+    dbConfig = new RocksDBConfig();
+    eventListeners = new HashSet<>();
+  }
+
+  public RocksDBModuleBuilder filePath(File file) {
+    if (file != null) {
+      this.filePath = file.getPath();
     }
+    return this;
+  }
 
-    public RocksDBModuleBuilder filePath(File file) {
-        if (file != null) {
-            this.filePath = file.getPath();
-        }
-        return this;
+  public RocksDBModuleBuilder filePath(String path) {
+    this.filePath = path;
+    return this;
+  }
+
+  public RocksDBModuleBuilder addStoreEventListener(StoreEventListener listener) {
+    eventListeners.add(listener);
+    return this;
+  }
+
+  public RocksDBModule build() {
+    RocksDBModule module = new RocksDBModule(filePath());
+
+    dbConfig.options(options());
+    dbConfig.dbOptions(dbOptions());
+    dbConfig.columnFamilyOptions(columnFamilyOptions());
+    dbConfig.filePath(filePath());
+
+    if (objectFormatter() != null) {
+      dbConfig.objectFormatter(objectFormatter());
     }
+    dbConfig.eventListeners(eventListeners());
 
-    public RocksDBModuleBuilder filePath(String path) {
-        this.filePath = path;
-        return this;
-    }
-
-    public RocksDBModuleBuilder addStoreEventListener(StoreEventListener listener) {
-        eventListeners.add(listener);
-        return this;
-    }
-
-    public RocksDBModule build() {
-        RocksDBModule module = new RocksDBModule(filePath());
-
-        dbConfig.options(options());
-        dbConfig.dbOptions(dbOptions());
-        dbConfig.columnFamilyOptions(columnFamilyOptions());
-        dbConfig.filePath(filePath());
-
-        if (objectFormatter() != null) {
-            dbConfig.objectFormatter(objectFormatter());
-        }
-        dbConfig.eventListeners(eventListeners());
-
-        module.setStoreConfig(dbConfig);
-        return module;
-    }
+    module.setStoreConfig(dbConfig);
+    return module;
+  }
 }

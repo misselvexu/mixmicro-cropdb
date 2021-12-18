@@ -23,22 +23,22 @@ package xyz.vopen.framework.cropdb.exceptions;
  * @since 1.0
  */
 public class IndexingException extends CropException {
-    /**
-     * Instantiates a new Indexing exception.
-     *
-     * @param message the message
-     */
-    public IndexingException(String message) {
-        super(message);
-    }
+  /**
+   * Instantiates a new Indexing exception.
+   *
+   * @param message the message
+   */
+  public IndexingException(String message) {
+    super(message);
+  }
 
-    /**
-     * Instantiates a new Indexing exception.
-     *
-     * @param message the message
-     * @param cause   the cause
-     */
-    public IndexingException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  /**
+   * Instantiates a new Indexing exception.
+   *
+   * @param message the message
+   * @param cause the cause
+   */
+  public IndexingException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

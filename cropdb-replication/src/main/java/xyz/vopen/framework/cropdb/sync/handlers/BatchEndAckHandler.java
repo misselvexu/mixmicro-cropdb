@@ -21,20 +21,18 @@ import xyz.vopen.framework.cropdb.sync.ReplicationTemplate;
 import xyz.vopen.framework.cropdb.sync.message.BatchEndAck;
 import xyz.vopen.framework.cropdb.sync.message.Receipt;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 @Getter
 public class BatchEndAckHandler implements MessageHandler<BatchEndAck>, JournalAware {
-    private final ReplicationTemplate replicationTemplate;
+  private final ReplicationTemplate replicationTemplate;
 
-    public BatchEndAckHandler(ReplicationTemplate replicationTemplate) {
-        this.replicationTemplate = replicationTemplate;
-    }
+  public BatchEndAckHandler(ReplicationTemplate replicationTemplate) {
+    this.replicationTemplate = replicationTemplate;
+  }
 
-    @Override
-    public void handleMessage(BatchEndAck message) {
-        Receipt finalReceipt = getJournal().getFinalReceipt();
-        retryFailed(finalReceipt);
-    }
+  @Override
+  public void handleMessage(BatchEndAck message) {
+    Receipt finalReceipt = getJournal().getFinalReceipt();
+    retryFailed(finalReceipt);
+  }
 }

@@ -35,84 +35,82 @@ import java.util.NoSuchElementException;
  * @since 4.0
  */
 public class FilteredStream implements RecordStream<Pair<CropId, Document>> {
-    private final RecordStream<Pair<CropId, Document>> recordStream;
+  private final RecordStream<Pair<CropId, Document>> recordStream;
+  private final Filter filter;
+
+  /**
+   * Instantiates a new Filtered stream.
+   *
+   * @param recordStream the record stream
+   * @param filter the filter
+   */
+  public FilteredStream(RecordStream<Pair<CropId, Document>> recordStream, Filter filter) {
+    this.recordStream = recordStream;
+    this.filter = filter;
+  }
+
+  @Override
+  public Iterator<Pair<CropId, Document>> iterator() {
+    Iterator<Pair<CropId, Document>> iterator =
+        recordStream == null ? Collections.emptyIterator() : recordStream.iterator();
+
+    // filter can be null from read operation when coll scan filter is null
+    if (filter == null || filter == Filter.ALL) {
+      return iterator;
+    }
+    return new FilteredIterator(iterator, filter);
+  }
+
+  /** The type Filtered iterator. */
+  private static class FilteredIterator implements Iterator<Pair<CropId, Document>> {
+    private final Iterator<Pair<CropId, Document>> iterator;
     private final Filter filter;
+    private Pair<CropId, Document> nextPair;
+    private boolean nextPairSet = false;
 
     /**
-     * Instantiates a new Filtered stream.
+     * Instantiates a new Filtered iterator.
      *
-     * @param recordStream the record stream
-     * @param filter       the filter
+     * @param iterator the iterator
+     * @param filter the filter
      */
-    public FilteredStream(RecordStream<Pair<CropId, Document>> recordStream, Filter filter) {
-        this.recordStream = recordStream;
-        this.filter = filter;
+    public FilteredIterator(Iterator<Pair<CropId, Document>> iterator, Filter filter) {
+      this.iterator = iterator;
+      this.filter = filter;
     }
 
     @Override
-    public Iterator<Pair<CropId, Document>> iterator() {
-        Iterator<Pair<CropId, Document>> iterator = recordStream == null ? Collections.emptyIterator()
-            : recordStream.iterator();
-
-        // filter can be null from read operation when coll scan filter is null
-        if (filter == null || filter == Filter.ALL) {
-            return iterator;
-        }
-        return new FilteredIterator(iterator, filter);
+    public boolean hasNext() {
+      return nextPairSet || setNextId();
     }
 
-    /**
-     * The type Filtered iterator.
-     */
-    private static class FilteredIterator implements Iterator<Pair<CropId, Document>> {
-        private final Iterator<Pair<CropId, Document>> iterator;
-        private final Filter filter;
-        private Pair<CropId, Document> nextPair;
-        private boolean nextPairSet = false;
-
-        /**
-         * Instantiates a new Filtered iterator.
-         *
-         * @param iterator the iterator
-         * @param filter   the filter
-         */
-        public FilteredIterator(Iterator<Pair<CropId, Document>> iterator, Filter filter) {
-            this.iterator = iterator;
-            this.filter = filter;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return nextPairSet || setNextId();
-        }
-
-        @Override
-        public Pair<CropId, Document> next() {
-            if (!nextPairSet && !setNextId()) {
-                throw new NoSuchElementException();
-            }
-            nextPairSet = false;
-            return nextPair;
-        }
-
-        @Override
-        public void remove() {
-            if (nextPairSet) {
-                throw new InvalidOperationException("remove operation cannot be called here");
-            }
-            iterator.remove();
-        }
-
-        private boolean setNextId() {
-            while (iterator.hasNext()) {
-                final Pair<CropId, Document> pair = iterator.next();
-                if (filter.apply(pair)) {
-                    nextPair = pair;
-                    nextPairSet = true;
-                    return true;
-                }
-            }
-            return false;
-        }
+    @Override
+    public Pair<CropId, Document> next() {
+      if (!nextPairSet && !setNextId()) {
+        throw new NoSuchElementException();
+      }
+      nextPairSet = false;
+      return nextPair;
     }
+
+    @Override
+    public void remove() {
+      if (nextPairSet) {
+        throw new InvalidOperationException("remove operation cannot be called here");
+      }
+      iterator.remove();
+    }
+
+    private boolean setNextId() {
+      while (iterator.hasNext()) {
+        final Pair<CropId, Document> pair = iterator.next();
+        if (filter.apply(pair)) {
+          nextPair = pair;
+          nextPairSet = true;
+          return true;
+        }
+      }
+      return false;
+    }
+  }
 }

@@ -28,84 +28,81 @@ import xyz.vopen.framework.cropdb.common.util.ValidationUtils;
 import static xyz.vopen.framework.cropdb.common.util.ValidationUtils.notEmpty;
 
 /**
- * An interface to specify filtering criteria during find operation. When
- * a filter is applied to a collection, based on the criteria it returns
- * a set of matching records.
- * <p>
- * Each filtering criteria is based on a value of a document. If the value
- * is indexed, the find operation takes the advantage of it and only scans
- * the index map for that value. But if the value is not indexed, it scans
- * the whole collection.
- * </p>
+ * An interface to specify filtering criteria during find operation. When a filter is applied to a
+ * collection, based on the criteria it returns a set of matching records.
+ *
+ * <p>Each filtering criteria is based on a value of a document. If the value is indexed, the find
+ * operation takes the advantage of it and only scans the index map for that value. But if the value
+ * is not indexed, it scans the whole collection.
  *
  * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
  * @see CropCollection#find(Filter) CropCollection#find(Filter)
- * @see CropCollection#find(Filter, FindOptions) CropCollection#find(Filter, xyz.vopen.framework.cropdb.collection.FindOptions)
+ * @see CropCollection#find(Filter, FindOptions) CropCollection#find(Filter,
+ *     xyz.vopen.framework.cropdb.collection.FindOptions)
  * @since 1.0
  */
 public interface Filter {
-    /**
-     * A filter to select all elements.
-     */
-    Filter ALL = element -> true;
+  /** A filter to select all elements. */
+  Filter ALL = element -> true;
 
-    /**
-     * Filter by id.
-     *
-     * @param cropId the crop id
-     * @return the filter
-     */
-    static Filter byId(CropId cropId) {
-        return new EqualsFilter(Constants.DOC_ID, cropId.getIdValue());
+  /**
+   * Filter by id.
+   *
+   * @param cropId the crop id
+   * @return the filter
+   */
+  static Filter byId(CropId cropId) {
+    return new EqualsFilter(Constants.DOC_ID, cropId.getIdValue());
+  }
+
+  /**
+   * And filter.
+   *
+   * @param filters the filters
+   * @return the filter
+   */
+  static Filter and(Filter... filters) {
+    ValidationUtils.notEmpty(filters, "at least two filters must be specified");
+    if (filters.length < 2) {
+      throw new FilterException("at least two filters must be specified");
     }
 
-    /**
-     * And filter.
-     *
-     * @param filters the filters
-     * @return the filter
-     */
-    static Filter and(Filter... filters) {
-        ValidationUtils.notEmpty(filters, "at least two filters must be specified");
-        if (filters.length < 2) {
-            throw new FilterException("at least two filters must be specified");
-        }
+    return new AndFilter(filters);
+  }
 
-        return new AndFilter(filters);
+  /**
+   * Or filter.
+   *
+   * @param filters the filters
+   * @return the filter
+   */
+  static Filter or(Filter... filters) {
+    ValidationUtils.notEmpty(filters, "at least two filters must be specified");
+    if (filters.length < 2) {
+      throw new FilterException("at least two filters must be specified");
     }
 
-    /**
-     * Or filter.
-     *
-     * @param filters the filters
-     * @return the filter
-     */
-    static Filter or(Filter... filters) {
-        ValidationUtils.notEmpty(filters, "at least two filters must be specified");
-        if (filters.length < 2) {
-            throw new FilterException("at least two filters must be specified");
-        }
+    return new OrFilter(filters);
+  }
 
-        return new OrFilter(filters);
-    }
+  /**
+   * Filters a document map and returns <code>true</code> if the criteria matches.
+   *
+   * @param element the entry to check.
+   * @return boolean value to indicate if the filtering criteria matches the document.
+   */
+  boolean apply(Pair<CropId, Document> element);
 
-    /**
-     * Filters a document map and returns <code>true</code> if the criteria matches.
-     *
-     * @param element the entry to check.
-     * @return boolean value to indicate if the filtering criteria matches the document.
-     */
-    boolean apply(Pair<CropId, Document> element);
-
-    /**
-     * Creates a not filter which performs a logical NOT operation on a filter and selects
-     * the documents that *_do not_* satisfy the criteria. This also includes documents
-     * that do not contain the value.
-     * <p>
-     *
-     * @return the not filter
-     */
-    default Filter not() {
-        return new NotFilter(this);
-    }
+  /**
+   * Creates a not filter which performs a logical NOT operation on a filter and selects the
+   * documents that *_do not_* satisfy the criteria. This also includes documents that do not
+   * contain the value.
+   *
+   * <p>
+   *
+   * @return the not filter
+   */
+  default Filter not() {
+    return new NotFilter(this);
+  }
 }

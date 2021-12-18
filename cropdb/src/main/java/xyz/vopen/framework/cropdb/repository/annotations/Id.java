@@ -30,10 +30,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Id {
-    /**
-     * The custom name of the field.
-     *
-     * @return the string
-     */
-    String fieldName() default "";
+  /**
+   * The custom name of the field.
+   *
+   * @return the string
+   */
+  String fieldName() default "";
 }

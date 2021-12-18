@@ -11,11 +11,11 @@ import xyz.vopen.framework.cropdb.CropDB;
  */
 @AllArgsConstructor
 public class Drop extends BaseCommand implements Command {
-    private final String collectionName;
+  private final String collectionName;
 
-    @Override
-    public void execute(CropDB cropdb) {
-        initialize(cropdb, collectionName);
-        operations.dropCollection();
-    }
+  @Override
+  public void execute(CropDB cropdb) {
+    initialize(cropdb, collectionName);
+    operations.dropCollection();
+  }
 }

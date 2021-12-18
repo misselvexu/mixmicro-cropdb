@@ -22,22 +22,20 @@ import xyz.vopen.framework.cropdb.common.util.Iterables;
 
 import java.util.Set;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 public class JacksonMapperModule implements CropModule {
-    private final JacksonMapper jacksonMapper;
+  private final JacksonMapper jacksonMapper;
 
-    public JacksonMapperModule() {
-        jacksonMapper = new JacksonMapper();
-    }
+  public JacksonMapperModule() {
+    jacksonMapper = new JacksonMapper();
+  }
 
-    public JacksonMapperModule(JacksonExtension... jacksonExtensions) {
-        jacksonMapper = new JacksonMapper(jacksonExtensions);
-    }
+  public JacksonMapperModule(JacksonExtension... jacksonExtensions) {
+    jacksonMapper = new JacksonMapper(jacksonExtensions);
+  }
 
-    @Override
-    public Set<CropPlugin> plugins() {
-        return Iterables.setOf(jacksonMapper);
-    }
+  @Override
+  public Set<CropPlugin> plugins() {
+    return Iterables.setOf(jacksonMapper);
+  }
 }

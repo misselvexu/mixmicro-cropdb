@@ -24,20 +24,18 @@ import xyz.vopen.framework.cropdb.collection.CropCollection;
 import java.net.Proxy;
 import java.util.concurrent.Callable;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 @Data
 public class Config {
-    private CropCollection collection;
-    private Integer chunkSize;
-    private String userName;
-    private Integer debounce;
-    private ObjectMapper objectMapper;
-    private TimeSpan timeout;
-    private Request.Builder requestBuilder;
-    private Proxy proxy;
-    private String authToken;
-    private boolean acceptAllCertificates;
-    private Callable<Boolean> networkConnectivityChecker;
+  private CropCollection collection;
+  private Integer chunkSize;
+  private String userName;
+  private Integer debounce;
+  private ObjectMapper objectMapper;
+  private TimeSpan timeout;
+  private Request.Builder requestBuilder;
+  private Proxy proxy;
+  private String authToken;
+  private boolean acceptAllCertificates;
+  private Callable<Boolean> networkConnectivityChecker;
 }

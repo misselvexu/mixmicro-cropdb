@@ -7,33 +7,21 @@ package xyz.vopen.framework.cropdb.transaction;
  * @since 4.0
  */
 public enum State {
-    /**
-     * Transaction is active.
-     */
-    Active,
+  /** Transaction is active. */
+  Active,
 
-    /**
-     * Transaction is partially committed.
-     */
-    PartiallyCommitted,
+  /** Transaction is partially committed. */
+  PartiallyCommitted,
 
-    /**
-     * Transaction is fully committed.
-     */
-    Committed,
+  /** Transaction is fully committed. */
+  Committed,
 
-    /**
-     * Transaction is closed.
-     */
-    Closed,
+  /** Transaction is closed. */
+  Closed,
 
-    /**
-     * Transaction is failed.
-     */
-    Failed,
+  /** Transaction is failed. */
+  Failed,
 
-    /**
-     * Transaction is aborted.
-     */
-    Aborted,
+  /** Transaction is aborted. */
+  Aborted,
 }

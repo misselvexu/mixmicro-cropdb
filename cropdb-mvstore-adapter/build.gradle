@@ -46,7 +46,7 @@ dependencies {
     api "com.h2database:h2-mvstore"
     annotationProcessor "org.projectlombok:lombok:1.18.22"
 
-    testAnnotationProcessor "org.projectlombok:lombok:1.18.20"
+    testAnnotationProcessor "org.projectlombok:lombok:1.18.22"
     testImplementation "uk.co.jemos.podam:podam:7.2.7.RELEASE"
     testImplementation "com.github.javafaker:javafaker:1.0.2"
     testImplementation "junit:junit:4.13.2"

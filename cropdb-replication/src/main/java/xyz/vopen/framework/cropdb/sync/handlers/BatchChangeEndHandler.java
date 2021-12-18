@@ -22,26 +22,27 @@ import xyz.vopen.framework.cropdb.sync.ReplicationTemplate;
 import xyz.vopen.framework.cropdb.sync.message.BatchChangeEnd;
 import xyz.vopen.framework.cropdb.sync.message.BatchEndAck;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 public class BatchChangeEndHandler implements MessageHandler<BatchChangeEnd> {
-    private final ReplicationTemplate replicationTemplate;
+  private final ReplicationTemplate replicationTemplate;
 
-    public BatchChangeEndHandler(ReplicationTemplate replicationTemplate) {
-        this.replicationTemplate = replicationTemplate;
-    }
+  public BatchChangeEndHandler(ReplicationTemplate replicationTemplate) {
+    this.replicationTemplate = replicationTemplate;
+  }
 
-    @Override
-    public void handleMessage(BatchChangeEnd message) {
-        MessageFactory factory = replicationTemplate.getMessageFactory();
-        BatchEndAck batchEndAck = factory.createBatchEndAck(replicationTemplate.getConfig(),
-            replicationTemplate.getReplicaId(), message.getHeader().getId());
+  @Override
+  public void handleMessage(BatchChangeEnd message) {
+    MessageFactory factory = replicationTemplate.getMessageFactory();
+    BatchEndAck batchEndAck =
+        factory.createBatchEndAck(
+            replicationTemplate.getConfig(),
+            replicationTemplate.getReplicaId(),
+            message.getHeader().getId());
 
-        MessageTemplate messageTemplate = replicationTemplate.getMessageTemplate();
-        messageTemplate.sendMessage(batchEndAck);
-        Long time = message.getHeader().getTimestamp();
-        replicationTemplate.saveLastSyncTime(time);
-        replicationTemplate.setAcceptCheckpoint();
-    }
+    MessageTemplate messageTemplate = replicationTemplate.getMessageTemplate();
+    messageTemplate.sendMessage(batchEndAck);
+    Long time = message.getHeader().getTimestamp();
+    replicationTemplate.saveLastSyncTime(time);
+    replicationTemplate.setAcceptCheckpoint();
+  }
 }

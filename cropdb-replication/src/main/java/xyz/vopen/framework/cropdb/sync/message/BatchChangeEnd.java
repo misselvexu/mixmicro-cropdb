@@ -18,13 +18,11 @@ package xyz.vopen.framework.cropdb.sync.message;
 
 import lombok.Data;
 
-/**
- * @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a>
- */
+/** @author <a href="mailto:iskp.me@gmail.com">Elve.Xu</a> */
 @Data
 public class BatchChangeEnd implements DataGateMessage {
-    private MessageHeader header;
-    private Long lastSynced;
-    private Integer batchSize;
-    private Integer debounce;
+  private MessageHeader header;
+  private Long lastSynced;
+  private Integer batchSize;
+  private Integer debounce;
 }
